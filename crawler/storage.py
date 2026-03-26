@@ -3,8 +3,8 @@ import os
 from typing import Dict, Any
 
 class Storage:
-    # Por defecto, guarda en una carpeta "data" en la raíz (un nivel arriba del crawler)
-    def __init__(self, base_dir: str = "../data"):
+    # Por defecto, guarda en una carpeta "data" en la raíz (ej. desde donde se ejecuta main.py)
+    def __init__(self, base_dir: str = "data"):
         self.raw_dir = os.path.join(base_dir, "raw")
         self.processed_dir = os.path.join(base_dir, "processed")
         
