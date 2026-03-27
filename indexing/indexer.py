@@ -1,0 +1,104 @@
+import logging
+from typing import List, Dict
+
+from .configs import settings
+from .preprocess.text_cleaner import TextCleaner
+from .lexical_index.bm25_index import BM25Index
+from .vector_index.faiss_hnsw import FAISSHNSWIndex
+from .multimodal.text_encoder import TextEncoder
+from .storage.index_io import IndexStorage
+
+logger = logging.getLogger(__name__)
+
+class Indexer:
+    """
+    Main Facade for the NeuroMedIR Indexing Module.
+    Handles the orchestration of Lexical and Semantic indexing.
+    """
+    def __init__(self):
+        self.cleaner = TextCleaner()
+        self.encoder = TextEncoder(settings.EMBEDDING_MODEL_NAME)
+        
+        self.lexical_index = BM25Index(k1=settings.BM25_PARAMS["k1"], b=settings.BM25_PARAMS["b"])
+        self.semantic_index = FAISSHNSWIndex(
+            dimension=settings.EMBEDDING_DIM,
+            m=settings.HNSW_M,
+            ef_construction=settings.HNSW_EF_CONSTRUCTION
+        )
+        self.storage = IndexStorage(str(settings.INDEX_STORAGE_DIR))
+
+    def index_documents(self, documents: List[Dict]):
+        """
+        Receives a list of parsed dictionaries from the crawler.
+        Each doc must have 'id', 'title', 'content'.
+        Builds both lexical and semantic indices.
+        """
+        logger.info(f"Indexing {len(documents)} documents...")
+        doc_ids = []
+        tokenized_corpus = []
+        texts_for_semantic = []
+
+        for doc in documents:
+            doc_id = doc.get("id")
+            # Combining title and content gives more context to both models
+            raw_text = f"{doc.get('title', '')}. {doc.get('content', '')}"
+            
+            # 1. Prepare Lexical Data (BM25)
+            tokens = self.cleaner.preprocess_for_lexical(raw_text)
+            
+            # 2. Prepare Semantic Data (FAISS)
+            semantic_text = self.cleaner.preprocess_for_semantic(raw_text)
+            
+            doc_ids.append(doc_id)
+            tokenized_corpus.append(tokens)
+            texts_for_semantic.append(semantic_text)
+            
+        # Build Lexical
+        logger.info("Building lexical index (BM25)...")
+        self.lexical_index.build_index(tokenized_corpus, doc_ids)
+        
+        # Build Semantic
+        logger.info("Generating embeddings and building semantic index (FAISS HNSW)...")
+        embeddings = self.encoder.encode(texts_for_semantic)
+        self.semantic_index.build_index(embeddings, doc_ids)
+        
+        logger.info("Indexing complete.")
+
+    def search_lexical(self, query: str, top_k: int = 10) -> List[Dict]:
+        """
+        Executes a keyword-based search on the BM25 inverted index.
+        """
+        query_tokens = self.cleaner.preprocess_for_lexical(query)
+        if not query_tokens:
+            return []
+        return self.lexical_index.search(query_tokens, top_k)
+
+    def search_semantic(self, query: str, top_k: int = 10) -> List[Dict]:
+        """
+        Executes a dense vector search using FAISS HNSW.
+        """
+        clean_query = self.cleaner.preprocess_for_semantic(query)
+        if not clean_query:
+            return []
+        query_embedding = self.encoder.encode([clean_query])[0]
+        return self.semantic_index.search(query_embedding, top_k, ef_search=settings.HNSW_EF_SEARCH)
+
+    def save_indices(self):
+        """Persists all index structures to disk."""
+        logger.info(f"Saving indices to {settings.INDEX_STORAGE_DIR}...")
+        self.storage.save_lexical(self.lexical_index)
+        self.storage.save_vector(self.semantic_index)
+        logger.info("Saved successfully.")
+
+    def load_indices(self) -> bool:
+        """Loads indices from disk. Returns True if successful."""
+        logger.info(f"Loading indices from {settings.INDEX_STORAGE_DIR}...")
+        lex_ok = self.storage.load_lexical(self.lexical_index)
+        vec_ok = self.storage.load_vector(self.semantic_index)
+        
+        if lex_ok and vec_ok:
+            logger.info("Indices loaded successfully.")
+            return True
+        else:
+            logger.warning("Could not find all index files.")
+            return False

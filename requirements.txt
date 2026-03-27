@@ -1,2 +1,8 @@
 requests==2.31.0
 beautifulsoup4==4.12.2
+rank-bm25==0.2.2
+sentence-transformers==2.5.1
+faiss-cpu
+nltk==3.8.1
+numpy
+pandas
