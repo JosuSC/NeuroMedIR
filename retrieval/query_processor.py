@@ -7,14 +7,14 @@ Responsibility:
     2. Clean text form for the neural encoder (semantic search).
 
 Design decision:
-    Re-uses the existing TextCleaner from the indexing module to guarantee
-    that queries are processed with the EXACT same pipeline as documents.
-    This is critical — any mismatch between document preprocessing and
-    query preprocessing degrades retrieval quality silently.
+    Accepts a TextCleaner via dependency injection to guarantee that queries
+    are processed with the EXACT same pipeline instance as documents.
+    Any mismatch between document preprocessing and query preprocessing
+    degrades retrieval quality silently.
 """
 
 import logging
-from typing import Dict, List
+from typing import Dict
 
 from indexing.preprocess.text_cleaner import TextCleaner
 
@@ -26,8 +26,12 @@ class QueryProcessor:
     Transforms a raw query into representations suitable for each retrieval lane.
     """
 
-    def __init__(self):
-        self.cleaner = TextCleaner()
+    def __init__(self, cleaner: TextCleaner = None):
+        """
+        Args:
+            cleaner: Shared TextCleaner instance. If None, creates a new one.
+        """
+        self.cleaner = cleaner or TextCleaner()
 
     def process(self, raw_query: str) -> Dict[str, object]:
         """

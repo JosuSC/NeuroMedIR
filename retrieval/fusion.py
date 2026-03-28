@@ -1,15 +1,12 @@
 """
-fusion.py — Score fusion strategies for hybrid retrieval.
+fusion.py — Score normalization, fusion, and ranking for hybrid retrieval.
 
-This module combines results from the lexical (BM25) and semantic (FAISS/NN)
-retrieval lanes into a single unified ranking.
+This module implements the canonical hybrid IR pipeline steps:
+    normalize_scores → fuse_results → rank_results
 
-Why fusion matters:
-    BM25 excels at exact keyword matching (e.g., drug names, ICD codes).
-    Neural search excels at understanding intent and synonyms across languages.
-    Neither alone is sufficient for medical IR — fusion gives us both strengths.
+Score normalization is extracted as a public, reusable function (fixes P2).
 
-Implemented strategies:
+Implemented fusion strategies:
 
 1. Reciprocal Rank Fusion (RRF):
    - From Cormack, Clarke & Buettcher (2009)
@@ -20,7 +17,7 @@ Implemented strategies:
 
 2. Weighted Linear Fusion:
    - score(d) = α * norm_lexical(d) + β * norm_semantic(d)
-   - Requires careful min-max normalization of raw scores
+   - Requires min-max normalization of raw scores
    - α + β = 1.0, configurable in settings
    - More tunable but more fragile than RRF
 
@@ -39,11 +36,74 @@ from .configs import settings as ret_settings
 logger = logging.getLogger(__name__)
 
 
+# ---------------------------------------------------------------------------
+# Score Normalization (Public — fixes P2)
+# ---------------------------------------------------------------------------
+
+def normalize_scores(
+    results: List[Dict],
+    method: str = "min_max",
+) -> List[Dict]:
+    """
+    Normalizes scores in a result list to a [0, 1] range.
+
+    This is an explicit, reusable step in the pipeline, separated from
+    fusion logic so it can be applied, tested, and swapped independently.
+
+    Args:
+        results: List of {"doc_id": int, "score": float}.
+        method: Normalization method. Currently supports "min_max".
+
+    Returns:
+        New list with normalized scores. Original list is not mutated.
+    """
+    if not results:
+        return []
+
+    scores = [r["score"] for r in results]
+
+    if method == "min_max":
+        min_s = min(scores)
+        max_s = max(scores)
+        range_s = max_s - min_s if max_s != min_s else 1.0
+        return [
+            {"doc_id": r["doc_id"], "score": (r["score"] - min_s) / range_s}
+            for r in results
+        ]
+    else:
+        raise ValueError(f"Unknown normalization method: '{method}'")
+
+
+# ---------------------------------------------------------------------------
+# Rank Results (Public — explicit ranking step)
+# ---------------------------------------------------------------------------
+
+def rank_results(results: List[Dict], top_k: int = 10) -> List[Dict]:
+    """
+    Sorts results by score descending and returns the top-k.
+
+    This is an explicit step so that sorting is never implicit or repeated
+    inside other functions. Acts as the final deterministic pass.
+
+    Args:
+        results: List of {"doc_id": int, "score": float}.
+        top_k: Maximum number of results to return.
+
+    Returns:
+        Sorted list truncated to top_k.
+    """
+    sorted_results = sorted(results, key=lambda x: x["score"], reverse=True)
+    return sorted_results[:top_k]
+
+
+# ---------------------------------------------------------------------------
+# Fusion Strategies
+# ---------------------------------------------------------------------------
+
 def reciprocal_rank_fusion(
     lexical_results: List[Dict],
     semantic_results: List[Dict],
     k: int = 60,
-    top_k: int = 10,
 ) -> List[Dict]:
     """
     Reciprocal Rank Fusion (RRF).
@@ -54,35 +114,28 @@ def reciprocal_rank_fusion(
     where rank_i(d) is the 1-based rank of document d in system i,
     and k is a smoothing constant (default 60, per the original paper).
 
+    Note: RRF operates on RANKS, not scores. No score normalization needed.
+
     Args:
         lexical_results: BM25 results as [{"doc_id": int, "score": float}, ...]
         semantic_results: FAISS results as [{"doc_id": int, "score": float}, ...]
         k: RRF smoothing constant.
-        top_k: Number of final results to return.
 
     Returns:
-        Fused results sorted by RRF score descending.
+        Fused results (unsorted — call rank_results() after this).
     """
     rrf_scores: Dict[int, float] = defaultdict(float)
 
-    # Lexical lane contribution
     for rank, result in enumerate(lexical_results, start=1):
-        doc_id = result["doc_id"]
-        rrf_scores[doc_id] += 1.0 / (k + rank)
+        rrf_scores[result["doc_id"]] += 1.0 / (k + rank)
 
-    # Semantic lane contribution
     for rank, result in enumerate(semantic_results, start=1):
-        doc_id = result["doc_id"]
-        rrf_scores[doc_id] += 1.0 / (k + rank)
+        rrf_scores[result["doc_id"]] += 1.0 / (k + rank)
 
-    # Sort by fused score
-    fused = [
+    return [
         {"doc_id": doc_id, "score": score}
         for doc_id, score in rrf_scores.items()
     ]
-    fused.sort(key=lambda x: x["score"], reverse=True)
-
-    return fused[:top_k]
 
 
 def weighted_fusion(
@@ -90,93 +143,80 @@ def weighted_fusion(
     semantic_results: List[Dict],
     lexical_weight: float = 0.3,
     semantic_weight: float = 0.7,
-    top_k: int = 10,
 ) -> List[Dict]:
     """
-    Weighted linear fusion with min-max score normalization.
+    Weighted linear fusion of pre-normalized scores.
 
-    Steps:
-    1. Normalize scores from each lane to [0, 1] via min-max scaling.
-    2. Compute: score(d) = α * norm_lex(d) + β * norm_sem(d)
-    3. Sort by fused score.
+    IMPORTANT: Expects results to be already normalized to [0, 1] via
+    normalize_scores(). If raw scores are passed, the weighting will
+    be meaningless because BM25 and FAISS use different score scales.
 
     Args:
-        lexical_results: BM25 results.
-        semantic_results: FAISS similarity results.
+        lexical_results: Normalized BM25 results.
+        semantic_results: Normalized FAISS similarity results.
         lexical_weight: Weight α for lexical scores.
         semantic_weight: Weight β for semantic scores.
-        top_k: Number of final results.
 
     Returns:
-        Fused results sorted by weighted score descending.
+        Fused results (unsorted — call rank_results() after this).
     """
-    def _min_max_normalize(results: List[Dict]) -> Dict[int, float]:
-        """Normalizes scores to [0, 1] range."""
-        if not results:
-            return {}
-        scores = [r["score"] for r in results]
-        min_s = min(scores)
-        max_s = max(scores)
-        range_s = max_s - min_s if max_s != min_s else 1.0
-        return {
-            r["doc_id"]: (r["score"] - min_s) / range_s
-            for r in results
-        }
+    lex_map = {r["doc_id"]: r["score"] for r in lexical_results}
+    sem_map = {r["doc_id"]: r["score"] for r in semantic_results}
 
-    norm_lex = _min_max_normalize(lexical_results)
-    norm_sem = _min_max_normalize(semantic_results)
-
-    # Union of all doc IDs
-    all_ids = set(norm_lex.keys()) | set(norm_sem.keys())
+    all_ids = set(lex_map.keys()) | set(sem_map.keys())
 
     fused = []
     for doc_id in all_ids:
-        lex_score = norm_lex.get(doc_id, 0.0)
-        sem_score = norm_sem.get(doc_id, 0.0)
+        lex_score = lex_map.get(doc_id, 0.0)
+        sem_score = sem_map.get(doc_id, 0.0)
         combined = lexical_weight * lex_score + semantic_weight * sem_score
         fused.append({"doc_id": doc_id, "score": combined})
 
-    fused.sort(key=lambda x: x["score"], reverse=True)
-    return fused[:top_k]
+    return fused
 
 
-def fuse(
+# ---------------------------------------------------------------------------
+# Dispatcher
+# ---------------------------------------------------------------------------
+
+def fuse_results(
     lexical_results: List[Dict],
     semantic_results: List[Dict],
     strategy: str = None,
-    top_k: int = None,
 ) -> List[Dict]:
     """
     Dispatches to the configured fusion strategy.
+
+    For RRF: scores are NOT normalized (RRF uses ranks only).
+    For Weighted: scores ARE normalized before fusion.
 
     Args:
         lexical_results: Results from BM25.
         semantic_results: Results from FAISS/NN.
         strategy: Override for the fusion strategy (defaults to config).
-        top_k: Override for number of final results (defaults to config).
 
     Returns:
-        Fused and ranked results.
+        Fused results (unsorted). Call rank_results() on the output.
     """
     strategy = strategy or ret_settings.FUSION_STRATEGY
-    top_k = top_k or ret_settings.FINAL_TOP_K
 
-    logger.info(f"Applying fusion strategy: {strategy} (top_k={top_k})")
+    logger.info(f"Applying fusion strategy: {strategy}")
 
     if strategy == "rrf":
         return reciprocal_rank_fusion(
             lexical_results,
             semantic_results,
             k=ret_settings.RRF_K,
-            top_k=top_k,
         )
     elif strategy == "weighted":
+        # Weighted fusion REQUIRES normalized scores
+        norm_lex = normalize_scores(lexical_results)
+        norm_sem = normalize_scores(semantic_results)
         return weighted_fusion(
-            lexical_results,
-            semantic_results,
+            norm_lex,
+            norm_sem,
             lexical_weight=ret_settings.LEXICAL_WEIGHT,
             semantic_weight=ret_settings.SEMANTIC_WEIGHT,
-            top_k=top_k,
         )
     else:
         raise ValueError(
