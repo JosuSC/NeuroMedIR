@@ -3,5 +3,8 @@
   "content": "drugs, herbs and supplements drugs learn about your prescription drugs and over-the-counter medicines. includes side effects, dosage, special precautions, and more. for fda approved labels included in drug packages, see dailymed . herbs and supplements browse dietary supplements and herbal remedies to learn about their effectiveness, usual dosage, and drug interactions. all herbs and supplements drug related topics hiv/aids medicines antibiotics antidepressants blood pressure medicines blood thinners cancer alternative therapies cancer chemotherapy cold and cough medicines complementary and alternative medicine diabetes medicines dietary supplements drug safety herbal medicine hormone replacement therapy medicines over-the-counter medicines pain relievers statins steroids vitamins prescription and over-the-counter medication information is from ahfs® consumer medication information, copyrighted by the american society of health-system pharmacists (ashp), inc. , bethesda, maryland; copyright © 2026. all rights reserved.",
   "source": "medlineplus.gov",
   "url": "https://medlineplus.gov/druginformation.html",
-  "id": 18
+  "id": 18,
+  "is_valid": true,
+  "validation_error": null,
+  "category": "health_topic"
 }

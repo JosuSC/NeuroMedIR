@@ -3,5 +3,8 @@
   "content": "viewers & players you may need to download the following viewers and players to your computer in order to access nlm content in various formats. note that not all viewer and players will work on all mobile devices. viewer or player how it works example formats apple quicktime media player play video and audio files on apple operating systems. mov apple itunes download nlm podcasts and applications. mp3 mp4 mov adobe reader read and print portable document format (pdf) from your web browser. pdf windows media player play video and audio files on pc operating systems. mp3 wav wmz",
   "source": "medlineplus.gov",
   "url": "https://medlineplus.gov/plugins.html",
-  "id": 4
+  "id": 4,
+  "is_valid": true,
+  "validation_error": null,
+  "category": "health_topic"
 }

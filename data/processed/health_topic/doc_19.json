@@ -3,5 +3,8 @@
   "content": "health topics: w waldenstrom's macroglobulinemia see lymphoma walkers see mobility aids walking pneumonia see pneumonia walking problems walleye see eye movement disorders warts water see drinking water water pollution water safety (recreational) waterborne diseases see water pollution weariness see fatigue wegener's granulomatosis see granulomatosis with polyangiitis weight control weight loss surgery weight training see exercise and physical fitness ; sports fitness weight-loss diet see diets west nile virus wheat allergy see food allergy wheelchairs see mobility aids whiplash see neck injuries and disorders whooping cough wildfires wilms tumor wilson disease windpipe disorders see tracheal disorders winter weather emergencies wnv see west nile virus women's health women's health checkup wounds and injuries wrinkles see skin aging wrist injuries and disorders",
   "source": "medlineplus.gov",
   "url": "https://medlineplus.gov/healthtopics_w.html",
-  "id": 19
+  "id": 19,
+  "is_valid": true,
+  "validation_error": null,
+  "category": "health_topic"
 }

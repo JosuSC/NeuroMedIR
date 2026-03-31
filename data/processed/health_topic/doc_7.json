@@ -3,5 +3,8 @@
   "content": "endocrine system see all endocrine system topics select one: adrenal gland ovary pancreas pituitary gland testicles thyroid gland the adrenal glands addison disease adrenal gland cancer adrenal gland disorders endocrine diseases hormones pheochromocytoma the ovaries endocrine diseases hormones menstruation ovarian cancer ovarian cysts polycystic ovary syndrome primary ovarian insufficiency the pancreas diabetes diabetes complications diabetes in children and teens diabetes type 1 diabetes type 2 endocrine diseases hormones how to prevent diabetes islet cell transplantation pancreas transplantation pancreatic cancer pancreatic diseases prediabetes the pituitary gland diabetes insipidus dwarfism endocrine diseases growth disorders hormones pituitary disorders pituitary tumors the testicles endocrine diseases hormones testicular cancer testicular disorders the thyroid gland endocrine diseases hormones hyperthyroidism hypothyroidism parathyroid disorders thyroid cancer thyroid diseases thyroid tests",
   "source": "medlineplus.gov",
   "url": "https://medlineplus.gov/endocrinesystem.html",
-  "id": 7
+  "id": 7,
+  "is_valid": true,
+  "validation_error": null,
+  "category": "health_topic"
 }
