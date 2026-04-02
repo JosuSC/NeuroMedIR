@@ -32,12 +32,18 @@ class IndexStorage:
         lexical_index.load_state(state)
         return True
 
-    def save_vector(self, vector_index):
-        """Saves FAISS index to its binary format and the metadata (Doc IDs) to pickle."""
+    def save_vector(self, vector_index, doc_texts: dict[int, str] = None):
+        """Saves FAISS index and metadata (Doc IDs + optional doc text mapping)."""
         vector_index.save_to_disk(str(self.faiss_index_path))
         
         with open(self.faiss_metadata_path, "wb") as f:
-            pickle.dump({"doc_ids": vector_index.doc_ids}, f)
+            pickle.dump(
+                {
+                    "doc_ids": vector_index.doc_ids,
+                    "doc_texts": doc_texts or {},
+                },
+                f,
+            )
 
     def load_vector(self, vector_index) -> bool:
         """Loads FAISS index and doc IDs."""
@@ -48,4 +54,5 @@ class IndexStorage:
             meta = pickle.load(f)
             
         vector_index.load_from_disk(str(self.faiss_index_path), meta["doc_ids"])
+        vector_index.set_text_mapping(meta.get("doc_texts", {}))
         return True

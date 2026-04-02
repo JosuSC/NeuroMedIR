@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import List, Dict
 
 from .configs import settings
@@ -17,7 +18,11 @@ class Indexer:
     """
     def __init__(self):
         self.cleaner = TextCleaner()
-        self.encoder = TextEncoder(settings.EMBEDDING_MODEL_NAME)
+        self.encoder = TextEncoder(
+            settings.EMBEDDING_MODEL_NAME,
+            batch_size=settings.EMBEDDING_BATCH_SIZE,
+        )
+        self.semantic_doc_texts = {}
         
         self.lexical_index = BM25Index(k1=settings.BM25_PARAMS["k1"], b=settings.BM25_PARAMS["b"])
         self.semantic_index = FAISSHNSWIndex(
@@ -33,25 +38,63 @@ class Indexer:
         Each doc must have 'id', 'title', 'content'.
         Builds both lexical and semantic indices.
         """
+        if not isinstance(documents, list):
+            raise TypeError("documents must be a list of dictionaries")
+
+        t_start = time.perf_counter()
         logger.info(f"Indexing {len(documents)} documents...")
         doc_ids = []
         tokenized_corpus = []
         texts_for_semantic = []
+        self.semantic_doc_texts = {}
+        seen_ids = set()
+        skipped_invalid = 0
+        skipped_empty = 0
 
-        for doc in documents:
+        for idx, doc in enumerate(documents, start=1):
+            if not isinstance(doc, dict):
+                skipped_invalid += 1
+                logger.warning(f"Skipping document #{idx}: expected dict, got {type(doc)}")
+                continue
+
             doc_id = doc.get("id")
+            title = doc.get("title", "")
+            content = doc.get("content", "")
+
+            if doc_id is None or not isinstance(title, str) or not isinstance(content, str):
+                skipped_invalid += 1
+                logger.warning(
+                    f"Skipping document #{idx}: invalid schema (id/title/content required)."
+                )
+                continue
+
+            if doc_id in seen_ids:
+                skipped_invalid += 1
+                logger.warning(f"Skipping duplicate document id: {doc_id}")
+                continue
+
             # Combining title and content gives more context to both models
-            raw_text = f"{doc.get('title', '')}. {doc.get('content', '')}"
+            raw_text = f"{title}. {content}"
             
             # 1. Prepare Lexical Data (BM25)
             tokens = self.cleaner.preprocess_for_lexical(raw_text)
             
             # 2. Prepare Semantic Data (FAISS)
             semantic_text = self.cleaner.preprocess_for_semantic(raw_text)
+
+            if not tokens and not semantic_text.strip():
+                skipped_empty += 1
+                logger.warning(f"Skipping empty document after preprocessing: id={doc_id}")
+                continue
             
+            seen_ids.add(doc_id)
             doc_ids.append(doc_id)
             tokenized_corpus.append(tokens)
             texts_for_semantic.append(semantic_text)
+            self.semantic_doc_texts[doc_id] = semantic_text
+
+        if not doc_ids:
+            raise ValueError("No valid documents available after validation/preprocessing.")
             
         # Build Lexical
         logger.info("Building lexical index (BM25)...")
@@ -61,8 +104,13 @@ class Indexer:
         logger.info("Generating embeddings and building semantic index (FAISS HNSW)...")
         embeddings = self.encoder.encode(texts_for_semantic)
         self.semantic_index.build_index(embeddings, doc_ids)
-        
-        logger.info("Indexing complete.")
+
+        elapsed_ms = (time.perf_counter() - t_start) * 1000
+        logger.info(
+            f"Indexing complete. Indexed: {len(doc_ids)} | "
+            f"Skipped invalid: {skipped_invalid} | Skipped empty: {skipped_empty} | "
+            f"Total time: {elapsed_ms:.1f}ms"
+        )
 
     def search_lexical(self, query: str, top_k: int = 10) -> List[Dict]:
         """
@@ -87,7 +135,7 @@ class Indexer:
         """Persists all index structures to disk."""
         logger.info(f"Saving indices to {settings.INDEX_STORAGE_DIR}...")
         self.storage.save_lexical(self.lexical_index)
-        self.storage.save_vector(self.semantic_index)
+        self.storage.save_vector(self.semantic_index, doc_texts=self.semantic_doc_texts)
         logger.info("Saved successfully.")
 
     def load_indices(self) -> bool:

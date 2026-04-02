@@ -19,6 +19,7 @@ BM25_PARAMS = {
 # "paraphrase-multilingual-MiniLM-L12-v2" is fast and robust for EN/ES semantic search
 EMBEDDING_MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 EMBEDDING_DIM = 384  # Dimensionality of the specific model above
+EMBEDDING_BATCH_SIZE = 32
 
 # Vector index (FAISS) configs
 HNSW_M = 32

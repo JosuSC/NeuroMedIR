@@ -8,6 +8,14 @@ class FAISSHNSWIndex:
         self.ef_construction = ef_construction
         self.index = None
         self.doc_ids = []
+        self.doc_texts = {}
+
+    @staticmethod
+    def _l2_normalize(vectors: np.ndarray) -> np.ndarray:
+        """L2-normalize vectors row-wise to approximate cosine with L2 search."""
+        norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+        norms = np.maximum(norms, 1e-12)  # Avoid division by zero.
+        return vectors / norms
 
     def build_index(self, embeddings: np.ndarray, doc_ids: list[int]):
         """
@@ -23,9 +31,10 @@ class FAISSHNSWIndex:
         if embeddings.shape[0] != len(doc_ids):
             raise ValueError("Number of embeddings must match number of doc_ids.")
 
-        # L2 distance is typically used, but inner product (cosine similarity) can be used 
-        # if vectors are normalized. SentenceTransformers normally outputs unnormalized 
-        # vectors unless specified, but HNSW in FAISS usually operates on L2.
+        # Normalize document vectors so L2 distance becomes a proxy for cosine similarity.
+        embeddings = self._l2_normalize(embeddings)
+
+        # HNSW with L2 metric.
         self.index = faiss.IndexHNSWFlat(self.dimension, self.m)
         self.index.hnsw.efConstruction = self.ef_construction
         
@@ -44,6 +53,9 @@ class FAISSHNSWIndex:
         query_embedding = np.array(query_embedding).astype('float32')
         if len(query_embedding.shape) == 1:
             query_embedding = np.expand_dims(query_embedding, axis=0)
+
+        # Normalize query vector with same policy used at indexing time.
+        query_embedding = self._l2_normalize(query_embedding)
 
         # Set search ef
         self.index.hnsw.efSearch = ef_search
@@ -71,3 +83,7 @@ class FAISSHNSWIndex:
     def load_from_disk(self, filepath: str, doc_ids: list[int]):
         self.index = faiss.read_index(filepath)
         self.doc_ids = doc_ids
+
+    def set_text_mapping(self, doc_texts: dict[int, str]):
+        """Attach a document text mapping for future RAG/enrichment usage."""
+        self.doc_texts = doc_texts or {}

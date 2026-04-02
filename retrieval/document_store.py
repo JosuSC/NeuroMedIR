@@ -8,7 +8,6 @@ and provide fast lookup by doc_id.
 
 import json
 import logging
-import os
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -32,17 +31,16 @@ class DocumentStore:
         self._load()
 
     def _load(self):
-        """Loads all processed JSON documents into memory."""
+        """Loads all processed JSON documents recursively into memory."""
         if not self._processed_dir.exists():
             logger.warning(f"Processed data directory not found: {self._processed_dir}")
             return
 
         loaded = 0
         errors = 0
-        for filename in os.listdir(self._processed_dir):
-            if not filename.endswith(".json"):
+        for filepath in self._processed_dir.rglob("*.json"):
+            if not filepath.is_file():
                 continue
-            filepath = self._processed_dir / filename
             try:
                 with open(filepath, "r", encoding="utf-8") as f:
                     doc = json.load(f)
