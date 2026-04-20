@@ -1,0 +1,10 @@
+{
+  "id": 11,
+  "title": "MedlinePlus: Information about MedlinePlus for Developers",
+  "content": "Information about MedlinePlus for Developers Find technical information for web developers, including our web service, data files, RSS feed, and MedlinePlus Connect for electronic health records (EHRs). MedlinePlus Connect API for use with EHR systems and patient portals Web Service Search-based health topic data in XML format XML Files Downloadable records for all English & Spanish health topics MedlinePlus Genetics Data Files & API Retrieve data from MedlinePlus Genetics in XML or JSON RSS Feeds Subscribe to general and topic-specific feeds Related Information What's New About MedlinePlus Using MedlinePlus",
+  "source": "MedlinePlus",
+  "url": "https://medlineplus.gov/about/developers",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-04-20T18:27:28.842556+00:00"
+}

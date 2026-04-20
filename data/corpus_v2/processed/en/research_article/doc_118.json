@@ -1,0 +1,10 @@
+{
+  "id": 118,
+  "title": "Advanced Search Results - PubMed",
+  "content": "PubMed Advanced Search Builder User Guide Filters applied: . Clear all Add terms to the query box Search Term: Field Selector: Select indexed value Start Date: to End Date: ADD Add with AND Add with OR Add with NOT Show Index Query box Query box Search Add to History Search Your saved search Name of saved search: Search terms: Test search terms Would you like email updates of new search results? Saved Search Alert Radio Buttons Yes No Email: ( change ) Frequency: Monthly Weekly Daily Which day? The first Sunday The first Monday The first Tuesday The first Wednesday The first Thursday The first Friday The first Saturday The first day The first weekday Which day? Sunday Monday Tuesday Wednesday Thursday Friday Saturday Report format: Summary Summary (text) Abstract Abstract (text) PubMed Send at most: 1 item 5 items 10 items 20 items 50 items 100 items 200 items Send even when there aren't any new results Optional text in email: Save Cancel History and Search Details Your history is currently empty! As you use PubMed your recent searches will appear here. Download Delete Your entire search history is about to be cleared. Confirm [x] The search history record is about to be deleted. Confirm [x] No History items are available for download. History items expire after 8 hour of inactivity. Click 'Refresh' to clear items from the table, or click the 'X' to go back to the table. Refresh [x] The history table currently contains expired items. Clear expired items and add your new query? Continue [x] No History items are available for deletion. History items expire after 8 hour of inactivity. Click 'Refresh' to clear items from the table, or click the 'X' to go back to the table. Refresh [x]",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/advanced",
+  "category": "research_article",
+  "language": "en",
+  "fetched_at": "2026-04-20T18:42:12.644222+00:00"
+}

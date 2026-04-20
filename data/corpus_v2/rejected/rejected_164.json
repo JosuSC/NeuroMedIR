@@ -1,0 +1,11 @@
+{
+  "id": 189,
+  "title": "cancer - NIH Health Information Search Results",
+  "content": "",
+  "source": "NIH",
+  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=cancer&commit=",
+  "category": "health_guideline",
+  "language": "en",
+  "fetched_at": "2026-04-20T18:53:11.728649+00:00",
+  "reason": "missing_or_empty_content"
+}

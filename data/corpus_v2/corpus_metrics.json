@@ -1,0 +1,77 @@
+{
+  "generated_at_utc": "2026-04-20T18:32:08.070861+00:00",
+  "total_valid_documents": 113,
+  "total_rejected_documents": 7,
+  "validity_ratio": 0.9417,
+  "distribution_by_language": {
+    "es": 3,
+    "en": 110
+  },
+  "distribution_by_source": {
+    "MedlinePlus ES": 2,
+    "SciELO": 1,
+    "NIH": 2,
+    "MedlinePlus": 105,
+    "PubMed": 3
+  },
+  "distribution_by_category": {
+    "health_topic": 107,
+    "research_article": 4,
+    "health_guideline": 2
+  },
+  "average_content_length_chars": 4256.39,
+  "crawl_duration_seconds": 318.4,
+  "docs_per_minute": 21.29,
+  "examples": [
+    {
+      "id": 8,
+      "title": "Temas de salud: MedlinePlus en espaÃ±ol",
+      "content": "Temas de salud Lea sobre sÃ­ntomas, causas, tratamientos y prevenciÃ³n de mÃ¡s de 1000 enfermedades, condiciones y temas de bienestar. MedlinePlus se revisa regularmente y los enlaces son actualizados diariamente. Partes del cuerpo/Sistemas Cerebro y nervios Huesos, articulaciones y mÃºsculos OÃ­do, nariz y garganta Ojos y visiÃ³n Piel, cabello y uÃ±as PulmÃ³n y vÃ­as respiratorias RiÃ±ones y sistema urinario Salud oral y dental Sangre, corazÃ³n y circulaciÃ³n Sistema digestivo Sistema endocrino Sistema inmunitario Sistema reproductor femenino Sistema reproductor masculino Trastornos y enfermedades Expand Section CÃ¡nceres Consumo de sustancias y sus trastornos Diabetes mellitus Embarazo y reproducciÃ³n Envenenamientos, toxicologÃ­a y salud ambiental GenÃ©tica y defectos congÃ©nitos Infecciones Lesiones y heridas Problemas del metabolismo Salud mental y conducta DiagnÃ³sticos y tratamientos Expand Section CirugÃ­a y rehabilitaciÃ³n Pruebas de diagnÃ³stico SÃ­ntomas Terapias complementarias y alternativas Transplantes y donaciones Tratamiento con medicamentos Grupos demogrÃ¡ficos Expand Section Grupos especiales Hombres Mujeres NiÃ±os y adolescentes Personas mayores Bienestar, prevenciÃ³n y planificaciÃ³n Expand Section Alimentos y nutriciÃ³n Aptitud fÃ­sica y ejercicio Asuntos de salud sexual Asuntos de seguridad Asuntos personales de salud Asuntos sociales y familiares Bienestar y estilo de vida Desastres Sistemas de salud",
+      "source": "MedlinePlus ES",
+      "url": "https://medlineplus.gov/spanish/healthtopics.html",
+      "category": "health_topic",
+      "language": "es",
+      "fetched_at": "2026-04-20T18:27:12.166045+00:00"
+    },
+    {
+      "id": 9,
+      "title": "Enciclopedia mÃ©dica: MedlinePlus en español",
+      "content": "Enciclopedia mÃ©dica La Enciclopedia Ilustrada de Salud (Health Illustrated Encyclopedia) de A.D.A.M. incluye mÃ¡s de 4.000 artÃ­culos acerca de enfermedades, exÃ¡menes, sÃ­ntomas, lesiones y procedimientos quirÃºrgicos. TambiÃ©n contiene una biblioteca extensa de fotografÃ­as mÃ©dicas e ilustraciones. Para mÃ¡s informaciÃ³n acerca de A.D.A.M., vea el directorio de contenidos (en inglÃ©s). La informaciÃ³n aquÃ­ proporcionada no debe utilizarse durante ninguna emergencia mÃ©dica ni para el diagnÃ³stico o tratamiento de ninguna afecciÃ³n mÃ©dica. Se debe consultar a un profesional mÃ©dico autorizado para el diagnÃ³stico y tratamiento de cualquiera y todas las afecciones mÃ©dicas. Los enlaces a otros sitios se proporcionan Ãºnicamente con fines informativos; no constituyen una recomendaciÃ³n de dichos sitios. No se ofrece garantÃ­a alguna, expresa ni implÃ­cita, en cuanto a la precisiÃ³n, fiabilidad, puntualidad o exactitud de las traducciones realizadas por un servicio externo de la informaciÃ³n aquÃ­ proporcionada a cualquier otro idioma. Â© 1997- 2026 A.D.A.M., una unidad de negocio de Ebix, Inc. Queda estrictamente prohibida la duplicaciÃ³n o distribuciÃ³n de la informaciÃ³n aquÃ­ contenida. Todo el contenido de este sitio, incluyendo texto, imÃ¡genes, grÃ¡ficos, audio, video, datos, metadatos y compilaciones, estÃ¡ protegido por derechos de autor y otras leyes de propiedad intelectual. Usted puede ver el contenido para uso personal y no comercial. Cualquier otro uso requiere el consentimiento previo por escrito de Ebix. Usted no puede copiar, reproducir, distribuir, transmitir, mostrar, publicar, realizar ingenierÃ­a inversa, adaptar, modificar, almacenar mÃ¡s allÃ¡ del almacenamiento en cachÃ© habitual del navegador, indexar, hacer minerÃ­a de datos, extraer o crear obras derivadas de este contenido. Usted no puede utilizar herramientas automatizadas para acceder o extraer contenido, incluyendo la creaciÃ³n de incrustaciones, vectores, conjuntos de datos o Ã­ndices para sistemas de recuperaciÃ³n. Se prohÃ­be el uso de cualquier contenido para entrenar, ajustar, calibrar, probar, evaluar o mejorar sistemas de inteligencia artificial (IA) de cualquier tipo sin el consentimiento expreso por escrito. Esto incluye modelos de lenguaje grandes, modelos de aprendizaje automÃ¡tico, redes neuronales, sistemas generativos, sistemas de recuperaciÃ³n aumentada y cualquier software que ingiera contenido para producir resultados. Cualquier uso no autorizado del contenido, incluyendo el uso relacionado con la IA, constituye una violaciÃ³n de nuestros derechos y puede dar lugar a acciones legales, daÃ±os y sanciones legales en la medida en que lo permita la ley. Ebix se reserva el derecho de hacer valer sus derechos mediante medidas legales, tecnolÃ³gicas y contractuales.",
+      "source": "MedlinePlus ES",
+      "url": "https://medlineplus.gov/spanish/encyclopedia.html",
+      "category": "health_topic",
+      "language": "es",
+      "fetched_at": "2026-04-20T18:27:14.376851+00:00"
+    },
+    {
+      "id": 10,
+      "title": "Início",
+      "content": "Scientific Electronic Library Online search Colecciones Revistas Revistas Argentina Bolivia Brasil Chile Colombia Costa Rica Cuba Ecuador España México Paraguay Peru Portugal Salud Publica Sudáfrica Uruguay En desarrollo Indias Occidentales República Dominicana Venezuela Servidores y Repositorios SciELO Data SciELO Preprints Libros SciELO Libros Otros Biodiversity Heritage Library Ciência e Cultura Pesquisa FAPESP Buscar revistas search Lista de revistas En orden alfabético Por editor Lista de revistas por tema Todos Agricultural Sciences Applied Social Sciences Biological Sciences Engineering Exact and Earth Sciences Health Sciences Human Sciences Linguistics, Letters and Arts Psicanalise SciELO en Perspectiva YouTube Acceda al blog SciELO en Perspectiva arrow_forward RedeSciELO YouTube Channel arrow_forward",
+      "source": "SciELO",
+      "url": "https://scielo.org/es",
+      "category": "research_article",
+      "language": "es",
+      "fetched_at": "2026-04-20T18:27:24.659216+00:00"
+    },
+    {
+      "id": 6,
+      "title": "Health Information | National Institutes of Health (NIH)",
+      "content": "Health Information Health Topics Search all health topics Search mental health heart disease cancer sleep diabetes fitness healthy eating stroke Health Highlights Testicular Cancer Learn about testicular cancer treatment, screening, and statistics. Organ Donation Organ donation is the act of taking healthy organs and tissues from one person and putting them into someone else. See the frequently asked questions about organ donation. Detecting Language Difficulties Many kids start talking later than expected, but most eventually catch up. Learn what you should know if your child has language difficulties that persist. Parkinson’s Disease Find out about the causes, signs, and available treatments for Parkinson’s disease, a neurodegenerative disease thought to be caused by the interaction of genes and environment. Your Healthiest Self: Wellness Toolkits Image Your relationships, your emotions, your surroundings, and other aspects of your life impact your overall health. Find ways to improve your well-being with NIH's wellness toolkits. Learn more NIH Clinical Research Trials and You Image It’s your involvement that helps researchers to ultimately uncover better ways to treat, prevent, diagnose and understand human disease. Learn more SuperAgers show unique cell signatures in the brain March 31, 2026 — Researchers linked neuron creation to exceptional recall and memory in older adults. Scientists identify proteins tied to food tolerance March 31, 2026 — New research enhances our understanding of food tolerance and may lead to new therapies for people with food allergies. Using RNA to treat heart attacks March 31, 2026 — An NIH-supported research team developed a minimally invasive therapy that may help the heart recover from a heart attack. Stay Connected! Sign up to receive the NIH Health Information newsletter. Get email updates twice a month about healthy living and wellness from NIH. Subscribe to the newsletter NIH News in Health Image Check out these popular recent stories from our monthly newsletter, which brings you practical health news and tips based on NIH research: Be A Citizen Scientist Sore, Scratchy Throat? Breaking Down Food Delivering Safer Pregnancies Your Body’s Disease Defenses More stories » Health Information Resources Your Healthiest Self: Wellness Toolkits NIH Clinical Research Trials and You Talking to Your Doctor MedlinePlus Health Info Health Care Providers & Facilities HealthCare.gov Contact Us What health topics would you like to see included on this site? Submit your ideas, feedback, and comments This page last reviewed on March 21, 2025",
+      "source": "NIH",
+      "url": "https://www.nih.gov/health-information",
+      "category": "health_guideline",
+      "language": "en",
+      "fetched_at": "2026-04-20T18:27:06.321671+00:00"
+    },
+    {
+      "id": 7,
+      "title": "NIH News in Health | A monthly newsletter from the National Institutes of Health, part of the U.S. Department of Health and Human Services",
+      "content": "April 2026 Download printable version (700.95 KB) Detecting Language Difficulties DLD Can Have Subtle Signs Many kids start talking later than expected. Most eventually catch up with other kids their age. But some have language difficulties that persist. This can be a sign of DLD. Protect Against Air Pollution Breathe Better Indoors and Out You can’t see most air pollution. You can’t smell much of it, either. But polluted air—both outdoors and indoors—can still affect your health. Health Capsule New Test May Find Early Pancreatic Cancer Health Capsule Certain Medications Riskier for People With Dementia Featured Website NIH Clinical Center Research Studies Contributors to this issue: Tianna Hicklin Sarah Mann Caroline Stetler Featured Stories Is It Flu, COVID-19, Allergies, or a Cold? Stopping Middle-Age Spread Tired, Achy Eyes? Buffering Childhood Stress",
+      "source": "NIH",
+      "url": "https://newsinhealth.nih.gov/",
+      "category": "health_guideline",
+      "language": "en",
+      "fetched_at": "2026-04-20T18:27:09.928445+00:00"
+    }
+  ]
+}

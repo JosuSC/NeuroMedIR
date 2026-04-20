@@ -1,0 +1,11 @@
+{
+  "id": 207,
+  "title": "diabetes - NIH Health Information Search Results",
+  "content": "",
+  "source": "NIH",
+  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=diabetes&commit=",
+  "category": "health_guideline",
+  "language": "en",
+  "fetched_at": "2026-04-20T18:55:38.773181+00:00",
+  "reason": "missing_or_empty_content"
+}

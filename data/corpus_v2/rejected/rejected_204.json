@@ -1,0 +1,11 @@
+{
+  "id": 207,
+  "title": "fitness - NIH Health Information Search Results",
+  "content": "",
+  "source": "NIH",
+  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=fitness&commit=",
+  "category": "health_guideline",
+  "language": "en",
+  "fetched_at": "2026-04-20T18:55:36.422277+00:00",
+  "reason": "missing_or_empty_content"
+}

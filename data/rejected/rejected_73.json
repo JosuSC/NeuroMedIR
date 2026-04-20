@@ -1,0 +1,11 @@
+{
+  "id": 112,
+  "title": "MedlinePlus - Health Information from the National Library of Medicine",
+  "content": "Welcome to MedlinePlus MedlinePlus is an online health information resource for patients and their families and friends. It is a service of the National Library of Medicine (NLM), the world's largest medical library, which is part of the National Institutes of Health (NIH). Learn more about MedlinePlus FEATURED TOPIC Healthy Sleep Sleep is a natural process that helps your body restore energy, supports learning and memory, and keeps you healthy. You can take steps to improve your sleep habits. Learn more Health Topics Find information on health, wellness, disorders and conditions Medical Encyclopedia Articles and images for diseases, symptoms, tests, treatments Genetics Explore genetic conditions, genes, and how genetic variations affect health Drugs & Supplements Prescription drugs, over-the-counter medicines, herbs, and supplements Medical Tests Learn why your doctor orders medical tests and what the results may mean Healthy Recipes These recipes show you how to prepare tasty, quick meals as part of a healthy lifestyle Easy-to-Read Health Information Health Information in Multiple Languages MedlinePlus Connect for EHRs All of Us NIH MedlinePlus Magazine Clinical Trials",
+  "source": "MedlinePlus",
+  "url": "https://medlineplus.gov/",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-04-20T18:24:11.081382+00:00",
+  "reason": "duplicate_url"
+}
