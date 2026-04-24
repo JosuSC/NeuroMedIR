@@ -1,11 +1,11 @@
 {
-  "id": 177,
-  "title": "Female Reproductive System: MedlinePlus",
-  "content": "Female Reproductive System See all Female Reproductive System topics Select One: Breast Cervix Ovary Uterus Vagina Whole System The Breast Breast Cancer Breast Diseases Breast Reconstruction Breastfeeding Mammography Mastectomy Preterm Labor The Cervix Cervical Cancer Cervical Cancer Screening Cervix Disorders Genital Warts Gonorrhea HPV Preterm Labor Trichomoniasis The Ovaries Ovarian Cancer Ovarian Cysts Ovarian Disorders Pelvic Inflammatory Disease Polycystic Ovary Syndrome Preterm Labor Primary Ovarian Insufficiency The Uterus Cesarean Delivery Endometriosis Gonorrhea Hysterectomy Pelvic Inflammatory Disease Preterm Labor Uterine Cancer Uterine Diseases Uterine Fibroids Vaginal Bleeding The Vagina Childbirth Chlamydia Infections Genital Herpes Genital Warts HPV Preterm Labor Syphilis Trichomoniasis Vaginal Bleeding Vaginal Cancer Vaginal Diseases Vaginitis Vulvar Cancer Yeast Infections The Whole System Abortion Assisted Reproductive Technology Birth Control Ectopic Pregnancy Infertility Menopause Menstruation Miscarriage Pelvic Pain Period Pain Pregnancy Premenstrual Syndrome Preterm Labor Reproductive Hazards Sexual Health Sexual Problems in Women Sexually Transmitted Infections Tubal Ligation Vaginal Bleeding Vulvar Disorders",
+  "id": 683,
+  "title": "Kidneys and Urinary System: MedlinePlus",
+  "content": "Kidneys and Urinary System See all Kidneys and Urinary System topics Select One: Bladder Kidney The Bladder Bladder Cancer Bladder Diseases Interstitial Cystitis Kidney Stones Ostomy Overactive Bladder Urinalysis Urinary Incontinence Urinary Tract Infections Urine and Urination The Kidneys Chronic Kidney Disease Diabetes Insipidus Diabetic Kidney Problems Dialysis Kidney Cancer Kidney Cysts Kidney Diseases Kidney Failure Kidney Stones Kidney Tests Kidney Transplantation Urinary Tract Infections Urine and Urination Wilms Tumor",
   "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/femalereproductivesystem.html",
+  "url": "https://medlineplus.gov/kidneysandurinarysystem.html",
   "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-20T18:49:57.310936+00:00",
-  "reason": "duplicate_url"
+  "fetched_at": "2026-04-24T06:30:57.649812+00:00",
+  "reason": "content_too_short"
 }

@@ -1,11 +1,11 @@
 {
-  "id": 178,
-  "title": "PubMed",
-  "content": "Home Page Search: Search Advanced Clipboard PubMed® comprises more than 40 million citations for biomedical literature from MEDLINE, life science journals, and online books. Citations may include links to full text content from PubMed Central and publisher web sites. Learn About PubMed FAQs & User Guide Finding Full Text Find Advanced Search Clinical Queries Single Citation Matcher Download E-utilities API FTP Batch Citation Matcher Explore MeSH Database Journals Trending Articles PubMed records with recent increases in activity Protein-templated synthesis of dinucleotide repeat DNA by an antiphage reverse transcriptase. Deng P, et al. Science. 2026. PMID: 41990131 Are Clouds a Neglected Reservoir of Pesticides? Bianco A, et al. Environ Sci Technol. 2025. PMID: 40920485 Asundexian for Secondary Stroke Prevention. Sharma M, et al. N Engl J Med. 2026. PMID: 41985132 Clinical Trial. Introduction: Diagnosis and management of lung cancer: ACCP evidence-based clinical practice guidelines (2nd Edition). Alberts WM, et al. Chest. 2007. PMID: 17873157 No abstract available. Fathers have lower salivary testosterone levels than unmarried men and married non-fathers in Beijing, China. Gray PB, et al. Proc Biol Sci. 2006. PMID: 16543176 Free PMC article. See more trending articles PubMed Updates Feature updates and other PubMed highlights Article Type Filters Updated to Reflect MeSH Changes to Publication Types March 31, 2026 The article type filters in PubMed have been updated to reflect Annual MeSH Processing (AMP) updates to Publication Types, including discontinued publication types from the past several years. PubMed 2026 Baseline Released January 30, 2026 The National Library of Medicine (NLM) has released the 2026 production year PubMed Baseline files. PubMed 2026 Baseline Release Scheduled January 22, 2026 The release of updated MEDLINE citations with 2026 MeSH is scheduled for the week of January 26, 2026. Recent Changes to References, Search Tools, Related Citations, and Sharing Features June 27, 2025 Key changes include improved rendering of reference lists, the addition of date stamps in search history downloads, streamlined sharing options, and other usability updates.",
-  "source": "PubMed",
-  "url": "https://pubmed.ncbi.nlm.nih.gov/",
-  "category": "research_article",
+  "id": 683,
+  "title": "Medical Encyclopedia: X: MedlinePlus",
+  "content": "Skip navigation Official websites use .gov A .gov website belongs to an official government organization in the United States. Secure .gov websites use HTTPS A lock ( Lock Locked padlock icon ) or https:// means youâve safely connected to the .gov website. Share sensitive information only on official, secure websites. You Are Here: Home → Medical Encyclopedia → Medical Encyclopedia: X URL of this page: //medlineplus.gov/ency/encyclopedia_X.htm.htm Medical Encyclopedia: X X-ray X-ray - skeleton Xanthoma Xeroderma pigmentosum",
+  "source": "MedlinePlus",
+  "url": "https://medlineplus.gov/ency/encyclopedia_X.htm",
+  "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-20T18:51:36.439676+00:00",
-  "reason": "duplicate_url"
+  "fetched_at": "2026-04-24T06:32:48.735293+00:00",
+  "reason": "content_too_short"
 }

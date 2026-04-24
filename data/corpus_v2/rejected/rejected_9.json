@@ -1,11 +1,11 @@
 {
-  "id": 158,
-  "title": "Enciclopedia mÃ©dica: MedlinePlus en español",
-  "content": "Enciclopedia mÃ©dica La Enciclopedia Ilustrada de Salud (Health Illustrated Encyclopedia) de A.D.A.M. incluye mÃ¡s de 4.000 artÃ­culos acerca de enfermedades, exÃ¡menes, sÃ­ntomas, lesiones y procedimientos quirÃºrgicos. TambiÃ©n contiene una biblioteca extensa de fotografÃ­as mÃ©dicas e ilustraciones. Para mÃ¡s informaciÃ³n acerca de A.D.A.M., vea el directorio de contenidos (en inglÃ©s). La informaciÃ³n aquÃ­ proporcionada no debe utilizarse durante ninguna emergencia mÃ©dica ni para el diagnÃ³stico o tratamiento de ninguna afecciÃ³n mÃ©dica. Se debe consultar a un profesional mÃ©dico autorizado para el diagnÃ³stico y tratamiento de cualquiera y todas las afecciones mÃ©dicas. Los enlaces a otros sitios se proporcionan Ãºnicamente con fines informativos; no constituyen una recomendaciÃ³n de dichos sitios. No se ofrece garantÃ­a alguna, expresa ni implÃ­cita, en cuanto a la precisiÃ³n, fiabilidad, puntualidad o exactitud de las traducciones realizadas por un servicio externo de la informaciÃ³n aquÃ­ proporcionada a cualquier otro idioma. Â© 1997- 2026 A.D.A.M., una unidad de negocio de Ebix, Inc. Queda estrictamente prohibida la duplicaciÃ³n o distribuciÃ³n de la informaciÃ³n aquÃ­ contenida. Todo el contenido de este sitio, incluyendo texto, imÃ¡genes, grÃ¡ficos, audio, video, datos, metadatos y compilaciones, estÃ¡ protegido por derechos de autor y otras leyes de propiedad intelectual. Usted puede ver el contenido para uso personal y no comercial. Cualquier otro uso requiere el consentimiento previo por escrito de Ebix. Usted no puede copiar, reproducir, distribuir, transmitir, mostrar, publicar, realizar ingenierÃ­a inversa, adaptar, modificar, almacenar mÃ¡s allÃ¡ del almacenamiento en cachÃ© habitual del navegador, indexar, hacer minerÃ­a de datos, extraer o crear obras derivadas de este contenido. Usted no puede utilizar herramientas automatizadas para acceder o extraer contenido, incluyendo la creaciÃ³n de incrustaciones, vectores, conjuntos de datos o Ã­ndices para sistemas de recuperaciÃ³n. Se prohÃ­be el uso de cualquier contenido para entrenar, ajustar, calibrar, probar, evaluar o mejorar sistemas de inteligencia artificial (IA) de cualquier tipo sin el consentimiento expreso por escrito. Esto incluye modelos de lenguaje grandes, modelos de aprendizaje automÃ¡tico, redes neuronales, sistemas generativos, sistemas de recuperaciÃ³n aumentada y cualquier software que ingiera contenido para producir resultados. Cualquier uso no autorizado del contenido, incluyendo el uso relacionado con la IA, constituye una violaciÃ³n de nuestros derechos y puede dar lugar a acciones legales, daÃ±os y sanciones legales en la medida en que lo permita la ley. Ebix se reserva el derecho de hacer valer sus derechos mediante medidas legales, tecnolÃ³gicas y contractuales.",
-  "source": "MedlinePlus ES",
-  "url": "https://medlineplus.gov/spanish/encyclopedia.html",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-04-20T18:46:13.048280+00:00",
-  "reason": "duplicate_url"
+  "id": 2204,
+  "title": "Clipboard - PubMed",
+  "content": "Search: Search Advanced Clipboard User Guide Clipboard Display options Display options Format: Summary Abstract PubMed PMID Per page 10 20 50 100 200 Clipboard items No items in clipboard. Your clipboard expires after eight hours of inactivity. Cite Copy Download .nbib .nbib Format: AMA APA MLA NLM Send To Email Save My Bibliography Collections Citation Manager [x] Your entire clipboard is about to be cleared. Confirm [x] Back to Top [x] Cite Copy Download .nbib .nbib Format: AMA APA MLA NLM",
+  "source": "PubMed (Dinámico)",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/clipboard",
+  "category": "research_article",
+  "language": "en",
+  "fetched_at": "2026-04-24T08:47:14.259006+00:00",
+  "reason": "content_too_short"
 }

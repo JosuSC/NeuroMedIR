@@ -1,11 +1,11 @@
 {
-  "id": 177,
-  "title": "Health Topics: K: MedlinePlus",
-  "content": "Health Topics: K Kaposi Sarcoma Kawasaki Disease Keloids see Scars Kernicterus see Jaundice Ketamine see Club Drugs Kidney Biopsy see Kidney Tests Kidney Cancer Kidney Cysts Kidney Diseases Kidney Failure Kidney Function Tests see Kidney Tests Kidney Infections see Urinary Tract Infections Kidney Stones Kidney Tests Kidney Transplantation Klinefelter Syndrome Knee Injuries and Disorders Knee Replacement Kyphosis see Spine Injuries and Disorders",
+  "id": 683,
+  "title": "Skin, Hair and Nails: MedlinePlus",
+  "content": "Skin, Hair and Nails See all Skin, Hair and Nails topics Select One: Hair Nails Skin The Hair Hair Loss Hair Problems Head Lice The Nails Fungal Infections Nail Diseases Psoriasis The Skin Acne Athlete's Foot Birthmarks Blisters Bruises Burns Cellulitis Chickenpox Corns and Calluses Dandruff, Cradle Cap, and Other Scalp Conditions Eczema Fifth Disease Fungal Infections Hives Impetigo Insect Bites and Stings Itching Kawasaki Disease Leishmaniasis Melanoma Moles Mosquito Bites Pemphigus Piercing and Tattoos Poison Ivy, Oak, and Sumac Pressure Sores Psoriasis Rashes Rosacea Rubella Scabies Scars Scleroderma Shingles Skin Aging Skin Cancer Skin Conditions Skin Pigmentation Disorders Sun Exposure Tanning Tick Bites Tinea Infections Vitiligo Warts Wounds and Injuries",
   "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/healthtopics_k.html",
+  "url": "https://medlineplus.gov/skinhairandnails.html",
   "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-20T18:50:14.068113+00:00",
-  "reason": "content_too_short"
+  "fetched_at": "2026-04-24T06:31:17.237632+00:00",
+  "reason": "duplicate_url"
 }

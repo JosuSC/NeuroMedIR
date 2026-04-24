@@ -1,11 +1,4 @@
 {
-  "id": 158,
-  "title": "Health Topics: MedlinePlus",
-  "content": "Health Topics Read about symptoms, causes, treatment and prevention for over 1000 diseases, illnesses, health conditions and wellness issues. MedlinePlus health topics are regularly reviewed, and links are updated daily. Body Location/Systems Blood, Heart and Circulation Bones, Joints and Muscles Brain and Nerves Digestive System Ear, Nose and Throat Endocrine System Eyes and Vision Immune System Kidneys and Urinary System Lungs and Breathing Mouth and Teeth Skin, Hair and Nails Female Reproductive System Male Reproductive System Disorders and Conditions Expand Section Cancers Diabetes Mellitus Genetics/Birth Defects Infections Injuries and Wounds Mental Health and Behavior Metabolic Problems Poisoning, Toxicology, Environmental Health Pregnancy and Reproduction Substance Use and Disorders Diagnosis and Therapy Expand Section Complementary and Alternative Therapies Diagnostic Tests Drug Therapy Surgery and Rehabilitation Symptoms Transplantation and Donation Demographic Groups Expand Section Children and Teenagers Men Older Adults Population Groups Women Health and Wellness Expand Section Disasters Fitness and Exercise Food and Nutrition Health System Personal Health Issues Safety Issues Sexual Health Issues Social/Family Issues Wellness and Lifestyle",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/healthtopics.html",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-04-20T18:45:51.220919+00:00",
-  "reason": "duplicate_url"
+  "url": "https://pubmed.ncbi.nlm.nih.gov/myncbi",
+  "reason": "fetch_failed"
 }

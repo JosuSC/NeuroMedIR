@@ -1,4 +1,11 @@
 {
-  "url": "https://newsinhealth.nih.gov/sites/newsinhealth/files/2026-04/NIHNiHApr2026.pdf",
-  "reason": "non_html_content_type"
+  "id": 692,
+  "title": "National Institutes of Health (NIH) |",
+  "content": "NIH Strategic Plan for Disability Health Research Image Inaugural plan provides a comprehensive roadmap to address the health needs and goals of Americans with disabilities. Low-cost care model reduces blood pressure in high-risk populations Image NIH-supported clinical trial shows coordinated care strategy more effective than standard care. Using CRISPR for precision delivery in the body Image Smaller gene-editing system could expand treatment options for cancer, ALS and other diseases. NIH at a Glance Image The National Institutes of Health (NIH), a part of the U.S. Department of Health and Human Services, is the nation’s medical research agency — making important discoveries that improve health and save lives. Take the Virtual Tour The NIH Director Funding for Research Labs at NIH Impact of NIH Research Jobs at NIH Featured Resources & Initiatives Image Explore NIH’s groundbreaking initiatives and programs that are advancing biomedical research, accelerating scientific discovery, and improving health for all Americans. Clinical Trials Training at NIH RECOVER NIH HEAL Initiative Accelerating Medicines Partnership Medical Research Initiatives",
+  "source": "NIH",
+  "url": "https://www.nih.gov/",
+  "category": "health_guideline",
+  "language": "en",
+  "fetched_at": "2026-04-24T06:36:32.808965+00:00",
+  "reason": "duplicate_url"
 }

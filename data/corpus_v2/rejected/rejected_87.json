@@ -1,11 +1,11 @@
 {
-  "id": 177,
-  "title": "Immune System: MedlinePlus",
-  "content": "Immune System See all Immune System topics Select One: Bone Marrow Lymph Nodes Spleen Thymus Tonsil Whole System The Bone Marrow Acute Lymphocytic Leukemia Aplastic Anemia Bone Marrow Diseases Bone Marrow Transplantation Childhood Leukemia Chronic Lymphocytic Leukemia Multiple Myeloma Myelodysplastic Syndromes The Lymph Nodes Hodgkin Lymphoma Infectious Mononucleosis Kawasaki Disease Lymphatic Diseases Lymphedema Lymphoma The Spleen Spleen Diseases The Thymus Thymus Cancer The Tonsils Tonsillitis The Whole System Addison Disease Allergy Ankylosing Spondylitis Autoimmune Diseases Childhood Vaccines Diabetes Type 1 Food Allergy HIV HIV and Infections HIV and Pregnancy HIV in Women Hives Immune System and Disorders Infectious Diseases Juvenile Arthritis Latex Allergy Living with HIV Lupus Pneumocystis Infections Rheumatoid Arthritis Sjogren's Syndrome Tetanus, Diphtheria, and Pertussis Vaccines Vaccines Viral Infections",
+  "id": 683,
+  "title": "Male Reproductive System: MedlinePlus",
+  "content": "Male Reproductive System See all Male Reproductive System topics Select One: Penis Prostate Testicle The Penis Birth Control Chlamydia Infections Circumcision Erectile Dysfunction Genital Herpes Genital Warts Gonorrhea Penis Disorders Reproductive Hazards Sexual Health Sexually Transmitted Infections Syphilis Vasectomy The Prostate Enlarged Prostate (BPH) Prostate Cancer Prostate Cancer Screening Prostate Diseases The Testicles Assisted Reproductive Technology Infertility Testicular Cancer Testicular Disorders Vasectomy",
   "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/immunesystem.html",
+  "url": "https://medlineplus.gov/malereproductivesystem.html",
   "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-20T18:49:48.667953+00:00",
-  "reason": "duplicate_url"
+  "fetched_at": "2026-04-24T06:30:46.613986+00:00",
+  "reason": "content_too_short"
 }

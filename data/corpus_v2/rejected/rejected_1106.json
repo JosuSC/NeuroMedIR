@@ -1,0 +1,11 @@
+{
+  "id": 2203,
+  "title": "Genomic Research: MedlinePlus Genetics",
+  "content": "Genomic Research What are single nucleotide polymorphisms (SNPs)? What are genome-wide association studies? What is pharmacogenomics? What are genome editing and CRISPR-Cas9?",
+  "source": "MedlinePlus",
+  "url": "https://medlineplus.gov/genetics/understanding/genomicresearch",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-04-24T08:22:31.727913+00:00",
+  "reason": "content_too_short"
+}

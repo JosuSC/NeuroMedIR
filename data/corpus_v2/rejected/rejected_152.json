@@ -1,11 +1,4 @@
 {
-  "id": 183,
-  "title": "Checking your browser - reCAPTCHA",
-  "content": "",
-  "source": "PubMed",
-  "url": "https://pubmed.ncbi.nlm.nih.gov/32075795",
-  "category": "research_article",
-  "language": "en",
-  "fetched_at": "2026-04-20T18:52:27.159965+00:00",
-  "reason": "missing_or_empty_content"
+  "url": "https://pubmed.ncbi.nlm.nih.gov/account/settings",
+  "reason": "fetch_failed"
 }

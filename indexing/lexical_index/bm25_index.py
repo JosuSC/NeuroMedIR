@@ -18,7 +18,16 @@ class BM25Index:
             raise ValueError("Number of tokenized documents must match number of doc_ids.")
 
         self.doc_ids = doc_ids
+        self.tokenized_corpus = tokenized_corpus
         self.bm25 = BM25Okapi(tokenized_corpus, k1=self.k1, b=self.b)
+
+    def add_documents(self, new_token_lists: list[list[str]], new_doc_ids: list[int]):
+        """Agrega nuevos documentos al índice y lo reconstruye (operación rápida)."""
+        if not getattr(self, 'tokenized_corpus', None):
+            self.tokenized_corpus = []
+        self.tokenized_corpus.extend(new_token_lists)
+        self.doc_ids.extend(new_doc_ids)
+        self.bm25 = BM25Okapi(self.tokenized_corpus, k1=self.k1, b=self.b)
 
     def search(self, query_tokens: list[str], top_k: int = 10) -> list[dict]:
         """
@@ -49,7 +58,7 @@ class BM25Index:
             "k1": self.k1,
             "b": self.b,
             "doc_ids": self.doc_ids,
-            # BM25Okapi object can be pickled directly
+            "tokenized_corpus": getattr(self, 'tokenized_corpus', []),
             "bm25": self.bm25
         }
 
@@ -58,4 +67,5 @@ class BM25Index:
         self.k1 = state["k1"]
         self.b = state["b"]
         self.doc_ids = state["doc_ids"]
+        self.tokenized_corpus = state.get("tokenized_corpus", [])
         self.bm25 = state["bm25"]

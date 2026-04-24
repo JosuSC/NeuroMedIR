@@ -1,11 +1,11 @@
 {
-  "id": 203,
-  "title": "Virtual Tour | National Institutes of Health (NIH)",
+  "id": 692,
+  "title": "mental health - NIH Health Information Search Results",
   "content": "",
   "source": "NIH",
-  "url": "https://www.nih.gov/virtual-tour",
+  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=mental health&commit=",
   "category": "health_guideline",
   "language": "en",
-  "fetched_at": "2026-04-20T18:55:10.903621+00:00",
+  "fetched_at": "2026-04-24T06:35:56.757507+00:00",
   "reason": "missing_or_empty_content"
 }

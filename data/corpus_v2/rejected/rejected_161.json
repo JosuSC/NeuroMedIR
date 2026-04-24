@@ -1,11 +1,11 @@
 {
-  "id": 188,
-  "title": "mental health - NIH Health Information Search Results",
-  "content": "",
-  "source": "NIH",
-  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=mental health&commit=",
-  "category": "health_guideline",
+  "id": 688,
+  "title": "Medicine's magicians - PubMed",
+  "content": "Cite Display options Display options Format Abstract PubMed PMID No abstract available PubMed Disclaimer Publication types Editorial Actions Search in PubMed Search in MeSH Add to Search Introductory Journal Article Actions Search in PubMed Search in MeSH Add to Search MeSH terms Forecasting Actions Search in PubMed Search in MeSH Add to Search Humans Actions Search in PubMed Search in MeSH Add to Search Magic* Actions Search in PubMed Search in MeSH Add to Search Medical Laboratory Science / trends* Actions Search in PubMed Search in MeSH Add to Search Minnesota Actions Search in PubMed Search in MeSH Add to Search Neurology / trends* Actions Search in PubMed Search in MeSH Add to Search Physician-Patient Relations* Actions Search in PubMed Search in MeSH Add to Search LinkOut - more resources Medical MedlinePlus Health Information",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/20572559",
+  "category": "research_article",
   "language": "en",
-  "fetched_at": "2026-04-20T18:53:00.898558+00:00",
-  "reason": "missing_or_empty_content"
+  "fetched_at": "2026-04-24T06:34:02.473667+00:00",
+  "reason": "duplicate_url"
 }

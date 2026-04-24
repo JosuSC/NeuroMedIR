@@ -42,6 +42,22 @@ class FAISSHNSWIndex:
         self.index.add(embeddings)
         self.doc_ids = doc_ids
 
+    def add_embeddings(self, new_embeddings: np.ndarray, new_doc_ids: list[int]):
+        """Increments the FAISS index with new embeddings."""
+        if self.index is None:
+            self.build_index(new_embeddings, new_doc_ids)
+            return
+
+        new_embeddings = np.array(new_embeddings).astype('float32')
+        if new_embeddings.shape[1] != self.dimension:
+            raise ValueError(f"Embeddings dimension mismatch.")
+        if new_embeddings.shape[0] != len(new_doc_ids):
+            raise ValueError("Number of embeddings must match number of doc_ids.")
+
+        new_embeddings = self._l2_normalize(new_embeddings)
+        self.index.add(new_embeddings)
+        self.doc_ids.extend(new_doc_ids)
+
     def search(self, query_embedding: np.ndarray, top_k: int = 10, ef_search: int = 16) -> list[dict]:
         """
         Searches for the nearest neighbors of the query embedding using HNSW graph.

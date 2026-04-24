@@ -1,11 +1,11 @@
 {
-  "id": 191,
-  "title": "NIH News Publications | National Institutes of Health (NIH)",
-  "content": "News Releases Media Inquiries NIH on Social Media Images and B-roll Calendar of Events NIH News Publications NIH News in Health NIH Research Matters NIH News Publications NIH News in Health A monthly newsletter of practical consumer health news and information based on NIH research. NIH Research Matters A weekly update of research advances from the National Institutes of Health. This page last reviewed on February 26, 2026",
-  "source": "NIH",
-  "url": "https://www.nih.gov/news-events/nih-news-publications",
-  "category": "health_guideline",
+  "id": 690,
+  "title": "Checking your browser - reCAPTCHA",
+  "content": "",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34275975",
+  "category": "research_article",
   "language": "en",
-  "fetched_at": "2026-04-20T18:53:33.707258+00:00",
-  "reason": "content_too_short"
+  "fetched_at": "2026-04-24T06:34:38.134842+00:00",
+  "reason": "missing_or_empty_content"
 }

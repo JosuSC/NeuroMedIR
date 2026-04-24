@@ -1,11 +1,11 @@
 {
-  "id": 177,
-  "title": "Medical Encyclopedia: Y: MedlinePlus",
-  "content": "Medical Encyclopedia: Y Yawning - excessive Yaws Yellow fever Yew poisoning Yoga for health Your baby and the flu Your baby in the birth canal Your cancer care team Your cancer diagnosis - Do you need a second opinion? Your cancer survivorship care plan Your child and the flu Your child's first vaccines - what you need to know Your diet after gastric bypass surgery",
+  "id": 683,
+  "title": "Health Topics: R: MedlinePlus",
+  "content": "Health Topics: R Rabies Radiation Emergencies Radiation Exposure Radiation Therapy Radiography see X-Rays Radionuclide Scans see Nuclear Scans Radiosurgery see Radiation Therapy Radiotherapy see Radiation Therapy Radon Rape see Sexual Assault Rare Diseases Rashes Raynaud Phenomenon Raynaud's Disease see Raynaud Phenomenon Raynaud's Syndrome see Raynaud Phenomenon Reactive Arthritis see Infectious Arthritis Reading Problems see Learning Disabilities Recreational Safety see Sports Safety ; Water Safety (Recreational) Rectal Bleeding see Gastrointestinal Bleeding Rectal Cancer see Colorectal Cancer Rectal Disorders Rectocele see Rectal Disorders Reflex Sympathetic Dystrophy see Complex Regional Pain Syndrome Reflux in Children Reflux in Infants Refractive Errors Regional Enteritis see Crohn's Disease Regional Ileitis see Crohn's Disease Rehabilitation Reiter's Syndrome see Infectious Arthritis Relaxation Techniques see How to Improve Mental Health Renal Cancer see Kidney Cancer Renal Dialysis see Dialysis Renal Diseases see Kidney Diseases Renal Failure see Kidney Failure Renal Transplantation see Kidney Transplantation Repetitive Motion Injuries see Ergonomics Reproductive Hazards Residential Care see Assisted Living Respiratory Diseases see Lung Diseases Respiratory Failure Respiratory Syncytial Virus Infections Restless Legs Resuscitation Orders see Advance Directives Retinal Detachment Retinal Disorders Retinoblastoma see Eye Cancer Retinol see Vitamin A Rett Syndrome Reye Syndrome Rh Incompatibility Rhabdomyolysis see Muscle Disorders Rhabdomyosarcoma see Soft Tissue Sarcoma Rheumatic Fever see Streptococcal Infections Rheumatoid Arthritis Rheumatoid Spondylitis see Ankylosing Spondylitis Rib Injuries see Chest Injuries and Disorders Riboflavin see B Vitamins Rickets Ringworm see Tinea Infections RLS see Restless Legs Rocky Mountain Spotted Fever see Tick Bites Rodenticides see Pesticides Roentgen Rays see X-Rays Rohypnol see Club Drugs Root Canal see Tooth Disorders Rosacea Roseola see Viral Infections Rotator Cuff Injuries Rotavirus Infections RSV Infections see Respiratory Syncytial Virus Infections Rubella Rubeola see Measles Runaways see Homelessness and Health Ruptured Disk see Herniated Disk Rural Health Concerns",
   "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/ency/encyclopedia_Y.htm",
+  "url": "https://medlineplus.gov/healthtopics_r.html",
   "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-20T18:50:52.811055+00:00",
-  "reason": "content_too_short"
+  "fetched_at": "2026-04-24T06:32:03.575572+00:00",
+  "reason": "duplicate_url"
 }

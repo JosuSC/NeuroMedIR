@@ -1,11 +1,11 @@
 {
-  "id": 177,
-  "title": "Poisoning, Toxicology, Environmental Health: MedlinePlus",
-  "content": "Poisoning, Toxicology, Environmental Health Air Pollution Arsenic Asbestos Asbestosis see Asbestos Biodefense and Bioterrorism Biological Weapons see Biodefense and Bioterrorism Bioterrorism see Biodefense and Bioterrorism Carbon Monoxide Poisoning Cell Phones see Electromagnetic Fields Cleaning Products see Household Products Climate Change CO Poisoning see Carbon Monoxide Poisoning Drinking Water Electromagnetic Fields EMF see Electromagnetic Fields Environmental Health Environmental Tobacco Smoke see Secondhand Smoke Food Poisoning see Foodborne Illness Food Safety Foodborne Illness Fungicides see Pesticides Germ Warfare see Biodefense and Bioterrorism Global Warming see Climate Change Gulf Oil Spill see Oil Spills Herbicides see Pesticides Household Products Indoor Air Pollution Insecticides see Pesticides lead exposure see Lead Poisoning Lead Poisoning Man-Made Disasters see Biodefense and Bioterrorism Mercury Molds Noise Oil Spills Ozone Passive Smoking see Secondhand Smoke Pesticides Pfiesteria Infections see Water Pollution Plumbism see Lead Poisoning Poisoning Poisons in the Home see Household Products Pollution see Air Pollution ; Indoor Air Pollution ; Water Pollution Pregnancy Hazards see Reproductive Hazards Radiation Exposure Radon Reproductive Hazards Rodenticides see Pesticides Secondhand Smoke Septic Systems see Water Pollution Sewage see Water Pollution Smallpox Smoking, Passive see Secondhand Smoke Terrorist Attacks see Biodefense and Bioterrorism Water see Drinking Water Water Pollution Waterborne Diseases see Water Pollution Yersinia Enterocolitica see Foodborne Illness",
+  "id": 683,
+  "title": "Population Groups: MedlinePlus",
+  "content": "Population Groups Adolescent Health see Teen Health Agent Orange see Veterans and Military Health Aging see Older Adult Health Children's Health Gulf War Syndrome see Veterans and Military Health Health Disparities Health Equity see Health Disparities Men's Health Military Health see Veterans and Military Health Older Adult Health Pediatrics see Children's Health Persian Gulf War see Veterans and Military Health Teen Health Veterans and Military Family Health Veterans and Military Health Veterans Health see Veterans and Military Health Women's Health",
   "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/poisoningtoxicologyenvironmentalhealth.html",
+  "url": "https://medlineplus.gov/populationgroups.html",
   "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-20T18:49:46.684838+00:00",
-  "reason": "duplicate_url"
+  "fetched_at": "2026-04-24T06:30:44.266792+00:00",
+  "reason": "content_too_short"
 }

@@ -112,6 +112,48 @@ class Indexer:
             f"Total time: {elapsed_ms:.1f}ms"
         )
 
+    def add_documents(self, documents: List[Dict]):
+        """Agrega dinámicamente nuevos documentos a los índices existentes."""
+        if not isinstance(documents, list) or not documents:
+            return
+
+        logger.info(f"Adding {len(documents)} new documents to indices...")
+        
+        new_ids = []
+        new_tokens = []
+        new_semantic_texts = []
+        
+        for doc in documents:
+            doc_id = doc.get("id")
+            title = doc.get("title", "")
+            content = doc.get("content", "")
+            if doc_id is None or not title or not content:
+                continue
+                
+            raw_text = f"{title}. {content}"
+            tokens = self.cleaner.preprocess_for_lexical(raw_text)
+            semantic_text = self.cleaner.preprocess_for_semantic(raw_text)
+            
+            if tokens and semantic_text.strip():
+                new_ids.append(doc_id)
+                new_tokens.append(tokens)
+                new_semantic_texts.append(semantic_text)
+                self.semantic_doc_texts[doc_id] = semantic_text
+        
+        if not new_ids:
+            return
+
+        # Update Lexical
+        self.lexical_index.add_documents(new_tokens, new_ids)
+        
+        # Update Semantic
+        embeddings = self.encoder.encode(new_semantic_texts)
+        self.semantic_index.add_embeddings(embeddings, new_ids)
+        
+        # Guardar en disco para que persistan
+        self.save_indices()
+        logger.info(f"Successfully added and saved {len(new_ids)} new documents to indices.")
+
     def search_lexical(self, query: str, top_k: int = 10) -> List[Dict]:
         """
         Executes a keyword-based search on the BM25 inverted index.

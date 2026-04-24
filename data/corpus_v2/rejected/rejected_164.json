@@ -1,11 +1,11 @@
 {
-  "id": 189,
-  "title": "cancer - NIH Health Information Search Results",
+  "id": 689,
+  "title": "Checking your browser - reCAPTCHA",
   "content": "",
-  "source": "NIH",
-  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=cancer&commit=",
-  "category": "health_guideline",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/35417745",
+  "category": "research_article",
   "language": "en",
-  "fetched_at": "2026-04-20T18:53:11.728649+00:00",
+  "fetched_at": "2026-04-24T06:34:13.448939+00:00",
   "reason": "missing_or_empty_content"
 }

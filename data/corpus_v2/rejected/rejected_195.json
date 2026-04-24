@@ -1,11 +1,11 @@
 {
-  "id": 203,
-  "title": "heart disease - NIH Health Information Search Results",
-  "content": "",
+  "id": 692,
+  "title": "The NIH Almanac | National Institutes of Health (NIH)",
+  "content": "Mission and Goals Organization The NIH Director The NIH Almanac About the NIH Almanac NIH Organization Leadership Photo Galleries Timelines Nobel Laureates Lasker Awards Historical Budget Information NIH...Turning Discovery Into Health® Impact of NIH Research Science, Health, and Public Trust Visitor Information Get Involved at NIH Jobs at NIH Contact Us The NIH Almanac About the NIH Almanac NIH Organization Leadership Photo Galleries Timelines Nobel Laureates Lasker Awards Historical Budget Information This page last reviewed on March 6, 2025",
   "source": "NIH",
-  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=heart disease&commit=",
+  "url": "https://www.nih.gov/about-nih/nih-almanac",
   "category": "health_guideline",
   "language": "en",
-  "fetched_at": "2026-04-20T18:55:06.702356+00:00",
-  "reason": "missing_or_empty_content"
+  "fetched_at": "2026-04-24T06:35:51.492071+00:00",
+  "reason": "content_too_short"
 }

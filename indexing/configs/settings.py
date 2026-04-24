@@ -4,7 +4,7 @@ from pathlib import Path
 # Base paths
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "data"
-PROCESSED_DATA_DIR = DATA_DIR / "processed"
+PROCESSED_DATA_DIR = DATA_DIR / "corpus_v2" / "processed"
 INDEX_STORAGE_DIR = BASE_DIR / "indices"
 
 os.makedirs(INDEX_STORAGE_DIR, exist_ok=True)
