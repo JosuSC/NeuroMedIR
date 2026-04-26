@@ -1,11 +1,4 @@
 {
-  "id": 2205,
-  "title": "Checking your browser - reCAPTCHA",
-  "content": "",
-  "source": "PubMed (Dinámico)",
-  "url": "https://pubmed.ncbi.nlm.nih.gov/18125731",
-  "category": "research_article",
-  "language": "en",
-  "fetched_at": "2026-04-24T09:10:17.787571+00:00",
-  "reason": "missing_or_empty_content"
+  "url": "https://pubmed.ncbi.nlm.nih.gov/myncbi/collections/bibliography",
+  "reason": "fetch_failed"
 }

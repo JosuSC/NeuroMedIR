@@ -1,11 +1,11 @@
 {
-  "id": 2204,
+  "id": 2212,
   "title": "Clipboard - PubMed",
   "content": "Search: Search Advanced Clipboard User Guide Clipboard Display options Display options Format: Summary Abstract PubMed PMID Per page 10 20 50 100 200 Clipboard items No items in clipboard. Your clipboard expires after eight hours of inactivity. Cite Copy Download .nbib .nbib Format: AMA APA MLA NLM Send To Email Save My Bibliography Collections Citation Manager [x] Your entire clipboard is about to be cleared. Confirm [x] Back to Top [x] Cite Copy Download .nbib .nbib Format: AMA APA MLA NLM",
   "source": "PubMed (Dinámico)",
   "url": "https://pubmed.ncbi.nlm.nih.gov/clipboard",
   "category": "research_article",
   "language": "en",
-  "fetched_at": "2026-04-24T08:47:14.259006+00:00",
+  "fetched_at": "2026-04-26T22:22:05.344713+00:00",
   "reason": "content_too_short"
 }

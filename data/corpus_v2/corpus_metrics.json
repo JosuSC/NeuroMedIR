@@ -1,28 +1,28 @@
 {
-  "generated_at_utc": "2026-04-24T09:12:05.698558+00:00",
-  "total_valid_documents": 2209,
-  "total_rejected_documents": 1,
-  "validity_ratio": 0.9995,
+  "generated_at_utc": "2026-04-26T22:22:08.384123+00:00",
+  "total_valid_documents": 2211,
+  "total_rejected_documents": 9,
+  "validity_ratio": 0.9959,
   "distribution_by_language": {
-    "en": 1108,
+    "en": 1110,
     "es": 1101
   },
   "distribution_by_source": {
     "NIH": 71,
     "MedlinePlus": 994,
     "PubMed": 36,
-    "PubMed (Dinámico)": 7,
+    "PubMed (Dinámico)": 9,
     "MedlinePlus ES": 1100,
     "SciELO": 1
   },
   "distribution_by_category": {
     "health_guideline": 71,
     "health_topic": 2094,
-    "research_article": 44
+    "research_article": 46
   },
-  "average_content_length_chars": 5402.25,
-  "crawl_duration_seconds": 13.61,
-  "docs_per_minute": 9741.3,
+  "average_content_length_chars": 5406.25,
+  "crawl_duration_seconds": 24.84,
+  "docs_per_minute": 5341.26,
   "examples": [
     {
       "id": 129,
