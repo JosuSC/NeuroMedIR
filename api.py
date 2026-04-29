@@ -15,6 +15,9 @@ from retrieval.document_store import DocumentStore
 from indexing.storage.index_io import IndexStorage
 from indexing.configs import settings as idx_settings
 
+from llm_agent.triage_agent import TriageAgent
+from llm_agent.diagnosis_agent import DiagnosisAgent
+
 app = FastAPI(title="NeuroMedIR API")
 
 app.add_middleware(
@@ -32,6 +35,14 @@ doc_store = None
 
 class QueryRequest(BaseModel):
     query: str
+
+class TriageRequest(BaseModel):
+    symptoms: str
+
+class DiagnosticRequest(BaseModel):
+    initial_symptoms: str
+    question_answers: dict
+    top_k: int = 5
 
 @app.on_event("startup")
 def startup_event():
