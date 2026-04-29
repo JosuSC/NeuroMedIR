@@ -1,0 +1,18 @@
+__pycache__/
+.venv/
+env/
+venv/
+node_modules/
+*.pyc
+*.pyo
+logs/
+.git/
+.vscode/
+
+# Ignore indices during build but allow mapping volume
+indices/faiss_semantic.index
+data/processed/
+
+# Do not copy local npm dependencies
+frontend/node_modules/
+frontend/dist/

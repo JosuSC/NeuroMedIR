@@ -1,0 +1,24 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Instalar dependencias del sistema operativo que puedan ser necesarias
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+
+# Instalar las librerías
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Descargar datos de NLTK necesarios (punkt, stopwords) si se requieren
+RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
+
+COPY . .
+
+# Exponer el puerto
+EXPOSE 8000
+
+# Lanzar API
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
