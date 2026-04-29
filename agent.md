@@ -91,6 +91,7 @@ Diseñar, implementar y mantener un sistema de recuperación de información mé
 5. No asumir que los datos médicos son limpios, balanceados o consistentes.
 6. No eliminar validaciones críticas para ganar velocidad.
 7. No romper compatibilidad de esquemas sin estrategia de migración.
+8. No acceder ni visualizar bajo ninguna circunstancia archivos `.env` ni exponer claves secretas locales.
 
 ## 7. Principios de Diseño
 
