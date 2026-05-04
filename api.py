@@ -51,13 +51,23 @@ def startup_event():
     
     bm25 = BM25Index(k1=idx_settings.BM25_PARAMS["k1"], b=idx_settings.BM25_PARAMS["b"])
     faiss = FAISSHNSWIndex(dimension=idx_settings.EMBEDDING_DIM, m=idx_settings.HNSW_M, ef_construction=idx_settings.HNSW_EF_CONSTRUCTION)
-    encoder = TextEncoder(idx_settings.EMBEDDING_MODEL_NAME)
+    
+    # Intentar cargar encoder; si falla (ej. sin conexión a Hugging Face), usar None
+    encoder = None
+    try:
+        print("Cargando encoder multilíngüe...")
+        encoder = TextEncoder(idx_settings.EMBEDDING_MODEL_NAME)
+        print("OK: Encoder cargado correctamente.")
+    except Exception as e:
+        print(f"Advertencia: No se puede cargar encoder: {e}")
+        print("   → Funcionando en modo BM25 (lexical-only). Búsqueda semántica deshabilitada.")
+    
     doc_store = DocumentStore(idx_settings.PROCESSED_DATA_DIR)
     io = IndexStorage(str(idx_settings.INDEX_STORAGE_DIR))
 
     success = io.load_lexical(bm25) and io.load_vector(faiss)
     if not success:
-        print("⚠️ Advertencia: No se pudieron cargar los índices de disco.")
+        print("Advertencia: No se pudieron cargar los índices de disco.")
     
     retriever = Retriever(bm25, faiss, encoder, doc_store)
     
@@ -67,7 +77,12 @@ def startup_event():
     indexer.encoder = encoder
     indexer.storage = io
     
-    print(f"✔ Motor listo. Documentos en memoria: {doc_store.count}")
+    print(f"OK: Motor listo. Documentos en memoria: {doc_store.count}")
+
+@app.get("/api/health")
+def health_check():
+    # Solo responderá cuando el servidor haya terminado su bloque startup_event
+    return {"status": "ready"}
 
 @app.post("/api/query")
 def process_query(req: QueryRequest):

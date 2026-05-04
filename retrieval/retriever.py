@@ -229,23 +229,6 @@ class Retriever:
         top_k: int = None,
         strategy: str = None,
     ) -> List[Dict]:
-        """
-        Full hybrid retrieval pipeline with latency measurement.
-
-        Pipeline:
-            preprocess → search_bm25 + (generate_embedding → search_faiss)
-            → fuse → rank → enrich
-
-        Args:
-            query: Raw user query in Spanish or English.
-            top_k: Number of final results (defaults to config FINAL_TOP_K).
-            strategy: Fusion strategy override ("rrf" or "weighted").
-
-        Returns:
-            List of enriched result dicts sorted by relevance, each containing:
-            {"rank", "doc_id", "score", "title", "snippet", "source", "url",
-             "latency_ms"}
-        """
         top_k = top_k or ret_settings.FINAL_TOP_K
         t_start = time.perf_counter()
 
@@ -260,17 +243,27 @@ class Retriever:
         t_bm25 = time.perf_counter() - t0
 
         # Step 2b: Semantic retrieval (NN → Embedding → FAISS)
-        t0 = time.perf_counter()
-        embedding = self.generate_embedding(processed["semantic_text"])
-        t_embed = time.perf_counter() - t0
+        semantic_results = []
+        t_embed = 0.0
+        t_faiss = 0.0
+        
+        # Solo ejecutar semántico si hay encoder disponible
+        if self._encoder is not None:
+            t0 = time.perf_counter()
+            embedding = self.generate_embedding(processed["semantic_text"])
+            t_embed = time.perf_counter() - t0
 
-        t0 = time.perf_counter()
-        semantic_results = self.search_faiss(embedding)
-        t_faiss = time.perf_counter() - t0
+            t0 = time.perf_counter()
+            semantic_results = self.search_faiss(embedding)
+            t_faiss = time.perf_counter() - t0
 
-        # Step 3+4: Fuse (normalization handled internally by strategy)
+        # Step 3+4: Fuse
         t0 = time.perf_counter()
-        fused = self.fuse_results(lexical_results, semantic_results, strategy=strategy)
+        # Si no hay resultados semánticos (ej. BM25 fallback), fusionar solo lexical
+        if not semantic_results and self._encoder is None:
+            fused = lexical_results  # Pure BM25
+        else:
+            fused = self.fuse_results(lexical_results, semantic_results, strategy=strategy)
         t_fusion = time.perf_counter() - t0
 
         # Step 5: Rank

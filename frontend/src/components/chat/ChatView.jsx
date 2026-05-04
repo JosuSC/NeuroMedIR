@@ -1,17 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Layout } from '../layout/Layout';
 import { Message } from './Message';
 import { ChatInput } from './ChatInput';
+import { LanguageContext } from '../../App';
 
 export const ChatView = () => {
+  const { t } = useContext(LanguageContext);
+
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Bienvenido. Soy el Sistema de Recuperación de Información NeuroMedIR.\n\nEstoy listo para recibir su consulta médica.',
+      content: t('welcome'),
       sources: [],
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isBackendReady, setIsBackendReady] = useState(false);
+
+  useEffect(() => {
+    // Polling the backend health check
+    const checkHealth = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/health');
+        if (res.ok) {
+          setIsBackendReady(true);
+        } else {
+          setTimeout(checkHealth, 2000);
+        }
+      } catch (err) {
+        setTimeout(checkHealth, 2000);
+      }
+    };
+    checkHealth();
+  }, []);
 
   const handleSendMessage = async (text) => {
     if (!text.trim()) return;
@@ -31,7 +52,7 @@ export const ChatView = () => {
 
       const data = await res.json();
 
-      let asstContent = `Resultados calculados por el motor híbrido (FAISS + BM25).`;
+      let asstContent = t('resultsFromHybrid');
 
       setMessages(prev => [...prev, {
         role: 'assistant',
@@ -47,7 +68,7 @@ export const ChatView = () => {
     } catch (err) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: `Error de conexión: ${err.message}. Asegúrese de que la base de datos de NeuroMedIR esté corriendo.`
+        content: `${t('connectionError')}: ${err.message}. ${t('ensureDatabase')}`
       }]);
     } finally {
       setIsLoading(false);
@@ -56,10 +77,10 @@ export const ChatView = () => {
 
   return (
     <Layout showSidebar={false}>
-      <div className="flex-1 overflow-y-auto p-gutter md:p-xl custom-scrollbar pb-32 w-full max-w-5xl mx-auto flex flex-col">
-        <div className="flex justify-center mb-8 sticky top-0 z-10 py-2">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar w-full max-w-5xl mx-auto flex flex-col pointer-events-auto">
+        <div className="flex justify-center mb-8 py-2">
           <span className="font-label-caps text-[10px] text-secondary px-3 py-1 bg-surface-container/80 backdrop-blur-md rounded-full shadow-sm">
-            NUEVA SESIÓN MÉDICA
+            {t('newMedicalSession')}
           </span>
         </div>
 
@@ -107,7 +128,8 @@ export const ChatView = () => {
         <div className="h-20 shrink-0"></div>
       </div>
 
-      <ChatInput onSend={handleSendMessage} disabled={isLoading} />
+      <ChatInput onSend={handleSendMessage} disabled={isLoading || !isBackendReady} isBackendReady={isBackendReady} />
     </Layout>
   );
 };
+

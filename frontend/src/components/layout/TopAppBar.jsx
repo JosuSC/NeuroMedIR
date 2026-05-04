@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { LanguageContext } from '../../App';
 
 export const TopAppBar = () => {
+  const { lang, setLang, t } = useContext(LanguageContext);
+
   return (
     <header className="flex justify-between items-center w-full px-4 h-16 max-w-full bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm sticky top-0 z-50 shrink-0">
       <div className="flex items-center gap-3">
@@ -10,13 +13,27 @@ export const TopAppBar = () => {
         <span className="material-symbols-outlined text-blue-700 dark:text-blue-400 md:hidden">clinical_notes</span>
         <span className="text-lg font-bold text-blue-800 dark:text-blue-300 tracking-tighter">NeuroMedIR</span>
       </div>
-      
+
       <div className="flex items-center gap-4">
+        {/* Language Selector */}
+        <div className="flex items-center gap-2 bg-surface-container/50 px-3 py-1.5 rounded-full border border-outline-variant/30">
+          <select
+            value={lang}
+            onChange={(e) => setLang(e.target.value)}
+            className="bg-transparent text-xs font-semibold text-on-surface cursor-pointer border-none focus:outline-none"
+          >
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+
+        {/* Connection Status */}
         <div className="flex items-center gap-3 bg-surface-container/50 px-3 py-1.5 rounded-full border border-outline-variant/30">
-           <span className="material-symbols-outlined text-green-500 text-sm">wifi</span>
-           <span className="text-xs font-semibold text-secondary">Sistema Conectado</span>
+          <span className="material-symbols-outlined text-green-500 text-sm">wifi</span>
+          <span className="text-xs font-semibold text-secondary">{t('systemConnected')}</span>
         </div>
       </div>
     </header>
   );
 };
+

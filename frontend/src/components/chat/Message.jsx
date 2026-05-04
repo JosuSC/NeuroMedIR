@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { SourceCard } from './SourceCard';
+import { LanguageContext } from '../../App';
 
 export const Message = ({ role, content, sources = [], multimodalImage = null, usedWebSearch = false }) => {
     const isAI = role === 'assistant';
+    const { t } = useContext(LanguageContext);
 
     if (!isAI) {
         return (
@@ -26,7 +28,7 @@ export const Message = ({ role, content, sources = [], multimodalImage = null, u
                 {usedWebSearch && (
                     <div className="flex items-center gap-2 text-xs font-label-caps text-secondary bg-surface-container-high w-fit px-3 py-1.5 rounded-full border border-outline-variant shadow-sm animate-pulse">
                         <span className="material-symbols-outlined text-[14px] text-primary">globe</span>
-                        <span>Información local insuficiente - Ampliando búsqueda en la web...</span>
+                        <span>{t('expandingSearch')}</span>
                     </div>
                 )}
 
@@ -60,7 +62,7 @@ export const Message = ({ role, content, sources = [], multimodalImage = null, u
                     <div className="mt-1">
                         <div className="flex items-center gap-2 mb-2 pl-2">
                             <span className="material-symbols-outlined text-[14px] text-secondary">database</span>
-                            <span className="font-label-caps text-[10px] text-secondary uppercase tracking-wider">Fuentes Recuperadas (RAG)</span>
+                            <span className="font-label-caps text-[10px] text-secondary uppercase tracking-wider">{t('recoveredSources')}</span>
                         </div>
 
                         <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar snap-x no-scrollbar-on-mobile">

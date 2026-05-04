@@ -1,7 +1,5 @@
 import React from 'react';
 import { TopAppBar } from './TopAppBar';
-import { BottomNavBar } from './BottomNavBar';
-import { Sidebar } from './Sidebar';
 
 export const Layout = ({ children, showSidebar = true }) => {
     return (
@@ -10,17 +8,11 @@ export const Layout = ({ children, showSidebar = true }) => {
             <TopAppBar />
 
             <main className="flex-1 flex overflow-hidden relative">
-                {/* Renderizado condicional para vistas como Consult */}
-                {showSidebar && <Sidebar />}
-
                 {/* Contenedor principal donde se montan las vistas específicas */}
-                <section className="flex-1 flex flex-col bg-white relative overflow-y-auto no-scrollbar">
+                <section className="flex-1 flex flex-col bg-white overflow-hidden relative">
                     {children}
                 </section>
             </main>
-
-            {/* Componente de Navegación Móvil Inferior */}
-            <BottomNavBar />
         </div>
     );
 };

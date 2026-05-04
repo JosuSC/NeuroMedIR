@@ -12,7 +12,16 @@ def start_dev_server():
 def start_backend_api():
     """Inicia el API FastAPI local del sistema"""
     print("Iniciando motor de Backend NeuroMedIR (API)...")
-    return subprocess.Popen([sys.executable, "-m", "uvicorn", "api:app", "--port", "8000"])
+    
+    # Intentar usar el python del entorno virtual si existe
+    import os
+    venv_python = os.path.join(".venv", "Scripts", "python.exe")
+    if os.path.exists(venv_python):
+        python_exe = venv_python
+    else:
+        python_exe = sys.executable
+        
+    return subprocess.Popen([python_exe, "-m", "uvicorn", "api:app", "--port", "8000"])
 
 def main():
     # 1. Levantar API y Vite

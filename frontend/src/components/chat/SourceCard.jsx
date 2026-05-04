@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { LanguageContext } from '../../App';
 
 export const SourceCard = ({ title, snippet, score, url }) => {
+    const { t } = useContext(LanguageContext);
+
     return (
         <div className="flex flex-col bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-4 gap-3 hover:border-primary/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 transform hover:-translate-y-1 flex-1 w-[280px] shrink-0 group cursor-default">
             <div className="flex justify-between items-start gap-3">
@@ -23,7 +26,7 @@ export const SourceCard = ({ title, snippet, score, url }) => {
             {/* Action Buttons (Relevance Feedback & Web Navigation) */}
             <div className="flex items-center justify-between mt-auto pt-3 border-t border-outline-variant/30">
                 <a href={url} target="_blank" rel="noreferrer" className="text-xs text-primary font-semibold hover:text-primary-container transition-colors flex items-center gap-1.5 group/link bg-primary/5 px-3 py-1.5 rounded-lg hover:bg-primary/10">
-                    Leer más <span className="material-symbols-outlined text-[14px] group-hover/link:translate-x-0.5 transition-transform">arrow_forward</span>
+                    {t('readMore')} <span className="material-symbols-outlined text-[14px] group-hover/link:translate-x-0.5 transition-transform">arrow_forward</span>
                 </a>
 
                 {/* Retroalimentación de relevancia (Feedback Module) */}
