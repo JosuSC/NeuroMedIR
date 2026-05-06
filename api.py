@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Dict, Any
 
 from dynamic_expansion import expand_corpus_from_query
 from retrieval.retriever import Retriever
@@ -14,6 +15,8 @@ from indexing.multimodal.text_encoder import TextEncoder
 from retrieval.document_store import DocumentStore
 from indexing.storage.index_io import IndexStorage
 from indexing.configs import settings as idx_settings
+
+from form.form_generator import extract_form_symptoms_prf, generate_dynamic_form_schema
 
 app = FastAPI(title="NeuroMedIR API")
 
@@ -32,6 +35,13 @@ doc_store = None
 
 class QueryRequest(BaseModel):
     query: str
+
+class FormSubmitRequest(BaseModel):
+    original_query: str
+    intensity: str
+    duration: str
+    dynamic_symptoms: list[str] = []
+    additional_notes: str = ""
 
 @app.on_event("startup")
 def startup_event():
@@ -113,3 +123,87 @@ def process_query(req: QueryRequest):
         "web_expanded": web_expanded,
         "latency_ms": round((time.time() - t_start) * 1000, 1)
     }
+
+@app.post("/api/generate_form")
+def generate_form(req: QueryRequest):
+    """
+    Ruta para la creación dinámica del formulario dada la consulta del paciente.
+    1. Recupera Top-10 artículos.
+    2. Usa Pseudo-Relevance Feedback TF-IDF para aislar síntomas colaterales.
+    3. Retorna un esquema JSON estructural validado para renderizar el UI.
+    """
+    if not req.query:
+        raise HTTPException(status_code=400, detail="Consulta vacía")
+        
+    t_start = time.time()
+    
+    # 1. Buscamos inicialmente los 10 documentos más relevantes
+    results = retriever.retrieve(req.query, top_k=10)
+    
+    # 2. Extraemos su contenido textual (se usa body y/o contexto)
+    docs_text = []
+    for res in results:
+        content = res.get("content", "")
+        title = res.get("title", "")
+        # Concatenamos para mayor riqueza de palabras
+        docs_text.append(f"{title} {content}")
+        
+    # 3. Aplicar PRF (TF-IDF Co-ocurrencias) para extraer los Top-10 síntomas/términos
+    extracted_terms = extract_form_symptoms_prf(req.query, docs_text, top_n=10)
+    
+    # 4. Generamos el esquema estandarizado
+    form_schema = generate_dynamic_form_schema(req.query, extracted_terms)
+    
+    return {
+        "status": "success",
+        "latency_ms": round((time.time() - t_start) * 1000, 1),
+        "form_schema": form_schema
+    }
+
+@app.post("/api/search_with_form")
+def search_with_form(req: FormSubmitRequest):
+    """
+    El paciente confirma y envía su formulario final rellenado.
+    Construimos una mega-query más específica y precisa, y hacemos la búsqueda rígida final.
+    """
+    t_start = time.time()
+    
+    # 1. Ensamblar la Macro-Query combinando los inputs
+    # Ejemplo: "tos seca (intensidad: 8) (duración: Semanas) +fiebre +asma Notas: tomo ibuprofeno"
+    
+    query_parts = [req.original_query]
+    
+    query_parts.append(f"intensidad {req.intensity}")
+    query_parts.append(f"duracion {req.duration}")
+    
+    if req.dynamic_symptoms:
+        # Penalizamos semánticamente añadiéndolos como contexto colateral esperado
+        query_parts.append(" ".join(req.dynamic_symptoms))
+        
+    if req.additional_notes:
+        query_parts.append(req.additional_notes)
+        
+    macro_query = " ".join(query_parts)
+    print(f">> Macro-query generada desde Formulario: {macro_query}")
+    
+    # 2. Re-Disparo exacto del modelo con Top-K final
+    results = retriever.retrieve(macro_query, top_k=10)
+    
+    # Formatear
+    formatted_results = []
+    for i, res in enumerate(results):
+        formatted_results.append({
+            "title": res.get("title", "Sin título"),
+            "score": res.get("score", 0.0),
+            "snippet": str(res.get("content", ""))[:300] + "...", 
+            "url": res.get("url", "#"),
+            "doc_id": res.get("doc_id", "")
+        })
+        
+    return {
+        "status": "success",
+        "macro_query_used": macro_query,
+        "results": formatted_results,
+        "latency_ms": round((time.time() - t_start) * 1000, 1)
+    }
+
