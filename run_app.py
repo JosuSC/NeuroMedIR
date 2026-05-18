@@ -4,16 +4,26 @@ import subprocess
 import threading
 import webview
 
+"""
+run_app.py — Lanzador de la app de escritorio.
+
+Lo uso como una especie de wrapper de desarrollo para abrir a la vez el
+backend FastAPI, el frontend Vite y la ventana nativa con pywebview.
+Es una pieza pequeña pero importante porque junta todo el sistema.
+"""
+
+
 def start_dev_server():
-    """Inicia el servidor de Vite en segundo plano"""
+    """Inicia el servidor de Vite en segundo plano."""
     print("Iniciando motor de interfaz (Vite)...")
     return subprocess.Popen("npm run dev", cwd="frontend", shell=True)
 
+
 def start_backend_api():
-    """Inicia el API FastAPI local del sistema"""
+    """Inicia el API FastAPI local del sistema."""
     print("Iniciando motor de Backend NeuroMedIR (API)...")
     
-    # Intentar usar el python del entorno virtual si existe
+    # Intento usar el Python del entorno virtual para no mezclar intérpretes
     import os
     venv_python = os.path.join(".venv", "Scripts", "python.exe")
     if os.path.exists(venv_python):
@@ -23,7 +33,9 @@ def start_backend_api():
         
     return subprocess.Popen([python_exe, "-m", "uvicorn", "api:app", "--port", "8000"])
 
+
 def main():
+    """Levanta backend, frontend y ventana nativa en una sola corrida."""
     # 1. Levantar API y Vite
     api_process = start_backend_api()
     server_process = start_dev_server()
@@ -38,7 +50,7 @@ def main():
         width=1280,
         height=850,
         min_size=(1024, 768),
-        background_color='#f8f9fa' # Mismo fondo de tu sistema
+        background_color='#f8f9fa' # Mantengo el mismo fondo visual del sistema
     )
     
     print("\nAbriendo aplicación NeuroMedIR...")
@@ -51,6 +63,7 @@ def main():
     server_process.kill()
     api_process.kill()
     sys.exit(0)
+
 
 if __name__ == "__main__":
     main()

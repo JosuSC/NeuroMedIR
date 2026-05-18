@@ -6,6 +6,13 @@ from pathlib import Path
 from crawler.config import DEFAULT_DOMAINS, default_crawl_config
 from crawler.crawler import CorpusCrawler
 
+"""
+build_corpus.py — Script de construcción del corpus desde cero.
+
+Este es el punto de entrada que usaría cuando quiero poblar el dataset
+procesado por primera vez o regenerarlo por completo. Deja bastante claro
+qué parámetros están bajo control y cuáles son los valores por defecto.
+"""
 
 logging.basicConfig(
     level=logging.INFO,
@@ -14,6 +21,7 @@ logging.basicConfig(
 
 
 def main():
+    """Lee parámetros de línea de comandos y ejecuta el crawler principal."""
     parser = argparse.ArgumentParser(description="Build NeuroMedIR bilingual medical corpus")
     parser.add_argument("--max-pages", type=int, default=20000)
     parser.add_argument("--max-depth", type=int, default=3)
@@ -25,6 +33,7 @@ def main():
     parser.add_argument("--output-dir", type=str, default="data/corpus_v2")
     args = parser.parse_args()
 
+    # Arranco desde una configuración base y luego sobreescribo lo que venga por CLI
     config = default_crawl_config()
     config.max_pages = args.max_pages
     config.max_depth = args.max_depth

@@ -4,10 +4,20 @@ from pathlib import Path
 from indexing.indexer import Indexer
 from indexing.configs import settings as idx_settings
 
+"""
+run_indexing.py — Script para reconstruir los índices del proyecto.
+
+Este archivo es el puente entre el corpus ya procesado y los motores de
+búsqueda. Yo lo dejaría así porque es muy directo: lee JSON, arma el índice
+y lo persiste. Es de esos scripts que conviene poder correr sin pensar mucho.
+"""
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 logger = logging.getLogger(__name__)
 
+
 def main():
+    """Lee el corpus procesado y reconstruye BM25 + FAISS desde cero."""
     logger.info("=" * 60)
     logger.info("=== NeuroMedIR: Re-Indexación Masiva de Todos los Documentos ===")
     logger.info("=" * 60)
@@ -54,6 +64,7 @@ def main():
     indexer.save_indices()
     
     logger.info("✅ Indexación Masiva Finalizada con Éxito.")
+
 
 if __name__ == "__main__":
     main()

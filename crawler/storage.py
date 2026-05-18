@@ -7,11 +7,30 @@ from typing import Dict, List
 from .utils import setup_logger
 from .language import infer_language_from_url
 
+"""
+storage.py — Persistencia del corpus.
+
+Mi idea aquí es separar totalmente la parte de disco del crawler. Así el
+crawler se enfoca en recolectar/validar y esta clase se encarga de guardar
+en `raw`, `processed`, `rejected` y de escribir métricas resumidas.
+"""
+
 logger = setup_logger(__name__)
 
 
 class CorpusStorage:
+    """Pequeña capa de persistencia para el corpus médico.
+
+    Mantengo esta clase simple a propósito: cada método hace una sola cosa
+    y eso hace más fácil revisar, probar y depurar el flujo completo.
+    """
+
     def __init__(self, base_dir: Path):
+        """Inicializa las rutas base del corpus.
+
+        Crea automáticamente las carpetas necesarias para no depender de
+        pasos manuales previos.
+        """
         self.base_dir = Path(base_dir)
         self.raw_dir = self.base_dir / "raw"
         self.processed_dir = self.base_dir / "processed"
@@ -23,6 +42,10 @@ class CorpusStorage:
         self.rejected_dir.mkdir(parents=True, exist_ok=True)
 
     def load_existing_documents(self) -> List[Dict]:
+        """Lee todos los documentos ya procesados desde disco.
+
+        Lo uso cuando el crawler se reinicia para no perder estado.
+        """
         docs = []
         if not self.processed_dir.exists():
             return docs
@@ -38,11 +61,13 @@ class CorpusStorage:
         return docs
 
     def save_raw(self, doc_id: int, payload: Dict):
+        """Guarda el HTML o payload crudo antes de limpiar el documento."""
         path = self.raw_dir / f"doc_{doc_id}.json"
         with path.open("w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
 
     def save_processed(self, doc_id: int, payload: Dict):
+        """Guarda el documento ya validado, separado por idioma y categoría."""
         lang = payload["language"]
         category = payload["category"]
         out_dir = self.processed_dir / lang / category
@@ -52,11 +77,17 @@ class CorpusStorage:
             json.dump(payload, f, ensure_ascii=False, indent=2)
 
     def save_rejected(self, idx: int, payload: Dict):
+        """Guarda documentos rechazados para poder auditar qué falló."""
         path = self.rejected_dir / f"rejected_{idx}.json"
         with path.open("w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
 
     def write_metrics(self, valid_docs: List[Dict], rejected_count: int, started_at: float, finished_at: float):
+        """Escribe métricas globales del corpus al terminar el crawling.
+
+        Aquí resumo distribución por idioma, fuente y categoría, además de
+        una estimación simple de velocidad de procesamiento.
+        """
         by_lang = Counter(
             d.get("language") or infer_language_from_url(str(d.get("url", "")))
             for d in valid_docs

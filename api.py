@@ -6,6 +6,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict, Any
 
+"""
+Módulo `api.py` — Endpoints HTTP (FastAPI) para el sistema NeuroMedIR.
+
+He documentado y comentado en un estilo cercano y humano para que sea
+fácil de seguir durante la revisión de código. Aquí se exponen las rutas
+principales que usa la interfaz: `health`, `query`, `generate_form` y
+`search_with_form`. El backend carga los índices BM25 y FAISS en el
+arranque y mantiene un `Retriever` que orquesta la búsqueda híbrida.
+
+Notas de estilo (mías, como autor): prefiero conservar la inicialización
+en `startup_event` porque simplifica los tests manuales y evita latencias
+extrañas al primer request.
+"""
+
 from dynamic_expansion import expand_corpus_from_query
 from retrieval.retriever import Retriever
 from indexing.indexer import Indexer
@@ -18,6 +32,7 @@ from indexing.configs import settings as idx_settings
 
 from form.form_generator import extract_form_symptoms_prf, generate_dynamic_form_schema
 
+
 app = FastAPI(title="NeuroMedIR API")
 
 app.add_middleware(
@@ -28,46 +43,78 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Variables globales para los motores
+# ---------------------------------------------------------------------------
+# Variables globales (mantenidas simples para este proyecto académico)
+# ---------------------------------------------------------------------------
+# Uso variables globales para que la app se comporte igual en dev y en
+# la ventana de escritorio (run_app.py). En un despliegue real cambiaría
+# por un contenedor/dep inj o factory más explícita.
 retriever = None
 indexer = None
 doc_store = None
 
+
 class QueryRequest(BaseModel):
+    """Modelo Pydantic para solicitudes simples de búsqueda.
+
+    A menudo solo se envía `query` desde la UI del chat. Mantengo el
+    modelo explícito para validación automática de FastAPI.
+    """
     query: str
 
+
 class FormSubmitRequest(BaseModel):
+    """Modelo para manejar envíos de formularios dinámicos desde el UI.
+
+    Campos:
+    - `original_query`: texto original del usuario.
+    - `intensity` / `duration`: campos estándar del formulario.
+    - `dynamic_symptoms`: lista de síntomas seleccionados por el paciente.
+    - `additional_notes`: notas libres.
+    """
     original_query: str
     intensity: str
     duration: str
     dynamic_symptoms: list[str] = []
     additional_notes: str = ""
 
+
 @app.on_event("startup")
 def startup_event():
+    """Inicialización en caliente de los motores de búsqueda.
+
+    Aquí intento cargar BM25 y FAISS desde disco y crear el `Retriever`.
+    Si no es posible cargar el encoder de embeddings, dejo el sistema
+    funcionando en modo BM25 (graceful degradation).
+    """
     global retriever, indexer, doc_store
     print("Inicializando Motor BM25 + FAISS para API...")
     
+    # Inicializo estructuras básicas (sin realizar I/O todavía)
     bm25 = BM25Index(k1=idx_settings.BM25_PARAMS["k1"], b=idx_settings.BM25_PARAMS["b"])
     faiss = FAISSHNSWIndex(dimension=idx_settings.EMBEDDING_DIM, m=idx_settings.HNSW_M, ef_construction=idx_settings.HNSW_EF_CONSTRUCTION)
     
-    # Intentar cargar encoder; si falla (ej. sin conexión a Hugging Face), usar None
+    # Intento crear el encoder; si falla, seguimos con BM25 solamente.
     encoder = None
     try:
         print("Cargando encoder multilíngüe...")
         encoder = TextEncoder(idx_settings.EMBEDDING_MODEL_NAME)
         print("OK: Encoder cargado correctamente.")
     except Exception as e:
+        # Comento en primera persona para dejar la traza más natural.
         print(f"Advertencia: No se puede cargar encoder: {e}")
         print("   → Funcionando en modo BM25 (lexical-only). Búsqueda semántica deshabilitada.")
     
+    # DocumentStore carga en memoria los JSON procesados para enriquecer resultados
     doc_store = DocumentStore(idx_settings.PROCESSED_DATA_DIR)
     io = IndexStorage(str(idx_settings.INDEX_STORAGE_DIR))
 
+    # Intento cargar índices y continúo aunque fallen (notifico).
     success = io.load_lexical(bm25) and io.load_vector(faiss)
     if not success:
         print("Advertencia: No se pudieron cargar los índices de disco.")
     
+    # Construyo las instancias compartidas que el API usará en runtime
     retriever = Retriever(bm25, faiss, encoder, doc_store)
     
     indexer = Indexer()
@@ -78,36 +125,52 @@ def startup_event():
     
     print(f"OK: Motor listo. Documentos en memoria: {doc_store.count}")
 
+
 @app.get("/api/health")
 def health_check():
-    # Solo responderá cuando el servidor haya terminado su bloque startup_event
+    """Chequeo simple de salud para que la UI espere hasta que el backend esté listo."""
     return {"status": "ready"}
+
 
 @app.post("/api/query")
 def process_query(req: QueryRequest):
+    """Endpoint principal que recibe una `query` y devuelve fuentes relevantes.
+
+    Flujo resumido:
+    1. Recuperación híbrida local con `retriever.retrieve`.
+    2. Si hay pocos resultados o muy baja confianza, intento expansión web
+       (llamando a `dynamic_expansion.expand_corpus_from_query`), indexo lo nuevo
+       y vuelvo a recuperar.
+    3. Formateo la salida para el frontend (lista de fuentes, snippet, score).
+
+    Esta función está escrita de forma imperativa y clara para facilitar la
+    lectura durante revisiones manuales.
+    """
     if not req.query:
         raise HTTPException(status_code=400, detail="Consulta vacía")
         
     t_start = time.time()
     
-    # 1. Búsqueda Local (RAG)
+    # 1. Búsqueda Local (BM25 + FAISS si está disponible)
     results = retriever.retrieve(req.query, top_k=5)
     
     web_expanded = False
     
-    # 2. Expansión y Fallback Web
+    # 2. Expansión y Fallback Web: si la búsqueda local no es suficiente
     if len(results) < 2 or (results and results[0].get("score", 0) < 0.3):
-        # Simulamos que no hubo buena info local, vamos a la web
+        # Imprimo la acción para que el log sea fácil de seguir.
         print(f">> Consultando web para expandir: '{req.query}'")
         nuevos = expand_corpus_from_query(req.query, max_new_docs=2)
         if nuevos:
             web_expanded = True
+            # Integro dinámicamente los documentos nuevos en los índices
             indexer.add_documents(nuevos)
+            # Forzamos recarga del store en memoria para que los nuevos docs sean accesibles
             doc_store._load() 
-            # Re-recuperar
+            # Re-recuperar tras la expansión
             results = retriever.retrieve(req.query, top_k=5)
             
-    # Formatear la salida para el frontend
+    # 3. Formatear la salida para el frontend (JSON ligero)
     formatted_results = []
     for i, res in enumerate(results):
         formatted_results.append({
@@ -124,34 +187,37 @@ def process_query(req: QueryRequest):
         "latency_ms": round((time.time() - t_start) * 1000, 1)
     }
 
+
 @app.post("/api/generate_form")
 def generate_form(req: QueryRequest):
-    """
-    Ruta para la creación dinámica del formulario dada la consulta del paciente.
-    1. Recupera Top-10 artículos.
-    2. Usa Pseudo-Relevance Feedback TF-IDF para aislar síntomas colaterales.
-    3. Retorna un esquema JSON estructural validado para renderizar el UI.
+    """Genera un esquema de formulario dinámico basado en PRF desde top-k docs.
+
+    - Extrae los top-10 artículos con el retriever.
+    - Aplica `extract_form_symptoms_prf` para obtener términos relevantes.
+    - Construye el `form_schema` con `generate_dynamic_form_schema`.
+
+    El objetivo es ofrecer al frontend un JSON que represente preguntas
+    médicas útiles para refinar la búsqueda.
     """
     if not req.query:
         raise HTTPException(status_code=400, detail="Consulta vacía")
         
     t_start = time.time()
     
-    # 1. Buscamos inicialmente los 10 documentos más relevantes
+    # 1. Recupero top documentos
     results = retriever.retrieve(req.query, top_k=10)
     
-    # 2. Extraemos su contenido textual (se usa body y/o contexto)
+    # 2. Concateno texto para análisis PRF
     docs_text = []
     for res in results:
         content = res.get("content", "")
         title = res.get("title", "")
-        # Concatenamos para mayor riqueza de palabras
         docs_text.append(f"{title} {content}")
         
-    # 3. Aplicar PRF (TF-IDF Co-ocurrencias) para extraer los Top-10 síntomas/términos
+    # 3. Extraigo términos por PRF
     extracted_terms = extract_form_symptoms_prf(req.query, docs_text, top_n=10)
     
-    # 4. Generamos el esquema estandarizado
+    # 4. Genero esquema y lo devuelvo
     form_schema = generate_dynamic_form_schema(req.query, extracted_terms)
     
     return {
@@ -160,24 +226,22 @@ def generate_form(req: QueryRequest):
         "form_schema": form_schema
     }
 
+
 @app.post("/api/search_with_form")
 def search_with_form(req: FormSubmitRequest):
-    """
-    El paciente confirma y envía su formulario final rellenado.
-    Construimos una mega-query más específica y precisa, y hacemos la búsqueda rígida final.
+    """Recibe el formulario completo, compone una macro-query y busca de nuevo.
+
+    Esto permite transformar inputs estructurados (intensidad, duración,
+    síntomas seleccionados) en una consulta más precisa para el motor de SRI.
     """
     t_start = time.time()
     
     # 1. Ensamblar la Macro-Query combinando los inputs
-    # Ejemplo: "tos seca (intensidad: 8) (duración: Semanas) +fiebre +asma Notas: tomo ibuprofeno"
-    
     query_parts = [req.original_query]
-    
     query_parts.append(f"intensidad {req.intensity}")
     query_parts.append(f"duracion {req.duration}")
     
     if req.dynamic_symptoms:
-        # Penalizamos semánticamente añadiéndolos como contexto colateral esperado
         query_parts.append(" ".join(req.dynamic_symptoms))
         
     if req.additional_notes:
@@ -186,10 +250,10 @@ def search_with_form(req: FormSubmitRequest):
     macro_query = " ".join(query_parts)
     print(f">> Macro-query generada desde Formulario: {macro_query}")
     
-    # 2. Re-Disparo exacto del modelo con Top-K final
+    # 2. Re-Disparo exacto del motor con la macro-query
     results = retriever.retrieve(macro_query, top_k=10)
     
-    # Formatear
+    # 3. Formatear la respuesta
     formatted_results = []
     for i, res in enumerate(results):
         formatted_results.append({

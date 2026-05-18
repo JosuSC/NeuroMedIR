@@ -7,7 +7,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from dynamic_expansion import expand_corpus_from_query
 
-# Modulos para cargar el buscador
+# Módulos para cargar el buscador
 from retrieval.retriever import Retriever
 from indexing.indexer import Indexer
 from indexing.lexical_index.bm25_index import BM25Index
@@ -17,9 +17,19 @@ from retrieval.document_store import DocumentStore
 from indexing.storage.index_io import IndexStorage
 from indexing.configs import settings as idx_settings
 
+"""
+main.py — CLI interactiva de búsqueda médica.
+
+Esto me sirve para probar el sistema sin levantar la interfaz web. La idea
+es muy simple: cargar índices, preguntar una consulta, mostrar resultados y,
+si hace falta, expandir con documentos nuevos desde la web.
+"""
+
 logging.basicConfig(level=logging.WARNING, format="%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 
+
 def get_loaded_indexer(bm25, faiss, encoder, io):
+    """Arma un `Indexer` usando componentes ya cargados desde disco."""
     indexer = Indexer()
     indexer.lexical_index = bm25
     indexer.semantic_index = faiss
@@ -27,7 +37,9 @@ def get_loaded_indexer(bm25, faiss, encoder, io):
     indexer.storage = io
     return indexer
 
+
 def main():
+    """Ejecuta el flujo de búsqueda en consola paso a paso."""
     print("=" * 60)
     print("=== NeuroMedIR: Sistema Híbrido de Búsqueda Médica ===")
     print("=" * 60)
@@ -58,7 +70,7 @@ def main():
             continue
 
         print(f"\n>> Buscando '{query}' en base de datos local (BM25 + FAISS)...")
-        # 2. Búsqueda Híbrida local
+        # 2. Búsqueda híbrida local
         t_start = time.time()
         results = retriever.retrieve(query, top_k=5)
         
@@ -87,11 +99,12 @@ def main():
             print("\nIntegrando la nueva información a los modelos vectoriales y BM25...")
             indexer.add_documents(nuevos_documentos)
             
-            # 5. Forzar actualización del Storage en memoria
+            # 5. Forzar actualización del storage en memoria
             doc_store._load() 
             print(f"Corpus y Modelos actualizados: {doc_store.count} documentos en base de datos.")
         else:
             print("\nNo se encontraron artículos nuevos rápidos en esta expansión.")
+
 
 if __name__ == "__main__":
     main()

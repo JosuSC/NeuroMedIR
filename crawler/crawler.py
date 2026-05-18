@@ -24,6 +24,14 @@ logger = setup_logger(__name__)
 
 @dataclass
 class QueueItem:
+    """Estructura ligera para representar URLs en la cola del crawler.
+
+    Campos principales:
+    - `url`: URL a procesar.
+    - `depth`: profundidad desde la semilla.
+    - `language_hint`, `source_name`, `category_hint`: metadatos para la extracción.
+    - `allowed_domains`: lista de dominios válidos para expansión.
+    """
     url: str
     depth: int
     language_hint: str
@@ -34,11 +42,21 @@ class QueueItem:
 
 
 class CorpusCrawler:
+    """Crawler orientado a construir un corpus médico bilingüe.
+
+    Diseño y notas personales:
+    - Respeta `robots.txt` y tiene mecanismos de reintento y backoff.
+    - Guarda `raw`, `processed` y `rejected` en disco via `CorpusStorage`.
+    - Usa una `CorpusQualityGate` para filtrar contenido demasiado corto o inválido.
+    - Mantengo contadores por idioma para balancear EN/ES.
+    """
+
     def __init__(self, config: CrawlConfig, domains: Optional[List[DomainConfig]] = None):
         self.config = config
         self.domains = domains or DEFAULT_DOMAINS
         self.headers = {"User-Agent": config.user_agent}
 
+        # Scraper por dominio (encapsula fetch/parse/extraer links)
         self.scraper = DomainScraper(
             timeout=config.request_timeout_seconds,
             max_retries=config.max_retries,
@@ -47,25 +65,31 @@ class CorpusCrawler:
         self.storage = CorpusStorage(config.output_dir)
         self.quality = CorpusQualityGate(config.min_content_chars)
 
+        # Estructuras internas
         self.queue: Deque[QueueItem] = deque()
         self.visited: Set[str] = set()
         self.robot_cache: Dict[str, Optional[urllib.robotparser.RobotFileParser]] = {}
 
+        # Resultados y métricas en memoria durante la ejecución
         self.valid_docs: List[Dict] = []
         self.rejected_count = 0
         self.next_doc_id = 1
         self.language_counter = Counter()
 
+        # Si ya hay documentos en disco, cargo el estado para continuar
         self._load_existing_state()
+        # Inicializo la cola con semillas por dominio
         self._bootstrap_queue()
 
     def _load_existing_state(self):
+        """Carga documentos ya procesados para mantener continuidad entre runs."""
         existing_docs = self.storage.load_existing_documents()
         if not existing_docs:
             return
 
         max_id = 0
         for doc in existing_docs:
+            # Registro en la compuerta de calidad para evitar re-aceptar lo mismo
             self.quality.register_existing(doc)
             lang = doc.get("language")
             if not isinstance(lang, str) or not lang:
@@ -77,6 +101,7 @@ class CorpusCrawler:
             if isinstance(doc_id, int) and doc_id > max_id:
                 max_id = doc_id
 
+        # Nos aseguramos de no colisionar con ids previos
         self.next_doc_id = max_id + 1
         logger.info(
             "Loaded existing corpus state | docs=%s | by_lang=%s | next_id=%s",
@@ -86,6 +111,7 @@ class CorpusCrawler:
         )
 
     def _bootstrap_queue(self):
+        """Añade las URLs semilla definidas en cada `DomainConfig` a la cola."""
         for domain_cfg in self.domains:
             for seed in domain_cfg.seeds:
                 if not is_http_url(seed):
@@ -104,6 +130,7 @@ class CorpusCrawler:
 
     @staticmethod
     def _is_allowed_domain(url: str, allowed_domains: List[str]) -> bool:
+        """Comprueba si una URL pertenece a la lista de dominios permitidos."""
         host = (urlparse(url).hostname or "").lower()
         if not host:
             return False
@@ -114,6 +141,7 @@ class CorpusCrawler:
         return False
 
     def _can_fetch(self, url: str) -> bool:
+        """Respeta robots.txt usando un pequeño caché de parsers por dominio."""
         parsed_domain = domain_from_url(url)
         if not parsed_domain:
             return False
@@ -126,6 +154,7 @@ class CorpusCrawler:
                 rp.read()
                 self.robot_cache[base] = rp
             except Exception:
+                # Si falla leer robots, asumimos permisividad (más seguro para investigación)
                 self.robot_cache[base] = None
 
         parser = self.robot_cache[base]
@@ -134,6 +163,7 @@ class CorpusCrawler:
         return parser.can_fetch(self.config.user_agent, url)
 
     def _target_met(self) -> bool:
+        """Comprueba si se alcanzaron los objetivos de tamaño/idioma del corpus."""
         if len(self.valid_docs) < self.config.min_valid_documents:
             return False
         for lang, target in self.config.language_targets.items():
@@ -142,6 +172,7 @@ class CorpusCrawler:
         return True
 
     def _to_document(self, item: QueueItem, parsed: Dict[str, str], url: str) -> Dict:
+        """Convierte el resultado del parser en la estructura de documento persistible."""
         content = parsed.get("content", "")
         lang = detect_language(content, hint=item.language_hint)
         return {
@@ -156,6 +187,13 @@ class CorpusCrawler:
         }
 
     def run(self) -> Dict:
+        """Ejecuta el crawling hasta agotar la cola o alcanzar `max_pages`.
+
+        Comportamiento:
+        - Para cada URL: respeta robots, hace fetch, parsea, valida calidad y guarda.
+        - Extrae enlaces y los encola respetando `allowed_domains` y `max_depth`.
+        - Acumula métricas y escribe el resumen al final.
+        """
         started = time.time()
         crawled_pages = 0
 
@@ -207,7 +245,7 @@ class CorpusCrawler:
             if quality.is_valid:
                 lang = document["language"]
                 if lang in self.config.language_targets:
-                    # Avoid creating an imbalanced corpus far above target for one language.
+                    # Evito desequilibrar demasiado el corpus en un idioma
                     if self.language_counter[lang] > self.config.language_targets[lang] + 100:
                         self.rejected_count += 1
                         self.storage.save_rejected(
@@ -216,6 +254,7 @@ class CorpusCrawler:
                         )
                         continue
 
+                # Guardar procesado y actualizar contadores
                 self.storage.save_processed(self.next_doc_id, document)
                 self.valid_docs.append(document)
                 self.language_counter[lang] += 1
@@ -226,6 +265,7 @@ class CorpusCrawler:
                 payload["reason"] = quality.reason
                 self.storage.save_rejected(self.rejected_count, payload)
 
+            # Extraer y encolar enlaces si la profundidad lo permite
             if item.depth < self.config.max_depth:
                 links = self.scraper.extract_links(html, base_url=url)
                 for link in links:
