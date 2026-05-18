@@ -13,3 +13,4 @@ uvicorn
 pywebview
 groq
 python-dotenv
+scikit-learn

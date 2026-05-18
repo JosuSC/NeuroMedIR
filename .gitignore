@@ -45,3 +45,6 @@ dist/
 # --- Sistemas operativos ---
 .DS_Store
 Thumbs.db
+
+# Node modules (frontend)
+node_modules/

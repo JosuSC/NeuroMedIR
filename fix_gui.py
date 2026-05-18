@@ -177,4 +177,4 @@ with open(os.path.join(base_dir, 'chat', 'ChatInput.jsx'), 'w', encoding='utf-8'
 with open(os.path.join(base_dir, 'chat', 'ChatView.jsx'), 'w', encoding='utf-8') as f:
     f.write(chat_view)
 
-print('GUI actualizada correctamente.')
+
