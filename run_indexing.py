@@ -8,8 +8,7 @@ from indexing.configs import settings as idx_settings
 run_indexing.py — Script para reconstruir los índices del proyecto.
 
 Este archivo es el puente entre el corpus ya procesado y los motores de
-búsqueda. Yo lo dejaría así porque es muy directo: lee JSON, arma el índice
-y lo persiste. Es de esos scripts que conviene poder correr sin pensar mucho.
+búsqueda. 
 """
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(name)s | %(message)s")
