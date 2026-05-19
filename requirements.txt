@@ -11,6 +11,5 @@ fastapi
 python-multipart
 uvicorn
 pywebview
-groq
 python-dotenv
 scikit-learn
