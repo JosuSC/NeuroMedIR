@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    * {
+        @apply border-slate-200 dark:border-slate-700/50;
+    }
+
+    body {
+        @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased;
+    }
+
+    ::selection {
+        @apply bg-neurol-500/30 text-neurol-900 dark:text-neurol-100;
+    }
+}
+
 @layer utilities {
     .no-scrollbar::-webkit-scrollbar {
         display: none;
@@ -9,14 +23,12 @@
 
     .no-scrollbar {
         -ms-overflow-style: none;
-        /* IE and Edge */
         scrollbar-width: none;
-        /* Firefox */
     }
 
     .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
+        width: 5px;
+        height: 5px;
     }
 
     .custom-scrollbar::-webkit-scrollbar-track {
@@ -24,15 +36,44 @@
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 10px;
+        @apply bg-slate-300 dark:bg-slate-600 rounded-full;
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
+        @apply bg-slate-400 dark:bg-slate-500;
     }
-}
 
-body {
-    font-family: 'Inter', sans-serif;
+    /* Glassmorphism */
+    .glass {
+        @apply bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-white/20 dark:border-slate-700/30;
+    }
+
+    .glass-card {
+        @apply bg-white/80 dark:bg-slate-800/50 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/30 rounded-2xl;
+    }
+
+    /* Gradient text */
+    .text-gradient {
+        @apply bg-gradient-to-r from-neurol-400 to-medical-400 bg-clip-text text-transparent;
+    }
+
+    /* Animated background */
+    .bg-animated {
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
 }
