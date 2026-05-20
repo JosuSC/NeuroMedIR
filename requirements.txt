@@ -13,3 +13,5 @@ uvicorn
 pywebview
 python-dotenv
 scikit-learn
+torch
+transformers
