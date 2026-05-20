@@ -24,15 +24,33 @@ SEMANTIC_WEIGHT = 0.7
 LEXICAL_TOP_K = 50
 SEMANTIC_TOP_K = 50
 
-# Final number of results returned to the user after fusion
+# Final number of results returned to the user after fusion + re-ranking
 FINAL_TOP_K = 10
 
 # ---------------------------------------------------------------------------
-# Neural Ranker
+# Neural Ranker (Stage 2 — Cross-Encoder Re-ranker)
 # ---------------------------------------------------------------------------
-# Cross-encoder model for re-ranking (optional, high-quality but slower)
-# Set to None to disable cross-encoder re-ranking
-CROSS_ENCODER_MODEL = None  # e.g. "cross-encoder/ms-marco-MiniLM-L-6-v2"
+# Cross-encoder model for re-ranking.
+# This is the Stage 2 precision model that re-scores (query, doc) pairs.
+# Set to None to disable cross-encoder re-ranking.
+#
+# Recommended models (from sentence-transformers):
+#   - "cross-encoder/ms-marco-MiniLM-L-6-v2"  ← Fast, good quality (DEFAULT)
+#   - "cross-encoder/ms-marco-MiniLM-L-12-v2"  ← Better quality, slower
+#   - "cross-encoder/ms-marco-electra-base"     ← Best quality, much slower
+#
+# Reference: Nogueira & Cho (2019), Nogueira et al. (2020)
+CROSS_ENCODER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
 # Maximum number of candidates to re-rank with cross-encoder (cost control)
+# These come from Stage 1 (RRF fusion) — more candidates = better recall but
+# slower re-ranking. 20-50 is typical.
 RERANK_TOP_K = 20
+
+# Cross-encoder inference batch size
+# Lower = less memory, higher = faster. 32 is safe for CPU; increase on GPU.
+RERANK_BATCH_SIZE = 32
+
+# Maximum sequence length for cross-encoder input (query + document tokens)
+# 512 is the standard for MiniLM models. Documents are truncated to fit.
+RERANK_MAX_LENGTH = 512

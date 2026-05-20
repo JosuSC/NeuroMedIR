@@ -1,9 +1,11 @@
 """
 retriever.py — Main facade for the NeuroMedIR Hybrid Retrieval Module.
 
-Implements the canonical hybrid IR pipeline:
+Implements the canonical 3-stage hybrid IR pipeline:
 
     query (raw string)
+     ↓
+    Stage 1: RECALL (hybrid retrieval)
      ↓
     preprocess_query(query)          → {lexical_tokens, semantic_text}
      ↓
@@ -13,16 +15,27 @@ Implements the canonical hybrid IR pipeline:
     │                                │ ↓                               │
     │                                │ search_faiss(vector)            │
     │                                │ → semantic candidates           │
-    └───────────────┬────────────────┴────────────────┬───────────────┘
-                    ↓                                 ↓
-             normalize_scores()                normalize_scores()
-                    ↓                                 ↓
-                    └─────────────┬────────────────────┘
-                                  ↓
-                       fuse_results(lex, sem)
-                                  ↓
-                          rank_results()
-                                  ↓
+    └───────────────┬────────────────┴───────────────┬────────────────┘
+                    ↓                                ↓
+             normalize_scores()               normalize_scores()
+                    ↓                                ↓
+                    └──────────────┬──────────────────┘
+                                   ↓
+                        fuse_results(lex, sem)
+                                   ↓
+                             rank_results()
+                                   ↓
+                        top-k fused candidates
+     ↓
+    Stage 2: PRECISION (cross-encoder re-ranking)
+     ↓
+    NeuralReranker.rerank(query, candidates, doc_texts)
+    → cross-encoder scores replace fusion scores
+     ↓
+    Stage 3: RE-ORDERING (final sort by CE scores)
+     ↓
+    rank_results(reranked)
+                                   ↓
                         top-k enriched results
 
 Design principles (from agent.md):
@@ -47,6 +60,7 @@ from .query_processor import QueryProcessor
 from .semantic_search import SemanticSearch
 from .document_store import DocumentStore
 from .fusion import fuse_results, normalize_scores, rank_results
+from .neural_reranker import NeuralReranker
 from .configs import settings as ret_settings
 
 logger = logging.getLogger(__name__)
@@ -55,7 +69,7 @@ logger = logging.getLogger(__name__)
 class Retriever:
     """
     Hybrid retrieval engine combining lexical (BM25) and neural (FAISS/NN)
-    search with score fusion and ranking.
+    search with score fusion and cross-encoder re-ranking.
 
     All pipeline steps are exposed as public methods for independent use,
     testing, and debugging.
@@ -75,6 +89,7 @@ class Retriever:
         encoder: TextEncoder,
         doc_store: DocumentStore,
         cleaner: TextCleaner = None,
+        reranker: NeuralReranker = None,
     ):
         """
         Dependency-injected constructor (fixes P1).
@@ -85,6 +100,8 @@ class Retriever:
             encoder: Pre-loaded multilingual text encoder.
             doc_store: Pre-loaded document store for result enrichment.
             cleaner: Shared TextCleaner (creates new one if None).
+            reranker: NeuralReranker for Stage 2 re-ranking.
+                      Creates one from settings if None.
         """
         self._cleaner = cleaner or TextCleaner()
         self._query_processor = QueryProcessor(cleaner=self._cleaner)
@@ -93,9 +110,15 @@ class Retriever:
         self._doc_store = doc_store
         self._encoder = encoder
 
+        # Stage 2: Cross-encoder re-ranker (lazy-loaded model)
+        self._reranker = reranker or NeuralReranker()
+
+        reranker_status = "ENABLED" if self._reranker.is_enabled else "DISABLED"
         logger.info(
             f"Retriever ready. Documents: {doc_store.count}. "
-            f"Fusion: {ret_settings.FUSION_STRATEGY}."
+            f"Fusion: {ret_settings.FUSION_STRATEGY}. "
+            f"Re-ranker: {reranker_status} "
+            f"(model: {self._reranker.model_name or 'N/A'})."
         )
 
     @classmethod
@@ -134,12 +157,16 @@ class Retriever:
         # Load document store
         doc_store = DocumentStore(idx_settings.PROCESSED_DATA_DIR)
 
+        # Load neural re-ranker (model loads lazily on first use)
+        reranker = NeuralReranker()
+
         return cls(
             lexical_index=lexical_index,
             vector_index=vector_index,
             encoder=encoder,
             doc_store=doc_store,
             cleaner=cleaner,
+            reranker=reranker,
         )
 
     # -----------------------------------------------------------------------
@@ -219,8 +246,37 @@ class Retriever:
         """Step 5: Sort by score descending and truncate to top_k."""
         return rank_results(results, top_k=top_k)
 
+    def rerank(
+        self,
+        query: str,
+        results: List[Dict],
+        top_k: int = None,
+    ) -> List[Dict]:
+        """
+        Stage 2: Re-rank fused results using the cross-encoder.
+
+        Takes the top candidates from Stage 1 (fusion) and re-scores them
+        with the cross-encoder model for higher precision.
+
+        Args:
+            query: Original user query.
+            results: Fused results from Stage 1.
+            top_k: Number of results to return after re-ranking.
+
+        Returns:
+            Re-ranked results with cross-encoder scores.
+            If re-ranking is disabled, returns input results.
+        """
+        top_k = top_k or ret_settings.RERANK_TOP_K
+
+        # Build doc_texts mapping from DocumentStore
+        doc_ids = [r["doc_id"] for r in results]
+        doc_texts = self._doc_store.get_texts(doc_ids)
+
+        return self._reranker.rerank(query, results, doc_texts, top_k=top_k)
+
     # -----------------------------------------------------------------------
-    # Orchestrated Retrieval (full pipeline)
+    # Orchestrated Retrieval (full 3-stage pipeline)
     # -----------------------------------------------------------------------
 
     def retrieve(
@@ -228,9 +284,30 @@ class Retriever:
         query: str,
         top_k: int = None,
         strategy: str = None,
+        enable_reranking: bool = True,
     ) -> List[Dict]:
+        """
+        Full 3-stage retrieval pipeline:
+            Stage 1: BM25 + FAISS + RRF fusion → recall candidates
+            Stage 2: Cross-encoder re-ranking → precision scores
+            Stage 3: Final sort & enrichment → top-k results
+
+        Args:
+            query: Raw user query string.
+            top_k: Final number of results (defaults to FINAL_TOP_K).
+            strategy: Fusion strategy override ("rrf" or "weighted").
+            enable_reranking: Set False to skip Stage 2 (for A/B testing).
+
+        Returns:
+            List of enriched result dicts with rank, doc_id, score, title,
+            snippet, source, url.
+        """
         top_k = top_k or ret_settings.FINAL_TOP_K
         t_start = time.perf_counter()
+
+        # =============================================================
+        # STAGE 1: RECALL — Hybrid retrieval (BM25 + FAISS + Fusion)
+        # =============================================================
 
         # Step 1: Preprocess
         t0 = time.perf_counter()
@@ -246,7 +323,7 @@ class Retriever:
         semantic_results = []
         t_embed = 0.0
         t_faiss = 0.0
-        
+
         # Solo ejecutar semántico si hay encoder disponible
         if self._encoder is not None:
             t0 = time.perf_counter()
@@ -266,19 +343,59 @@ class Retriever:
             fused = self.fuse_results(lexical_results, semantic_results, strategy=strategy)
         t_fusion = time.perf_counter() - t0
 
-        # Step 5: Rank
-        ranked = self.rank_results(fused, top_k=top_k)
+        # Step 5: Rank fused results (get more candidates for re-ranking)
+        # We retrieve RERANK_TOP_K candidates from fusion to feed into Stage 2
+        rerank_k = ret_settings.RERANK_TOP_K if (
+            enable_reranking and self._reranker.is_enabled
+        ) else top_k
+        ranked = self.rank_results(fused, top_k=rerank_k)
+
+        t_stage1 = time.perf_counter() - t_start
+
+        # =============================================================
+        # STAGE 2: PRECISION — Cross-Encoder Re-ranking
+        # =============================================================
+
+        t_rerank = 0.0
+        if enable_reranking and self._reranker.is_enabled and ranked:
+            t0 = time.perf_counter()
+
+            # Build doc_texts mapping for all candidate doc_ids
+            doc_ids = [r["doc_id"] for r in ranked]
+            doc_texts = self._doc_store.get_texts(doc_ids)
+
+            # Re-rank with cross-encoder
+            reranked = self._reranker.rerank(
+                query=processed["raw"],  # Use original query for CE
+                results=ranked,
+                doc_texts=doc_texts,
+                top_k=top_k,  # Final top_k after re-ranking
+            )
+            t_rerank = time.perf_counter() - t0
+
+            # Stage 3: Final sort by cross-encoder scores
+            ranked = rank_results(reranked, top_k=top_k)
+
+            logger.info(
+                f"Stage 2 (Re-ranking): {t_rerank*1000:.1f}ms — "
+                f"re-ranked {len(reranked)} candidates → top {len(ranked)}"
+            )
+        else:
+            # No re-ranking: just truncate to final top_k
+            ranked = ranked[:top_k]
 
         t_total = time.perf_counter() - t_start
 
         # Log latency per stage
         logger.info(
             f"Retrieval completed in {t_total*1000:.1f}ms — "
+            f"Stage 1 (Recall): {t_stage1*1000:.1f}ms ["
             f"preprocess: {t_preprocess*1000:.1f}ms, "
             f"BM25: {t_bm25*1000:.1f}ms ({len(lexical_results)} hits), "
             f"embed: {t_embed*1000:.1f}ms, "
             f"FAISS: {t_faiss*1000:.1f}ms ({len(semantic_results)} hits), "
-            f"fusion: {t_fusion*1000:.1f}ms → {len(ranked)} results"
+            f"fusion: {t_fusion*1000:.1f}ms] "
+            f"Stage 2 (Re-rank): {t_rerank*1000:.1f}ms → {len(ranked)} results"
         )
 
         # Step 6: Enrich with document metadata
@@ -302,6 +419,17 @@ class Retriever:
         results = self._semantic_search.search(processed["semantic_text"], top_k=top_k)
         return self._enrich_results(results)
 
+    def retrieve_without_reranking(
+        self, query: str, top_k: int = None, strategy: str = None
+    ) -> List[Dict]:
+        """
+        Retrieves using Stage 1 only (no cross-encoder re-ranking).
+        Useful for A/B comparison and evaluation.
+        """
+        return self.retrieve(
+            query, top_k=top_k, strategy=strategy, enable_reranking=False
+        )
+
     # -----------------------------------------------------------------------
     # Private Helpers
     # -----------------------------------------------------------------------
@@ -323,6 +451,7 @@ class Retriever:
                 "rank": rank,
                 "doc_id": doc_id,
                 "score": round(result["score"], 6),
+                "fusion_score": result.get("fusion_score"),
                 "title": doc.get("title", "Unknown"),
                 "snippet": snippet,
                 "source": doc.get("source", "Unknown"),
