@@ -15,9 +15,9 @@ import logging
 import numpy as np
 from typing import List, Dict, Optional
 
-from indexing.multimodal.text_encoder import TextEncoder
-from indexing.vector_index.faiss_hnsw import FAISSHNSWIndex
-from indexing.configs import settings as idx_settings
+from ..indexing.multimodal.text_encoder import TextEncoder
+from ..indexing.vector_index.faiss_hnsw import FAISSHNSWIndex
+from ..indexing.configs import settings as idx_settings
 
 logger = logging.getLogger(__name__)
 

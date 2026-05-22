@@ -27,7 +27,7 @@ import time
 import logging
 from typing import List, Dict, Optional, Tuple
 
-from retrieval.retriever import Retriever
+from ..retrieval.retriever import Retriever
 from .llm_client import BaseLLMClient
 from .configs import settings as rag_settings
 

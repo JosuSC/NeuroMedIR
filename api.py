@@ -16,17 +16,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
-from dynamic_expansion import expand_corpus_from_query
-from retrieval.retriever import Retriever
-from retrieval.neural_reranker import NeuralReranker
-from indexing.indexer import Indexer
-from indexing.lexical_index.bm25_index import BM25Index
-from indexing.vector_index.faiss_hnsw import FAISSHNSWIndex
-from indexing.multimodal.text_encoder import TextEncoder
-from retrieval.document_store import DocumentStore
-from indexing.storage.index_io import IndexStorage
-from indexing.configs import settings as idx_settings
-from form.form_generator import extract_form_symptoms_prf, generate_dynamic_form_schema
+from .dynamic_expansion import expand_corpus_from_query
+from .retrieval.retriever import Retriever
+from .retrieval.neural_reranker import NeuralReranker
+from .indexing.indexer import Indexer
+from .indexing.lexical_index.bm25_index import BM25Index
+from .indexing.vector_index.faiss_hnsw import FAISSHNSWIndex
+from .indexing.multimodal.text_encoder import TextEncoder
+from .retrieval.document_store import DocumentStore
+from .indexing.storage.index_io import IndexStorage
+from .indexing.configs import settings as idx_settings
+from .form.form_generator import extract_form_symptoms_prf, generate_dynamic_form_schema
 
 logger = logging.getLogger(__name__)
 

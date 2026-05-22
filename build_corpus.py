@@ -3,8 +3,8 @@ import logging
 import argparse
 from pathlib import Path
 
-from crawler.config import DEFAULT_DOMAINS, default_crawl_config
-from crawler.crawler import CorpusCrawler
+from .crawler.config import DEFAULT_DOMAINS, default_crawl_config
+from .crawler.crawler import CorpusCrawler
 
 """
 build_corpus.py — Script de construcción del corpus desde cero.

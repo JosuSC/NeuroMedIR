@@ -16,7 +16,7 @@ Design decision:
 import logging
 from typing import Dict
 
-from indexing.preprocess.text_cleaner import TextCleaner
+from ..indexing.preprocess.text_cleaner import TextCleaner
 
 logger = logging.getLogger(__name__)
 
