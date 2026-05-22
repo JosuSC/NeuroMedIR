@@ -1,12 +1,12 @@
 """
-api.py — FastAPI endpoints for the NeuroMedIR system.
+api.py — Endpoints FastAPI para el sistema NeuroMedIR.
 
 Endpoints:
-    GET  /api/health          — Backend health check
-    POST /api/query           — Hybrid retrieval (BM25 + FAISS + CrossEncoder)
-    POST /api/rag_query       — Full RAG pipeline (retrieval + local LLM)
-    POST /api/generate_form   — PRF-based dynamic form generation
-    POST /api/search_with_form — Search from structured form submission
+    GET  /api/health          — Verificación del backend
+    POST /api/query           — Recuperación híbrida (BM25 + FAISS + CrossEncoder)
+    POST /api/rag_query       — Pipeline RAG completo (recuperación + LLM local)
+    POST /api/generate_form   — Generación dinámica de formulario PRF
+    POST /api/search_with_form — Búsqueda desde formulario estructurado
 """
 
 import logging
@@ -41,7 +41,7 @@ app.add_middleware(
 )
 
 # ---------------------------------------------------------------------------
-# Global state
+# Estado global
 # ---------------------------------------------------------------------------
 retriever = None
 indexer = None
@@ -54,7 +54,7 @@ class QueryRequest(BaseModel):
 
 
 class RAGQueryRequest(BaseModel):
-    """Request model for RAG pipeline."""
+    """Modelo de petición para el pipeline RAG."""
     query: str
     top_k: Optional[int] = None
 
@@ -69,7 +69,7 @@ class FormSubmitRequest(BaseModel):
 
 @app.on_event("startup")
 def startup_event():
-    """Initialize all engines at startup."""
+    """Inicializa todos los motores al arrancar."""
     global retriever, indexer, doc_store, rag_pipeline
 
     print("Inicializando Motor BM25 + FAISS + Cross-Encoder para API...")
@@ -106,10 +106,13 @@ def startup_event():
     indexer.encoder = encoder
     indexer.storage = io
 
-    # Initialize RAG pipeline with LOCAL LLM (no API key needed)
+    # Inicializar pipeline RAG con LLM LOCAL (sin API keys)
+    # CAMBIO CLAVE: imports relativos (from .rag en vez de from rag)
+    # Antes: from rag.llm_client → fallaba con "No module named 'rag'"
+    # Ahora: from .rag.llm_client → funciona como parte del paquete NeuroMedIR
     try:
-        from rag.llm_client import TransformersLLMClient
-        from rag.pipeline import RAGPipeline
+        from .rag.llm_client import TransformersLLMClient
+        from .rag.pipeline import RAGPipeline
 
         llm_client = TransformersLLMClient()
         rag_pipeline = RAGPipeline(retriever=retriever, llm_client=llm_client)
@@ -130,7 +133,7 @@ def health_check():
 
 @app.post("/api/query")
 def process_query(req: QueryRequest):
-    """Hybrid retrieval endpoint."""
+    """Endpoint de recuperación híbrida."""
     if not req.query:
         raise HTTPException(status_code=400, detail="Consulta vacía")
 
@@ -167,19 +170,9 @@ def process_query(req: QueryRequest):
 
 @app.post("/api/rag_query")
 def rag_query(req: RAGQueryRequest):
-    """
-    RAG endpoint: retrieval + LOCAL LLM generation.
+    """Endpoint RAG: recuperación + generación con LLM local.
 
-    No API keys required. The LLM (flan-t5-base) runs entirely locally.
-
-    Returns:
-        {
-            "answer": str,       # Generated answer with citations
-            "sources": list,     # Source documents used
-            "confidence": float, # 0.0-1.0 confidence score
-            "latency_ms": float, # Total pipeline latency
-            "model": str,        # LLM model used
-        }
+    No requiere API keys. El LLM (flan-t5-base) corre completamente local.
     """
     if not req.query:
         raise HTTPException(status_code=400, detail="Consulta vacía")
@@ -193,7 +186,6 @@ def rag_query(req: RAGQueryRequest):
     top_k = req.top_k or 5
     result = rag_pipeline.query(req.query, top_k=top_k)
 
-    # Format sources for frontend
     formatted_sources = []
     for src in result.get("sources", []):
         formatted_sources.append({
