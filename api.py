@@ -126,6 +126,22 @@ def startup_event():
     print(f"OK: Motor listo. Documentos: {doc_store.count}")
 
 
+@app.get("/")
+def root():
+    return {
+        "name": "NeuroMedIR API",
+        "status": "ready",
+        "endpoints": {
+            "health": "/api/health",
+            "query": "/api/query",
+            "rag_query": "/api/rag_query",
+            "generate_form": "/api/generate_form",
+            "search_with_form": "/api/search_with_form",
+            "docs": "/docs",
+        },
+    }
+
+
 @app.get("/api/health")
 def health_check():
     return {"status": "ready"}
