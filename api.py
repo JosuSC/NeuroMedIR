@@ -10,8 +10,10 @@ Endpoints:
 """
 
 import logging
+import os
 import time
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -126,20 +128,9 @@ def startup_event():
     print(f"OK: Motor listo. Documentos: {doc_store.count}")
 
 
-@app.get("/")
-def root():
-    return {
-        "name": "NeuroMedIR API",
-        "status": "ready",
-        "endpoints": {
-            "health": "/api/health",
-            "query": "/api/query",
-            "rag_query": "/api/rag_query",
-            "generate_form": "/api/generate_form",
-            "search_with_form": "/api/search_with_form",
-            "docs": "/docs",
-        },
-    }
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return Response(content=b"", media_type="image/x-icon")
 
 
 @app.get("/api/health")
@@ -219,6 +210,17 @@ def rag_query(req: RAGQueryRequest):
         "latency_ms": result["latency_ms"],
         "model": result["model"],
     }
+
+# ---------------------------------------------------------------------------
+# Montaje del Frontend (StaticFiles)
+# ---------------------------------------------------------------------------
+frontend_path = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+if os.path.exists(frontend_path):
+    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+else:
+    @app.get("/")
+    def root():
+        return {"status": "ready", "message": "Frontend no compilado. Ejecuta 'npm run build' en la carpeta frontend."}
 
 
 @app.post("/api/generate_form")
