@@ -4,7 +4,7 @@ import { Message } from './Message';
 import { ChatInput } from './ChatInput';
 import { LanguageContext } from '../../App';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 /**
  * ChatView — Vista principal del chat conversacional NeuroMedIR.
@@ -81,6 +81,7 @@ export const ChatView = () => {
         bibliography: data.bibliography || null,
         formSchema: data.form_schema || null,
         disclaimer: data.disclaimer || null,
+        usedWebSearch: data.used_web_search || false,
       };
 
       setMessages(prev => [...prev, assistantMsg]);

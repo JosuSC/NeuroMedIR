@@ -1,8 +1,13 @@
 import json
 import logging
 from pathlib import Path
-from indexing.indexer import Indexer
-from indexing.configs import settings as idx_settings
+
+try:
+    from .indexing.indexer import Indexer
+    from .indexing.configs import settings as idx_settings
+except ImportError:
+    from indexing.indexer import Indexer
+    from indexing.configs import settings as idx_settings
 
 """
 run_indexing.py — Script para reconstruir los índices del proyecto.

@@ -21,4 +21,4 @@ COPY . .
 EXPOSE 8000
 
 # Lanzar API
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "NeuroMedIR.api:app", "--host", "0.0.0.0", "--port", "8000"]

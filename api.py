@@ -40,6 +40,7 @@ from .chat.intent_classifier import IntentClassifier, IntentType
 from .chat.diagnosis_engine import DiagnosisEngine
 from .chat.configs import settings as chat_settings
 from .form.form_generator import extract_form_symptoms_prf, generate_dynamic_form_schema
+from .dynamic_expansion import expand_corpus_from_query
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,12 @@ doc_store: Optional[DocumentStore] = None
 rag_pipeline = None
 intent_classifier: Optional[IntentClassifier] = None
 diagnosis_engine: Optional[DiagnosisEngine] = None
+
+# ---------------------------------------------------------------------------
+# Configuracion de expansion web automatica
+# ---------------------------------------------------------------------------
+MIN_RESULTS_FOR_ANSWER = 3
+WEB_EXPANSION_TARGET_DOCS = 5
 
 
 # ---------------------------------------------------------------------------
@@ -135,13 +142,14 @@ def startup_event():
     indexer = Indexer()
     indexer.lexical_index = bm25
     indexer.semantic_index = faiss
-    indexer.encoder = encoder
+    if encoder is not None:
+        indexer.encoder = encoder
     indexer.storage = io
 
     # --- Pipeline RAG (LLM local) ---
     try:
-        from rag.llm_client import TransformersLLMClient
-        from rag.pipeline import RAGPipeline
+        from .rag.llm_client import TransformersLLMClient
+        from .rag.pipeline import RAGPipeline
 
         llm_client = TransformersLLMClient()
         rag_pipeline = RAGPipeline(retriever=retriever, llm_client=llm_client)
@@ -327,6 +335,19 @@ def _handle_question(message: str, is_spanish: bool) -> dict:
     """
     t_start = time.time()
 
+    # Evaluar si la base local es insuficiente y activar expansion web
+    used_web_search = False
+    try:
+        initial_results = retriever.retrieve(message, top_k=5)
+    except Exception as e:
+        logger.error(f"Retrieval inicial fallo: {e}")
+        initial_results = []
+
+    if _should_expand(initial_results):
+        used_web_search = _try_expand_corpus(message)
+        if used_web_search:
+            logger.info("Expansion web activa: reintentando retrieval tras indexacion dinamica.")
+
     # Intentar RAG primero (genera respuesta natural)
     answer_text = None
     sources = []
@@ -367,6 +388,7 @@ def _handle_question(message: str, is_spanish: bool) -> dict:
         "diagnoses": None,
         "bibliography": bibliography,
         "disclaimer": disclaimer,
+        "used_web_search": used_web_search,
     }
 
 
@@ -468,6 +490,11 @@ def process_query(req: QueryRequest):
 
     t_start = time.time()
     results = retriever.retrieve(req.query, top_k=5)
+    used_web_search = False
+    if _should_expand(results):
+        used_web_search = _try_expand_corpus(req.query)
+        if used_web_search:
+            results = retriever.retrieve(req.query, top_k=5)
 
     formatted_results = []
     for res in results:
@@ -483,7 +510,39 @@ def process_query(req: QueryRequest):
     return {
         "results": formatted_results,
         "latency_ms": round((time.time() - t_start) * 1000, 1),
+        "used_web_search": used_web_search,
     }
+
+
+def _should_expand(results: list) -> bool:
+    """Retorna True si la base local es insuficiente para responder."""
+    if results is None:
+        return True
+    return len(results) < MIN_RESULTS_FOR_ANSWER
+
+
+def _try_expand_corpus(query: str) -> bool:
+    """Ejecuta expansion web y reindexa incrementalmente si es posible."""
+    global doc_store, retriever
+
+    if indexer is None or indexer.encoder is None:
+        logger.warning("Expansion web omitida: encoder no disponible.")
+        return False
+
+    new_docs = expand_corpus_from_query(query, max_new_docs=WEB_EXPANSION_TARGET_DOCS)
+    if not new_docs:
+        return False
+
+    try:
+        indexer.add_documents(new_docs)
+        # Recargar store para incluir nuevos docs
+        doc_store = DocumentStore(idx_settings.PROCESSED_DATA_DIR)
+        if retriever is not None:
+            retriever._doc_store = doc_store
+        return True
+    except Exception as e:
+        logger.error(f"Expansion web fallo al reindexar: {e}")
+        return False
 
 
 @app.post("/api/rag_query")

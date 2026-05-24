@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const translations = {
     es: {
         // --- Estado del sistema ---
