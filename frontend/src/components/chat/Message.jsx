@@ -25,6 +25,19 @@ export const Message = ({
     const isAI = role === 'assistant';
     const { t } = useContext(LanguageContext);
 
+    const classifyCategory = (category) => {
+        if (category === 'research_article') return 'research_article';
+        if (category === 'health_topic') return 'health_topic';
+        return 'other';
+    };
+
+    const categoryLabel = (category) => {
+        const normalized = classifyCategory(category);
+        if (normalized === 'research_article') return t('researchArticle');
+        if (normalized === 'health_topic') return t('healthTopic');
+        return t('otherType');
+    };
+
     if (!isAI) {
         return (
             <div className="flex justify-end mb-6 w-full animate-fade-in-up">
@@ -125,30 +138,71 @@ export const Message = ({
                             </span>
                         </div>
 
-                        <div className="glass-card p-4 space-y-3">
-                            {bibliography.map((ref, idx) => (
-                                <div key={idx} className="flex items-start gap-3 group">
-                                    <span className="shrink-0 text-[10px] font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 w-6 h-6 rounded-md flex items-center justify-center">
-                                        {ref.ref_num}
-                                    </span>
-                                    <div className="flex-1 min-w-0">
-                                        <a
-                                            href={ref.url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="text-xs font-semibold text-neurol-500 dark:text-neurol-400 hover:text-neurol-700 dark:hover:text-neurol-300 transition-colors"
-                                        >
-                                            {ref.title}
-                                        </a>
-                                        {ref.snippet && (
-                                            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
-                                                {ref.snippet}
-                                            </p>
-                                        )}
-                                    </div>
+                        {(() => {
+                            const primary = bibliography.filter(ref => classifyCategory(ref.category) === 'research_article');
+                            const background = bibliography.filter(ref => classifyCategory(ref.category) === 'health_topic');
+                            const other = bibliography.filter(ref => classifyCategory(ref.category) === 'other');
+
+                            const sections = [
+                                { key: 'primary', label: t('primarySources'), items: primary },
+                                { key: 'background', label: t('backgroundSources'), items: background },
+                                { key: 'other', label: t('otherSources'), items: other },
+                            ].filter(section => section.items.length > 0);
+
+                            return (
+                                <div className="glass-card p-4 space-y-4">
+                                    {sections.map(section => (
+                                        <div key={section.key}>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-[10px] font-bold tracking-[0.12em] uppercase text-slate-500 dark:text-slate-400">
+                                                    {section.label}
+                                                </span>
+                                                <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+                                                    {section.items.length}
+                                                </span>
+                                            </div>
+
+                                            <div className="grid gap-3 md:grid-cols-2">
+                                                {section.items.map((ref, idx) => (
+                                                    <div key={`${section.key}-${idx}`} className="flex items-start gap-3 group">
+                                                        <span className="shrink-0 text-[10px] font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 w-6 h-6 rounded-md flex items-center justify-center">
+                                                            {ref.ref_num}
+                                                        </span>
+                                                        <div className="flex-1 min-w-0">
+                                                            <a
+                                                                href={ref.url}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                                className="text-xs font-semibold text-neurol-500 dark:text-neurol-400 hover:text-neurol-700 dark:hover:text-neurol-300 transition-colors"
+                                                            >
+                                                                {ref.title}
+                                                            </a>
+
+                                                            <div className="flex flex-wrap gap-2 mt-1">
+                                                                {ref.source && (
+                                                                    <span className="text-[9px] font-semibold uppercase tracking-wider px-2 py-1 rounded-md bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                                                                        {t('sourceLabel')}: {ref.source}
+                                                                    </span>
+                                                                )}
+                                                                <span className="text-[9px] font-semibold uppercase tracking-wider px-2 py-1 rounded-md bg-neurol-50 text-neurol-700 dark:bg-neurol-500/10 dark:text-neurol-200">
+                                                                    {t('typeLabel')}: {categoryLabel(ref.category)}
+                                                                </span>
+                                                            </div>
+
+                                                            {ref.snippet && (
+                                                                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                                                                    {ref.snippet}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
+                            );
+                        })()}
                     </div>
                 )}
 
@@ -292,8 +346,8 @@ const SymptomFormInline = ({ formSchema, onSubmit }) => {
                                         <label
                                             key={option}
                                             className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${formData.duration === option
-                                                    ? 'border-neurol-400 dark:border-neurol-500 bg-neurol-50 dark:bg-neurol-500/10'
-                                                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                                                ? 'border-neurol-400 dark:border-neurol-500 bg-neurol-50 dark:bg-neurol-500/10'
+                                                : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                                                 }`}
                                         >
                                             <input
@@ -326,8 +380,8 @@ const SymptomFormInline = ({ formSchema, onSubmit }) => {
                                             <label
                                                 key={option}
                                                 className={`flex items-center gap-2 p-2.5 rounded-lg border cursor-pointer transition-all text-xs ${isSelected
-                                                        ? 'border-neurol-400 dark:border-neurol-500 bg-neurol-50 dark:bg-neurol-500/10 text-neurol-700 dark:text-neurol-300'
-                                                        : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'
+                                                    ? 'border-neurol-400 dark:border-neurol-500 bg-neurol-50 dark:bg-neurol-500/10 text-neurol-700 dark:text-neurol-300'
+                                                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'
                                                     }`}
                                             >
                                                 <input

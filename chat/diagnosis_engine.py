@@ -270,6 +270,7 @@ class DiagnosisEngine:
                 "title": title,
                 "url": result.get("url", "#"),
                 "source": result.get("source", ""),
+                "category": result.get("category", "other"),
                 "snippet": (result.get("snippet", ""))[:150] + "...",
             })
 

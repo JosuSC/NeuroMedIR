@@ -505,6 +505,8 @@ def process_query(req: QueryRequest):
             "url": res.get("url", "#"),
             "doc_id": res.get("doc_id", ""),
             "fusion_score": res.get("fusion_score"),
+            "source": res.get("source", ""),
+            "category": res.get("category", "other"),
         })
 
     return {

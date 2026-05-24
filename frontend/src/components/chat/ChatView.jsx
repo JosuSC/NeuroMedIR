@@ -73,12 +73,28 @@ export const ChatView = () => {
       if (!res.ok) throw new Error("Error HTTP " + res.status);
       const data = await res.json();
 
+      const legacyResults = Array.isArray(data.results) ? data.results : null;
+      const legacyBibliography = legacyResults
+        ? legacyResults.map((item, idx) => ({
+          ref_num: idx + 1,
+          title: item.title || t('noSnippet'),
+          url: item.url || '#',
+          source: item.source || '',
+          category: item.category || 'other',
+          snippet: item.snippet || '',
+        }))
+        : null;
+
+      const fallbackMessage = legacyResults && legacyResults.length > 0
+        ? `${t('recoveredSources')}. ${legacyResults[0].title || t('noSnippet')}`
+        : t('processingResponse');
+
       const assistantMsg = {
         role: 'assistant',
-        content: data.message || '',
-        type: data.type,
+        content: data.message || fallbackMessage,
+        type: data.type || (legacyResults ? 'question' : null),
         diagnoses: data.diagnoses || null,
-        bibliography: data.bibliography || null,
+        bibliography: data.bibliography || legacyBibliography || null,
         formSchema: data.form_schema || null,
         disclaimer: data.disclaimer || null,
         usedWebSearch: data.used_web_search || false,

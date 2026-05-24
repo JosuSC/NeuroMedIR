@@ -48,6 +48,14 @@ export const translations = {
         noSnippet: 'Sin fragmento disponible',
         expandingSearch: 'Ampliando búsqueda en la web...',
         recoveredSources: 'Fuentes Recuperadas',
+        primarySources: 'Fuentes primarias',
+        backgroundSources: 'Contexto y guias',
+        otherSources: 'Otras fuentes',
+        sourceLabel: 'Fuente',
+        typeLabel: 'Tipo',
+        researchArticle: 'Articulo cientifico',
+        healthTopic: 'Tema de salud',
+        otherType: 'Otro',
 
         // --- Tema ---
         switchToLight: 'Cambiar a modo claro',
@@ -111,6 +119,14 @@ export const translations = {
         noSnippet: 'No snippet available',
         expandingSearch: 'Expanding web search...',
         recoveredSources: 'Recovered Sources',
+        primarySources: 'Primary sources',
+        backgroundSources: 'Background and guides',
+        otherSources: 'Other sources',
+        sourceLabel: 'Source',
+        typeLabel: 'Type',
+        researchArticle: 'Research article',
+        healthTopic: 'Health topic',
+        otherType: 'Other',
 
         // --- Theme ---
         switchToLight: 'Switch to light mode',

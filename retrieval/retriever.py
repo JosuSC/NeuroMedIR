@@ -455,6 +455,7 @@ class Retriever:
                 "title": doc.get("title", "Unknown"),
                 "snippet": snippet,
                 "source": doc.get("source", "Unknown"),
+                "category": doc.get("category", "other"),
                 "url": doc.get("url", ""),
             })
 
