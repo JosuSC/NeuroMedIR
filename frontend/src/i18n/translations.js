@@ -1,23 +1,58 @@
 export const translations = {
     es: {
+        // --- Estado del sistema ---
         systemConnected: 'Sistema Conectado',
         newMedicalSession: 'NUEVA SESIÓN MÉDICA',
-        resultsFromHybrid: 'Resultados calculados por el motor híbrido (FAISS + BM25 + Cross-Encoder).',
+        connectingEngines: 'Conectando motores neuronales...',
+
+        // --- Chat ---
+        enterMedicalQuery: 'Escriba su consulta médica o cuénteme sus síntomas...',
+        processingResponse: 'Analizando su consulta...',
         connectionError: 'Error de conexión',
         ensureDatabase: 'Asegúrese de que el servidor NeuroMedIR esté corriendo.',
+
+        // --- Bienvenida ---
+        welcome: '¡Hola! Soy NeuroMedIR, tu asistente médico inteligente.\n\nPuedes preguntarme sobre cualquier tema de salud o contarme tus síntomas y te ayudaré a entenderlos mejor. Si me cuentas qué sientes, generaré un formulario personalizado para darte un análisis más preciso.',
+
+        // --- Formulario de síntomas ---
+        fillForm: 'Complete el formulario',
+        submitForm: 'Enviar formulario',
+        intensity: 'Intensidad',
+        duration: 'Duración',
+        additionalNotes: 'Notas adicionales',
+        detectedSymptoms: 'Síntomas detectados',
+        dynamicSymptoms: 'Síntomas relacionados',
+        selectDuration: 'Seleccione la duración',
+        placeholderNotes: 'Ej. Soy diabético, tomo Losartán...',
+
+        // --- Diagnóstico ---
+        possibleDiagnoses: 'Posibles condiciones',
+        probability: 'Probabilidad',
+        bibliography: 'Bibliografía',
+        sources: 'Fuentes consultadas',
+        supportedBy: 'Sustentado por',
+
+        // --- Respuestas ---
+        greeting: 'saludo',
+        question: 'pregunta',
+        symptoms: 'síntomas',
+        farewell: 'despedida',
+        diagnosis: 'diagnóstico',
+
+        // --- Controles ---
         uploadNeuroimage: 'Subir Neuroimagen (MRI/CT)',
         visualSearch: 'Búsqueda Visual',
-        processingResponse: 'Procesando respuesta...',
-        enterMedicalQuery: 'Escriba su consulta médica aquí...',
-        connectingEngines: 'Conectando motores neuronales...',
-        expandingSearch: 'Ampliando búsqueda en la web...',
-        recoveredSources: 'Fuentes Recuperadas',
         readMore: 'Leer más',
         noSnippet: 'Sin fragmento disponible',
-        welcome: 'Bienvenido. Soy el Sistema de Recuperación de Información NeuroMedIR.\n\nEstoy listo para recibir su consulta médica. Utilice el campo inferior para realizar una búsqueda.',
+        expandingSearch: 'Ampliando búsqueda en la web...',
+        recoveredSources: 'Fuentes Recuperadas',
+
+        // --- Tema ---
         switchToLight: 'Cambiar a modo claro',
         switchToDark: 'Cambiar a modo oscuro',
         language: 'Idioma',
+
+        // --- Evaluación ---
         assessmentProgress: 'Progreso de Evaluación',
         complete: 'Completar',
         cerebrovascularAssessment: 'Evaluación Cerebrovascular',
@@ -28,24 +63,59 @@ export const translations = {
         continue: 'Continuar a Análisis',
     },
     en: {
+        // --- System status ---
         systemConnected: 'System Connected',
         newMedicalSession: 'NEW MEDICAL SESSION',
-        resultsFromHybrid: 'Results calculated by the hybrid engine (FAISS + BM25 + Cross-Encoder).',
+        connectingEngines: 'Connecting neural engines...',
+
+        // --- Chat ---
+        enterMedicalQuery: 'Write your medical query or tell me your symptoms...',
+        processingResponse: 'Analyzing your query...',
         connectionError: 'Connection error',
         ensureDatabase: 'Make sure the NeuroMedIR server is running.',
+
+        // --- Welcome ---
+        welcome: 'Hello! I\'m NeuroMedIR, your intelligent medical assistant.\n\nYou can ask me about any health topic or tell me your symptoms and I\'ll help you understand them better. If you tell me what you\'re feeling, I\'ll generate a personalized form for a more precise analysis.',
+
+        // --- Symptom form ---
+        fillForm: 'Fill out the form',
+        submitForm: 'Submit form',
+        intensity: 'Intensity',
+        duration: 'Duration',
+        additionalNotes: 'Additional notes',
+        detectedSymptoms: 'Detected symptoms',
+        dynamicSymptoms: 'Related symptoms',
+        selectDuration: 'Select duration',
+        placeholderNotes: 'E.g. I\'m diabetic, taking Losartan...',
+
+        // --- Diagnosis ---
+        possibleDiagnoses: 'Possible conditions',
+        probability: 'Probability',
+        bibliography: 'Bibliography',
+        sources: 'Consulted sources',
+        supportedBy: 'Supported by',
+
+        // --- Response types ---
+        greeting: 'greeting',
+        question: 'question',
+        symptoms: 'symptoms',
+        farewell: 'farewell',
+        diagnosis: 'diagnosis',
+
+        // --- Controls ---
         uploadNeuroimage: 'Upload Neuroimage (MRI/CT)',
         visualSearch: 'Visual Search',
-        processingResponse: 'Processing response...',
-        enterMedicalQuery: 'Write your medical query here...',
-        connectingEngines: 'Connecting neural engines...',
-        expandingSearch: 'Expanding web search...',
-        recoveredSources: 'Recovered Sources',
         readMore: 'Read more',
         noSnippet: 'No snippet available',
-        welcome: 'Welcome. I am the NeuroMedIR Information Retrieval System.\n\nI am ready to receive your medical query. Use the input field below to perform a search.',
+        expandingSearch: 'Expanding web search...',
+        recoveredSources: 'Recovered Sources',
+
+        // --- Theme ---
         switchToLight: 'Switch to light mode',
         switchToDark: 'Switch to dark mode',
         language: 'Language',
+
+        // --- Assessment ---
         assessmentProgress: 'Assessment Progress',
         complete: 'Complete',
         cerebrovascularAssessment: 'Cerebrovascular Assessment',

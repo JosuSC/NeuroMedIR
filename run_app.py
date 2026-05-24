@@ -2,6 +2,7 @@ import sys
 import time
 import subprocess
 import threading
+from pathlib import Path
 import webview
 
 """
@@ -25,13 +26,18 @@ def start_backend_api():
     
     # Intento usar el Python del entorno virtual para no mezclar intérpretes
     import os
-    venv_python = os.path.join(".venv", "Scripts", "python.exe")
+    base_dir = Path(__file__).resolve().parent
+    project_parent = base_dir.parent
+    venv_python = base_dir / ".venv" / "Scripts" / "python.exe"
     if os.path.exists(venv_python):
-        python_exe = venv_python
+        python_exe = str(venv_python)
     else:
         python_exe = sys.executable
         
-    return subprocess.Popen([python_exe, "-m", "uvicorn", "api:app", "--port", "8000"])
+    return subprocess.Popen(
+        [python_exe, "-m", "uvicorn", "NeuroMedIR.api:app", "--port", "8000"],
+        cwd=str(project_parent),
+    )
 
 
 def main():
