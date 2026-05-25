@@ -1,8 +1,8 @@
 import logging
 from typing import List, Dict
 from urllib.parse import quote_plus
-from .crawler.config import CrawlConfig, DomainConfig
-from .crawler.crawler import CorpusCrawler
+from crawler.config import CrawlConfig, DomainConfig
+from crawler.crawler import CorpusCrawler
 
 logger = logging.getLogger(__name__)
 

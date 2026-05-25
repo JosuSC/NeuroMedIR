@@ -44,7 +44,7 @@ from .utils import (
 
 # Antes: from .scraper import DomainScraper  (scraper dentro de crawler — mezcla responsabilidades)
 # Ahora: from scraper import DomainScraper   (scraper es módulo independiente)
-from ..scraper import DomainScraper
+from scraper import DomainScraper
 
 logger = setup_logger(__name__)
 

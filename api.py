@@ -27,20 +27,20 @@ from pydantic import BaseModel
 from typing import Optional, List
 from pathlib import Path
 
-from .retrieval.retriever import Retriever
-from .retrieval.neural_reranker import NeuralReranker
-from .indexing.indexer import Indexer
-from .indexing.lexical_index.bm25_index import BM25Index
-from .indexing.vector_index.faiss_hnsw import FAISSHNSWIndex
-from .indexing.multimodal.text_encoder import TextEncoder
-from .retrieval.document_store import DocumentStore
-from .indexing.storage.index_io import IndexStorage
-from .indexing.configs import settings as idx_settings
-from .chat.intent_classifier import IntentClassifier, IntentType
-from .chat.diagnosis_engine import DiagnosisEngine
-from .chat.configs import settings as chat_settings
-from .form.form_generator import extract_form_symptoms_prf, generate_dynamic_form_schema
-from .dynamic_expansion import expand_corpus_from_query
+from retrieval.retriever import Retriever
+from retrieval.neural_reranker import NeuralReranker
+from indexing.indexer import Indexer
+from indexing.lexical_index.bm25_index import BM25Index
+from indexing.vector_index.faiss_hnsw import FAISSHNSWIndex
+from indexing.multimodal.text_encoder import TextEncoder
+from retrieval.document_store import DocumentStore
+from indexing.storage.index_io import IndexStorage
+from indexing.configs import settings as idx_settings
+from chat.intent_classifier import IntentClassifier, IntentType
+from chat.diagnosis_engine import DiagnosisEngine
+from chat.configs import settings as chat_settings
+from form.form_generator import extract_form_symptoms_prf, generate_dynamic_form_schema
+from dynamic_expansion import expand_corpus_from_query
 
 logger = logging.getLogger(__name__)
 
@@ -148,13 +148,15 @@ def startup_event():
 
     # --- Pipeline RAG (LLM local) ---
     try:
-        from .rag.llm_client import TransformersLLMClient
-        from .rag.pipeline import RAGPipeline
+        from rag.llm_client import GeminiLLMClient
+        from rag.pipeline import RAGPipeline
 
-        llm_client = TransformersLLMClient()
+        llm_client = GeminiLLMClient()
         rag_pipeline = RAGPipeline(retriever=retriever, llm_client=llm_client)
-        print(f"OK: RAG Pipeline configurado (LLM local: {llm_client.model_name})")
-        print("   → El modelo se descargará de HuggingFace en la primera consulta.")
+        if llm_client.is_available:
+            print(f"OK: RAG Pipeline configurado (Gemini: {llm_client.model_name})")
+        else:
+            print("Advertencia: Gemini API key no configurada. RAG quedará deshabilitado hasta definirla.")
     except ImportError as e:
         print(f"RAG: Módulo no disponible: {e}")
         rag_pipeline = None

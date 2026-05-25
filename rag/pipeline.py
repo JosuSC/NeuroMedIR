@@ -4,7 +4,7 @@ pipeline.py — RAG Pipeline for NeuroMedIR.
 Orchestrates the full Retrieval-Augmented Generation flow:
     1. Retrieve:   Hybrid Retriever (BM25+FAISS+CrossEncoder) → candidate docs
     2. Construct:  Build prompt with numbered context + medical system prompt
-    3. Generate:   Local LLM (flan-t5) produces grounded answer
+    3. Generate:   Gemini LLM produces grounded answer
     4. Parse:      Extract citations, verify sources, compute confidence
 
 Algorithmic highlights:
@@ -27,9 +27,9 @@ import time
 import logging
 from typing import List, Dict, Optional, Tuple
 
-from ..retrieval.retriever import Retriever
-from .llm_client import BaseLLMClient
-from .configs import settings as rag_settings
+from retrieval.retriever import Retriever
+from rag.llm_client import BaseLLMClient
+from rag.configs import settings as rag_settings
 
 logger = logging.getLogger(__name__)
 
@@ -190,8 +190,8 @@ class RAGPipeline:
         """
         Constructs the full prompt for the LLM.
 
-        Format (seq2seq): instruction + context + query
-        Flan-T5 uses a single text input (not chat messages).
+        Format: instruction + context + query
+        Gemini is called with a single user prompt payload.
         """
         system = SYSTEM_PROMPT_ES if lang == "es" else SYSTEM_PROMPT_EN
 

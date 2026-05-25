@@ -49,19 +49,19 @@ import time
 import logging
 from typing import List, Dict, Optional
 
-from ..indexing.preprocess.text_cleaner import TextCleaner
-from ..indexing.lexical_index.bm25_index import BM25Index
-from ..indexing.vector_index.faiss_hnsw import FAISSHNSWIndex
-from ..indexing.multimodal.text_encoder import TextEncoder
-from ..indexing.storage.index_io import IndexStorage
-from ..indexing.configs import settings as idx_settings
+from indexing.preprocess.text_cleaner import TextCleaner
+from indexing.lexical_index.bm25_index import BM25Index
+from indexing.vector_index.faiss_hnsw import FAISSHNSWIndex
+from indexing.multimodal.text_encoder import TextEncoder
+from indexing.storage.index_io import IndexStorage
+from indexing.configs import settings as idx_settings
 
-from .query_processor import QueryProcessor
-from .semantic_search import SemanticSearch
-from .document_store import DocumentStore
-from .fusion import fuse_results, normalize_scores, rank_results
-from .neural_reranker import NeuralReranker
-from .configs import settings as ret_settings
+from retrieval.query_processor import QueryProcessor
+from retrieval.semantic_search import SemanticSearch
+from retrieval.document_store import DocumentStore
+from retrieval.fusion import fuse_results, normalize_scores, rank_results
+from retrieval.neural_reranker import NeuralReranker
+from retrieval.configs import settings as ret_settings
 
 logger = logging.getLogger(__name__)
 
