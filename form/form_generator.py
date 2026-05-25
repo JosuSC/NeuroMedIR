@@ -1,10 +1,54 @@
+import re
+import string
+
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-import string
 
 def sanitize_text(text: str) -> str:
     """Elimina signos de puntuación básicos."""
     return text.translate(str.maketrans('', '', string.punctuation))
+
+
+def fix_mojibake(text: str) -> str:
+    """Intenta corregir texto mojibake típico (ej. espaÃ±ol -> español)."""
+    if not text:
+        return ""
+
+    # Heurística: solo intentar recodificar cuando hay patrones sospechosos.
+    if "Ã" in text or "Â" in text:
+        try:
+            repaired = text.encode("latin1").decode("utf-8")
+            return repaired
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            return text
+    return text
+
+
+def normalize_candidate_term(term: str) -> str:
+    """Limpia términos candidatos para evitar basura visual en el formulario."""
+    if not term:
+        return ""
+
+    # Si ya hay caracteres de reemplazo (U+FFFD), ese texto está corrupto.
+    # Lo descartamos para no mostrar opciones rotas como "espa�ol".
+    if "�" in term:
+        return ""
+
+    term = fix_mojibake(term)
+    term = sanitize_text(term)
+    term = re.sub(r"\s+", " ", term).strip().lower()
+
+    # Quitar tokens muy cortos o claramente rotos.
+    if len(term) < 4:
+        return ""
+    if re.fullmatch(r"[a-z]{1,2}", term):
+        return ""
+    if "â" in term or "ã" in term:
+        return ""
+    if "ntomas" in term and not term.startswith("s"):
+        return ""
+
+    return term
 
 def extract_form_symptoms_prf(query: str, retrieved_docs: list[str], top_n: int = 10) -> list[str]:
     """
@@ -46,20 +90,22 @@ def extract_form_symptoms_prf(query: str, retrieved_docs: list[str], top_n: int 
     word_scores = []
     
     for word, score in zip(feature_names, sum_tfidf):
-        word_clean = sanitize_text(word)
+        word_clean = normalize_candidate_term(word)
+
         # Filtros heurísticos: Evitar términos muy cortos (basura)
-        if len(word_clean) < 4:
+        if not word_clean:
             continue
             
         # Si ninguna palabra del síntoma coincide trivialmente con lo que originó la búsqueda:
         if not any(q_term in word_clean for q_term in query_terms):
-            word_scores.append((word, score))
+            word_scores.append((word_clean, score))
             
     # 5. Ordenar decrecientemente por relevancia PRF total
     word_scores.sort(key=lambda x: x[1], reverse=True)
     
     # 6. Retornar los top N limpios
-    return [word for word, score in word_scores[:top_n]]
+    top_terms = [word for word, score in word_scores[:top_n]]
+    return list(dict.fromkeys(top_terms))
 
 def generate_dynamic_form_schema(query: str, extracted_symptoms: list[str]) -> dict:
     """
@@ -93,7 +139,7 @@ def generate_dynamic_form_schema(query: str, extracted_symptoms: list[str]) -> d
     # Si logramos extraer conocimiento dinámico del motor de SRI
     if extracted_symptoms:
         # Capitalizamos la primera letra de cada término para que se vea más natural en la UI
-        formatted_options = [sym.capitalize() for sym in extracted_symptoms]
+        formatted_options = [fix_mojibake(sym).capitalize() for sym in extracted_symptoms]
         schema["fields"].append({
             "id": "dynamic_symptoms",
             "type": "multiselect_checkbox",

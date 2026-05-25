@@ -90,6 +90,13 @@ class DomainScraper:
                     url, headers=headers, timeout=self.timeout
                 )
                 respuesta.raise_for_status()
+
+                # Forzar decodificación coherente para evitar mojibake en páginas ES.
+                if not respuesta.encoding or respuesta.encoding.lower() == "iso-8859-1":
+                    apparent = getattr(respuesta, "apparent_encoding", None)
+                    if apparent:
+                        respuesta.encoding = apparent
+
                 return respuesta
 
             except requests.exceptions.Timeout:

@@ -277,8 +277,12 @@ class IntentClassifier:
             (r'dolor de (\w+(?:\s+(?!y\s|e\s|o\s|u\s)\w+){0,1})', 'dolor de {}'),
             # Español: "me duele el/la X"
             (r'me duele[sn]? (?:el|la|los|las) (\w+(?:\s+(?!y\s|e\s|o\s|u\s)\w+){0,1})', 'dolor de {}'),
+            # Español: "estoy con ..."
+            (r'estoy con (?:mucha\s+|mucho\s+)?(tos|fiebre|cansancio|nauseas|mareo|vertigo|congestion|diarrea|vomito)', '{}'),
             # Español: "tengo X" (solo para síntomas específicos)
             (r'tengo (fiebre|cansancio|nauseas|mareo|vertigo|tos|congestion|diarrea|vomito)', '{}'),
+            # Español: síntomas directos aislados
+            (r'\b(tos|fiebre|cansancio|nauseas|mareo|vertigo|congestion|diarrea|vomito)\b', '{}'),
             # Inglés: "I have X"
             (r'i have (fever|fatigue|nausea|dizziness|cough|congestion|diarrhea|vomiting)', '{}'),
             # Inglés: "my X hurts"
@@ -296,4 +300,20 @@ class IntentClassifier:
                 if symptom_text not in symptoms and len(symptom_text) > 2:
                     symptoms.append(symptom_text)
 
-        return symptoms
+        # Normalizar equivalencias EN->ES para mostrar resultados consistentes.
+        normalized = []
+        synonym_map = {
+            "cough": "tos",
+            "fever": "fiebre",
+            "fatigue": "cansancio",
+            "nausea": "nauseas",
+            "dizziness": "mareo",
+            "congestion": "congestion",
+            "diarrhea": "diarrea",
+            "vomiting": "vomito",
+        }
+        for symptom in symptoms:
+            normalized.append(synonym_map.get(symptom, symptom))
+
+        # Preservar orden y quitar duplicados.
+        return list(dict.fromkeys(normalized))
