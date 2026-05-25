@@ -10,7 +10,6 @@ __pycache__/
 *$py.class
 *.pyc
 
-
 # --- Archivos de logs ---
 *.log
 
@@ -46,5 +45,5 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Node modules (frontend)
-node_modules/
+# --- Node modules (frontend) ---
+frontend/node_modules/
