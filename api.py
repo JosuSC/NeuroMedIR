@@ -78,6 +78,7 @@ WEB_EXPANSION_TARGET_DOCS = 5
 class ChatRequest(BaseModel):
     """Request para el endpoint conversacional unificado."""
     message: str
+    lang: Optional[str] = None
 
 
 class FormSubmitRequest(BaseModel):
@@ -87,6 +88,8 @@ class FormSubmitRequest(BaseModel):
     duration: str = ""
     dynamic_symptoms: List[str] = []
     additional_notes: str = ""
+    extra_fields: List[str] = []
+    lang: Optional[str] = None
 
 
 class QueryRequest(BaseModel):
@@ -148,15 +151,18 @@ def startup_event():
 
     # --- Pipeline RAG (LLM local) ---
     try:
-        from rag.llm_client import GeminiLLMClient
+        from rag.llm_client import GeminiLLMClient, OpenRouterLLMClient, FallbackLLMClient
         from rag.pipeline import RAGPipeline
 
-        llm_client = GeminiLLMClient()
+        llm_client = FallbackLLMClient([
+            GeminiLLMClient(),
+            OpenRouterLLMClient(),
+        ])
         rag_pipeline = RAGPipeline(retriever=retriever, llm_client=llm_client)
         if llm_client.is_available:
-            print(f"OK: RAG Pipeline configurado (Gemini: {llm_client.model_name})")
+            print(f"OK: RAG Pipeline configurado ({llm_client.model_name})")
         else:
-            print("Advertencia: Gemini API key no configurada. RAG quedará deshabilitado hasta definirla.")
+            print("Advertencia: no hay LLM configurado. RAG quedará deshabilitado hasta definirlo.")
     except ImportError as e:
         print(f"RAG: Módulo no disponible: {e}")
         rag_pipeline = None
@@ -217,8 +223,10 @@ def chat_endpoint(req: ChatRequest):
     intent = classification["intent"]
     detected_symptoms = classification.get("detected_symptoms", [])
 
-    # Detectar idioma
-    is_spanish = _detect_spanish(req.message)
+    # Detectar idioma (o respetar selección de UI si viene definida)
+    requested_lang = req.lang if req.lang in {"es", "en"} else None
+    is_spanish = True if requested_lang == "es" else False if requested_lang == "en" else _detect_spanish(req.message)
+    lang_code = "es" if is_spanish else "en"
 
     # ============================================================
     # SALUDO → Respuesta amigable conversacional
@@ -254,13 +262,13 @@ def chat_endpoint(req: ChatRequest):
     # SÍNTOMAS → Generar formulario dinámico
     # ============================================================
     if intent == IntentType.SINTOMAS:
-        return _handle_symptoms(req.message, detected_symptoms, is_spanish)
+        return _handle_symptoms(req.message, detected_symptoms, lang_code)
 
     # ============================================================
     # PREGUNTA → RAG conversacional + bibliografía
     # ============================================================
     if intent == IntentType.PREGUNTA:
-        return _handle_question(req.message, is_spanish)
+        return _handle_question(req.message, lang_code)
 
     # Fallback
     return {
@@ -272,7 +280,7 @@ def chat_endpoint(req: ChatRequest):
     }
 
 
-def _handle_symptoms(message: str, detected_symptoms: list, is_spanish: bool) -> dict:
+def _handle_symptoms(message: str, detected_symptoms: list, lang_code: str) -> dict:
     """
     Maneja mensajes con síntomas: genera formulario dinámico.
     Usa PRF (Pseudo-Relevance Feedback) para extraer términos médicos
@@ -282,6 +290,11 @@ def _handle_symptoms(message: str, detected_symptoms: list, is_spanish: bool) ->
 
     # Recuperar documentos para PRF
     results = retriever.retrieve(message, top_k=10)
+
+    if _should_expand(results):
+        used_web_search = _try_expand_corpus(message)
+        if used_web_search:
+            results = retriever.retrieve(message, top_k=10)
 
     # Extraer términos médicos adicionales de los documentos
     docs_text = []
@@ -300,7 +313,12 @@ def _handle_symptoms(message: str, detected_symptoms: list, is_spanish: bool) ->
             combined_symptoms.append(term)
 
     # Generar esquema del formulario dinámico
-    form_schema = generate_dynamic_form_schema(message, combined_symptoms)
+    form_schema = generate_dynamic_form_schema(
+        message,
+        combined_symptoms,
+        detected_symptoms=detected_symptoms,
+        lang=lang_code,
+    )
 
     # Agregar síntomas detectados del mensaje al esquema
     if detected_symptoms:
@@ -309,7 +327,7 @@ def _handle_symptoms(message: str, detected_symptoms: list, is_spanish: bool) ->
     latency_ms = round((time.time() - t_start) * 1000, 1)
     logger.info(f"Formulario generado en {latency_ms}ms para: '{message[:50]}...'")
 
-    if is_spanish:
+    if lang_code == "es":
         intro_msg = (
             "Entiendo que tienes algunos síntomas. Para poder ayudarte mejor, "
             "por favor completa el siguiente formulario con más detalles sobre tu caso. "
@@ -331,7 +349,7 @@ def _handle_symptoms(message: str, detected_symptoms: list, is_spanish: bool) ->
     }
 
 
-def _handle_question(message: str, is_spanish: bool) -> dict:
+def _handle_question(message: str, lang_code: str) -> dict:
     """
     Maneja preguntas generales: RAG → respuesta conversacional + bibliografía.
     """
@@ -357,7 +375,7 @@ def _handle_question(message: str, is_spanish: bool) -> dict:
 
     if rag_pipeline is not None and rag_pipeline.is_available:
         try:
-            rag_result = rag_pipeline.query(message, top_k=5)
+            rag_result = rag_pipeline.query(message, top_k=5, lang=lang_code)
             answer_text = rag_result.get("answer")
             sources = rag_result.get("sources", [])
             confidence = rag_result.get("confidence", 0.0)
@@ -365,11 +383,36 @@ def _handle_question(message: str, is_spanish: bool) -> dict:
             logger.error(f"RAG falló para pregunta: {e}")
             answer_text = None
 
+    # Si la respuesta indica insuficiencia, intentar expansión web y reintentar
+    if answer_text and _answer_indicates_insufficient(answer_text):
+        if not used_web_search:
+            used_web_search = _try_expand_corpus(message)
+        if used_web_search and rag_pipeline is not None and rag_pipeline.is_available:
+            try:
+                rag_result = rag_pipeline.query(message, top_k=5, lang=lang_code)
+                answer_text = rag_result.get("answer")
+                sources = rag_result.get("sources", [])
+                confidence = rag_result.get("confidence", 0.0)
+            except Exception as e:
+                logger.error(f"RAG falló tras expansión web: {e}")
+
+    # Si hay baja confianza, intentar expansión web una vez
+    if answer_text and confidence < 0.15 and not used_web_search:
+        used_web_search = _try_expand_corpus(message)
+        if used_web_search and rag_pipeline is not None and rag_pipeline.is_available:
+            try:
+                rag_result = rag_pipeline.query(message, top_k=5, lang=lang_code)
+                answer_text = rag_result.get("answer")
+                sources = rag_result.get("sources", [])
+                confidence = rag_result.get("confidence", 0.0)
+            except Exception as e:
+                logger.error(f"RAG falló tras expansión web por baja confianza: {e}")
+
     # Si RAG no está disponible o falló, usar retrieval directo
     if answer_text is None:
         results = retriever.retrieve(message, top_k=5)
         sources = results
-        if is_spanish:
+        if lang_code == "es":
             answer_text = _build_answer_from_results(results, "es")
         else:
             answer_text = _build_answer_from_results(results, "en")
@@ -378,7 +421,7 @@ def _handle_question(message: str, is_spanish: bool) -> dict:
     bibliography = diagnosis_engine._build_bibliography(sources) if sources else []
 
     # Agregar disclaimer
-    disclaimer = chat_settings.DISCLAIMER_ES if is_spanish else chat_settings.DISCLAIMER_EN
+    disclaimer = chat_settings.DISCLAIMER_ES if lang_code == "es" else chat_settings.DISCLAIMER_EN
 
     latency_ms = round((time.time() - t_start) * 1000, 1)
     logger.info(f"Pregunta respondida en {latency_ms}ms (RAG={'sí' if rag_pipeline else 'no'})")
@@ -430,6 +473,8 @@ def submit_form(req: FormSubmitRequest):
         query_parts.append(f"duracion {req.duration}")
     if req.dynamic_symptoms:
         query_parts.append(" ".join(req.dynamic_symptoms))
+    if req.extra_fields:
+        query_parts.append(" ".join(req.extra_fields))
     if req.additional_notes:
         query_parts.append(req.additional_notes)
 
@@ -438,9 +483,16 @@ def submit_form(req: FormSubmitRequest):
 
     # Paso 2: Recuperar documentos
     results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
+    if _should_expand(results):
+        used_web_search = _try_expand_corpus(macro_query)
+        if used_web_search:
+            results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
 
     # Paso 3: Generar diagnósticos
-    diagnosis_result = diagnosis_engine.generate_diagnosis(macro_query, results)
+    requested_lang = req.lang if req.lang in {"es", "en"} else None
+    lang_code = "es" if requested_lang == "es" else "en" if requested_lang == "en" else None
+    lang_final = lang_code or ("es" if _detect_spanish(req.original_query) else "en")
+    diagnosis_result = diagnosis_engine.generate_diagnosis(macro_query, results, lang=lang_final)
     diagnoses = diagnosis_result.get("diagnoses", [])
     bibliography = diagnosis_result.get("bibliography", [])
     summary = diagnosis_result.get("summary", "")
@@ -449,9 +501,15 @@ def submit_form(req: FormSubmitRequest):
     answer_text = None
     if rag_pipeline is not None and rag_pipeline.is_available:
         try:
+            diag_prompt = (
+                f"Diagnóstico diferencial para: {macro_query}"
+                if lang_final == "es"
+                else f"Differential diagnosis for: {macro_query}"
+            )
             rag_result = rag_pipeline.query(
-                f"Diagnóstico diferencial para: {macro_query}",
+                diag_prompt,
                 top_k=chat_settings.DIAGNOSIS_TOP_K,
+                lang=lang_final,
             )
             answer_text = rag_result.get("answer")
         except Exception as e:
@@ -460,9 +518,14 @@ def submit_form(req: FormSubmitRequest):
     # Si RAG no está disponible, usar el summary del DiagnosisEngine
     if answer_text is None:
         answer_text = summary
+    elif summary:
+        if lang_final == "es":
+            answer_text = f"{answer_text}\n\nResumen del análisis:\n{summary}"
+        else:
+            answer_text = f"{answer_text}\n\nAnalysis summary:\n{summary}"
 
     # Detectar idioma
-    is_spanish = _detect_spanish(req.original_query)
+    is_spanish = True if (lang_final == "es") else False if (lang_final == "en") else _detect_spanish(req.original_query)
     disclaimer = chat_settings.DISCLAIMER_ES if is_spanish else chat_settings.DISCLAIMER_EN
 
     latency_ms = round((time.time() - t_start) * 1000, 1)
@@ -522,7 +585,10 @@ def _should_expand(results: list) -> bool:
     """Retorna True si la base local es insuficiente para responder."""
     if results is None:
         return True
-    return len(results) < MIN_RESULTS_FOR_ANSWER
+    if len(results) < MIN_RESULTS_FOR_ANSWER:
+        return True
+    top_score = results[0].get("score", 0.0) if results else 0.0
+    return top_score < 0.15
 
 
 def _try_expand_corpus(query: str) -> bool:
@@ -623,6 +689,25 @@ def _build_answer_from_results(results: list, lang: str) -> str:
         lines.append("\n_You can check the full sources in the bibliography section below._")
 
     return "\n".join(lines)
+
+
+def _answer_indicates_insufficient(answer: str) -> bool:
+    """Detecta si el texto indica falta de información en las fuentes."""
+    if not answer:
+        return False
+
+    text = answer.lower()
+    patterns = [
+        "no está disponible",
+        "no se describen",
+        "no proporcionan suficiente",
+        "no se encuentra en el texto",
+        "sources do not provide",
+        "not available in the provided",
+        "not described",
+        "insufficient information",
+    ]
+    return any(p in text for p in patterns)
 
 
 # ---------------------------------------------------------------------------

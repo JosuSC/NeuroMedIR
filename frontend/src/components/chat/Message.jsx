@@ -246,34 +246,78 @@ export const Message = ({
 
 const SymptomFormInline = ({ formSchema, onSubmit }) => {
     const { t } = useContext(LanguageContext);
-    const [formData, setFormData] = useState({
-        original_query: formSchema.original_query || '',
-        intensity: '5',
-        duration: '',
-        dynamic_symptoms: [],
-        additional_notes: '',
-    });
 
-    const handleIntensityChange = (value) => {
-        setFormData(prev => ({ ...prev, intensity: value }));
+    const initFormData = () => {
+        const data = {
+            original_query: formSchema.original_query || '',
+        };
+        (formSchema.fields || []).forEach((field) => {
+            if (field.type === 'slider') {
+                const min = field.min ?? 1;
+                const max = field.max ?? 10;
+                const mid = Math.round((min + max) / 2);
+                data[field.id] = String(field.default ?? mid);
+            } else if (field.type === 'select') {
+                data[field.id] = field.default ?? '';
+            } else if (field.type === 'multiselect_checkbox') {
+                data[field.id] = [];
+            } else if (field.type === 'textarea') {
+                data[field.id] = '';
+            }
+        });
+        return data;
     };
 
-    const handleDurationChange = (value) => {
-        setFormData(prev => ({ ...prev, duration: value }));
+    const [formData, setFormData] = useState(initFormData);
+
+    const setFieldValue = (fieldId, value) => {
+        setFormData(prev => ({ ...prev, [fieldId]: value }));
     };
 
-    const handleSymptomToggle = (symptom) => {
-        setFormData(prev => ({
-            ...prev,
-            dynamic_symptoms: prev.dynamic_symptoms.includes(symptom)
-                ? prev.dynamic_symptoms.filter(s => s !== symptom)
-                : [...prev.dynamic_symptoms, symptom]
-        }));
+    const handleSymptomToggle = (fieldId, symptom) => {
+        setFormData(prev => {
+            const current = prev[fieldId] || [];
+            return {
+                ...prev,
+                [fieldId]: current.includes(symptom)
+                    ? current.filter(s => s !== symptom)
+                    : [...current, symptom]
+            };
+        });
+    };
+
+    const buildExtraFields = () => {
+        const standardIds = new Set([
+            'original_query',
+            'intensity',
+            'duration',
+            'dynamic_symptoms',
+            'additional_notes',
+        ]);
+        const extras = [];
+
+        (formSchema.fields || []).forEach((field) => {
+            if (standardIds.has(field.id)) {
+                return;
+            }
+            const value = formData[field.id];
+            if (field.type === 'multiselect_checkbox' && Array.isArray(value) && value.length > 0) {
+                extras.push(`${field.label}: ${value.join(', ')}`);
+            } else if (value) {
+                extras.push(`${field.label}: ${value}`);
+            }
+        });
+
+        return extras;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formData);
+        const payload = {
+            ...formData,
+            extra_fields: buildExtraFields(),
+        };
+        onSubmit(payload);
     };
 
     return (
@@ -321,12 +365,12 @@ const SymptomFormInline = ({ formSchema, onSubmit }) => {
                                         type="range"
                                         min={field.min || 1}
                                         max={field.max || 10}
-                                        value={formData.intensity}
-                                        onChange={(e) => handleIntensityChange(e.target.value)}
+                                        value={formData[field.id] ?? ''}
+                                        onChange={(e) => setFieldValue(field.id, e.target.value)}
                                         className="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-neurol-500"
                                     />
                                     <span className="text-lg font-bold text-neurol-500 dark:text-neurol-400 w-8 text-center">
-                                        {formData.intensity}
+                                        {formData[field.id] ?? ''}
                                     </span>
                                 </div>
                                 <div className="flex justify-between text-[10px] text-slate-400 mt-1">
@@ -345,17 +389,17 @@ const SymptomFormInline = ({ formSchema, onSubmit }) => {
                                     {field.options && field.options.map((option) => (
                                         <label
                                             key={option}
-                                            className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${formData.duration === option
+                                            className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${formData[field.id] === option
                                                 ? 'border-neurol-400 dark:border-neurol-500 bg-neurol-50 dark:bg-neurol-500/10'
                                                 : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                                                 }`}
                                         >
                                             <input
                                                 type="radio"
-                                                name="duration"
+                                                name={field.id}
                                                 value={option}
-                                                checked={formData.duration === option}
-                                                onChange={(e) => handleDurationChange(e.target.value)}
+                                                checked={formData[field.id] === option}
+                                                onChange={(e) => setFieldValue(field.id, e.target.value)}
                                                 className="w-4 h-4 text-neurol-500 focus:ring-neurol-500 border-slate-300"
                                             />
                                             <span className="text-sm text-slate-700 dark:text-slate-300">{option}</span>
@@ -375,7 +419,8 @@ const SymptomFormInline = ({ formSchema, onSubmit }) => {
                                 )}
                                 <div className="grid grid-cols-2 gap-2">
                                     {field.options && field.options.map((option) => {
-                                        const isSelected = formData.dynamic_symptoms.includes(option);
+                                        const current = formData[field.id] || [];
+                                        const isSelected = current.includes(option);
                                         return (
                                             <label
                                                 key={option}
@@ -387,7 +432,7 @@ const SymptomFormInline = ({ formSchema, onSubmit }) => {
                                                 <input
                                                     type="checkbox"
                                                     checked={isSelected}
-                                                    onChange={() => handleSymptomToggle(option)}
+                                                    onChange={() => handleSymptomToggle(field.id, option)}
                                                     className="w-3.5 h-3.5 rounded border-slate-300 text-neurol-500 focus:ring-neurol-500"
                                                 />
                                                 <span className="truncate">{option}</span>
@@ -404,8 +449,8 @@ const SymptomFormInline = ({ formSchema, onSubmit }) => {
                                     {field.label}
                                 </label>
                                 <textarea
-                                    value={formData.additional_notes}
-                                    onChange={(e) => setFormData(prev => ({ ...prev, additional_notes: e.target.value }))}
+                                    value={formData[field.id] ?? ''}
+                                    onChange={(e) => setFieldValue(field.id, e.target.value)}
                                     placeholder={field.placeholder || t('placeholderNotes')}
                                     rows={3}
                                     className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-3 bg-white dark:bg-slate-800/50 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-neurol-500/30 focus:border-neurol-400 dark:focus:border-neurol-500 outline-none transition-all resize-none"

@@ -10,6 +10,7 @@ export const translations = {
         // --- Chat ---
         enterMedicalQuery: 'Escriba su consulta médica o cuénteme sus síntomas...',
         processingResponse: 'Analizando su consulta...',
+        searchingWeb: 'Buscando en internet si es necesario...',
         connectionError: 'Error de conexión',
         ensureDatabase: 'Asegúrese de que el servidor NeuroMedIR esté corriendo.',
 
@@ -81,6 +82,7 @@ export const translations = {
         // --- Chat ---
         enterMedicalQuery: 'Write your medical query or tell me your symptoms...',
         processingResponse: 'Analyzing your query...',
+        searchingWeb: 'Searching the web if needed...',
         connectionError: 'Connection error',
         ensureDatabase: 'Make sure the NeuroMedIR server is running.',
 

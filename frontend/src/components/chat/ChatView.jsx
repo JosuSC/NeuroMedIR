@@ -19,7 +19,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
  *   4. Si se genera formulario → usuario rellena → POST /api/chat/submit_form
  */
 export const ChatView = () => {
-  const { t } = useContext(LanguageContext);
+  const { t, lang } = useContext(LanguageContext);
   const messagesEndRef = useRef(null);
 
   const [messages, setMessages] = useState([
@@ -67,7 +67,7 @@ export const ChatView = () => {
       const res = await fetch(`${API_BASE}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ message: text, lang })
       });
 
       if (!res.ok) throw new Error("Error HTTP " + res.status);
@@ -119,23 +119,30 @@ export const ChatView = () => {
   const handleFormSubmit = async (formData) => {
     setIsLoading(true);
 
+    const intensityLabel = lang === 'es' ? 'Intensidad' : 'Intensity';
+    const durationLabel = lang === 'es' ? 'Duracion' : 'Duration';
+    const dynamicLabel = lang === 'es' ? 'Sintomas adicionales' : 'Additional symptoms';
+    const notesLabel = lang === 'es' ? 'Notas' : 'Notes';
+    const formCompletedLabel = lang === 'es' ? 'Formulario completado' : 'Form completed';
+
     const submittedSymptoms = [
-      formData.intensity && `Intensidad: ${formData.intensity}/10`,
-      formData.duration && `Duración: ${formData.duration}`,
-      formData.dynamic_symptoms?.length > 0 && `Síntomas adicionales: ${formData.dynamic_symptoms.join(', ')}`,
-      formData.additional_notes && `Notas: ${formData.additional_notes}`,
+      formData.intensity && `${intensityLabel}: ${formData.intensity}/10`,
+      formData.duration && `${durationLabel}: ${formData.duration}`,
+      formData.dynamic_symptoms?.length > 0 && `${dynamicLabel}: ${formData.dynamic_symptoms.join(', ')}`,
+      Array.isArray(formData.extra_fields) && formData.extra_fields.length > 0 && formData.extra_fields.join(' | '),
+      formData.additional_notes && `${notesLabel}: ${formData.additional_notes}`,
     ].filter(Boolean).join(' | ');
 
     setMessages(prev => [...prev, {
       role: 'user',
-      content: `📋 Formulario completado — ${submittedSymptoms}`,
+      content: `📋 ${formCompletedLabel} — ${submittedSymptoms}`,
     }]);
 
     try {
       const res = await fetch(`${API_BASE}/api/chat/submit_form`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, lang })
       });
 
       if (!res.ok) throw new Error("Error HTTP " + res.status);
@@ -186,16 +193,27 @@ export const ChatView = () => {
         ))}
 
         {isLoading && (
-          <div className="flex gap-4 w-full max-w-4xl animate-fade-in">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neurol-500 to-neurol-700 flex items-center justify-center shrink-0 animate-pulse-soft shadow-lg shadow-neurol-500/20">
-              <span className="material-symbols-outlined text-white text-lg">neurology</span>
+          <div className="flex flex-col gap-3 w-full max-w-4xl animate-fade-in">
+            <div className="glass-card px-4 py-2 shadow-sm flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+                {t('searchingWeb')}
+              </span>
+              <div className="w-32 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div className="h-full w-2/3 bg-gradient-to-r from-neurol-500 to-medical-500 animate-shimmer bg-[length:200%_100%]"></div>
+              </div>
             </div>
-            <div className="flex flex-col gap-3 flex-1 min-w-0">
-              <div className="glass-card p-5 shadow-sm w-full max-w-2xl">
-                <div className="space-y-3">
-                  <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded-full w-3/4 animate-shimmer bg-[length:200%_100%]"></div>
-                  <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded-full w-full animate-shimmer bg-[length:200%_100%]" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded-full w-5/6 animate-shimmer bg-[length:200%_100%]" style={{ animationDelay: '0.4s' }}></div>
+
+            <div className="flex gap-4 w-full max-w-4xl">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neurol-500 to-neurol-700 flex items-center justify-center shrink-0 animate-pulse-soft shadow-lg shadow-neurol-500/20">
+                <span className="material-symbols-outlined text-white text-lg">neurology</span>
+              </div>
+              <div className="flex flex-col gap-3 flex-1 min-w-0">
+                <div className="glass-card p-5 shadow-sm w-full max-w-2xl">
+                  <div className="space-y-3">
+                    <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded-full w-3/4 animate-shimmer bg-[length:200%_100%]"></div>
+                    <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded-full w-full animate-shimmer bg-[length:200%_100%]" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="h-4 bg-slate-200 dark:bg-slate-700/50 rounded-full w-5/6 animate-shimmer bg-[length:200%_100%]" style={{ animationDelay: '0.4s' }}></div>
+                  </div>
                 </div>
               </div>
             </div>

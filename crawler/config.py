@@ -66,6 +66,49 @@ DEFAULT_DOMAINS: List[DomainConfig] = [
         allowed_domains=["nih.gov", "newsinhealth.nih.gov"],
     ),
     DomainConfig(
+        domain="msdmanuals.com",
+        seeds=[
+            "https://www.msdmanuals.com/professional",
+            "https://www.msdmanuals.com/home",
+        ],
+        language_hint="en",
+        source_name="MSD Manuals",
+        category_hint="health_topic",
+        allowed_domains=["msdmanuals.com"],
+    ),
+    DomainConfig(
+        domain="cdc.gov",
+        seeds=[
+            "https://www.cdc.gov/",
+            "https://www.cdc.gov/healthinformation/",
+        ],
+        language_hint="en",
+        source_name="CDC",
+        category_hint="health_guideline",
+        allowed_domains=["cdc.gov"],
+    ),
+    DomainConfig(
+        domain="mayoclinic.org",
+        seeds=[
+            "https://www.mayoclinic.org/diseases-conditions",
+            "https://www.mayoclinic.org/symptom-checker",
+        ],
+        language_hint="en",
+        source_name="Mayo Clinic",
+        category_hint="health_topic",
+        allowed_domains=["mayoclinic.org"],
+    ),
+    DomainConfig(
+        domain="nhs.uk",
+        seeds=[
+            "https://www.nhs.uk/conditions/",
+        ],
+        language_hint="en",
+        source_name="NHS",
+        category_hint="health_topic",
+        allowed_domains=["nhs.uk"],
+    ),
+    DomainConfig(
         domain="medlineplus.gov",
         seeds=["https://medlineplus.gov/spanish/healthtopics.html", "https://medlineplus.gov/spanish/encyclopedia.html"]
         + [f"https://medlineplus.gov/spanish/healthtopics_{ch}.html" for ch in string.ascii_lowercase],
@@ -73,6 +116,16 @@ DEFAULT_DOMAINS: List[DomainConfig] = [
         source_name="MedlinePlus ES",
         category_hint="health_topic",
         allowed_domains=["medlineplus.gov"],
+    ),
+    DomainConfig(
+        domain="msdmanuals.com",
+        seeds=[
+            "https://www.msdmanuals.com/es/hogar",
+        ],
+        language_hint="es",
+        source_name="MSD Manuals ES",
+        category_hint="health_topic",
+        allowed_domains=["msdmanuals.com"],
     ),
     DomainConfig(
         domain="who.int",
@@ -84,6 +137,27 @@ DEFAULT_DOMAINS: List[DomainConfig] = [
         source_name="OMS",
         category_hint="health_guideline",
         allowed_domains=["who.int"],
+    ),
+    DomainConfig(
+        domain="cdc.gov",
+        seeds=[
+            "https://www.cdc.gov/spanish/",
+            "https://www.cdc.gov/spanish/enfermedades/",
+        ],
+        language_hint="es",
+        source_name="CDC ES",
+        category_hint="health_guideline",
+        allowed_domains=["cdc.gov"],
+    ),
+    DomainConfig(
+        domain="paho.org",
+        seeds=[
+            "https://www.paho.org/es/temas",
+        ],
+        language_hint="es",
+        source_name="OPS/PAHO",
+        category_hint="health_guideline",
+        allowed_domains=["paho.org"],
     ),
     DomainConfig(
         domain="scielo.org",

@@ -41,6 +41,7 @@ logger = logging.getLogger(__name__)
 SYSTEM_PROMPT_ES = (
     "Eres un asistente médico bilingüe del sistema NeuroMedIR. "
     "Responde basándote EXCLUSIVAMENTE en las fuentes proporcionadas. "
+    "No saludes ni te presentes; responde directo a la pregunta. "
     "Cita usando [Fuente 1], [Fuente 2], etc. "
     "Si las fuentes no bastan, indícalo. "
     "NO inventes información médica. "
@@ -51,6 +52,7 @@ SYSTEM_PROMPT_ES = (
 SYSTEM_PROMPT_EN = (
     "You are a bilingual medical assistant from the NeuroMedIR system. "
     "Answer based EXCLUSIVELY on the provided sources. "
+    "Do not greet or introduce yourself; answer the question directly. "
     "Cite using [Source 1], [Source 2], etc. "
     "If sources are insufficient, state it clearly. "
     "DO NOT invent medical information. "
@@ -198,6 +200,7 @@ class RAGPipeline:
         if lang == "es":
             prompt = (
                 f"{system}\n\n"
+                "Idioma de respuesta: Español.\n\n"
                 f"Fuentes médicas recuperadas:\n{context}\n\n"
                 f"Consulta del paciente: {query}\n\n"
                 f"Responde basándote en las fuentes. "
@@ -206,6 +209,7 @@ class RAGPipeline:
         else:
             prompt = (
                 f"{system}\n\n"
+                "Response language: English.\n\n"
                 f"Retrieved medical sources:\n{context}\n\n"
                 f"Patient query: {query}\n\n"
                 f"Answer based on the sources. "
@@ -213,6 +217,67 @@ class RAGPipeline:
             )
 
         return prompt
+
+    # -------------------------------------------------------------------
+    # Completion Guard
+    # -------------------------------------------------------------------
+
+    def _needs_continuation(self, answer: str) -> bool:
+        if not answer:
+            return False
+
+        text = answer.strip()
+        min_chars = rag_settings.RAG_MIN_NEW_TOKENS * rag_settings.RAG_CHARS_PER_TOKEN
+        if len(text) < min_chars:
+            return True
+
+        if text.endswith(("...", "…")):
+            return True
+
+        terminal_chars = (".", "!", "?", "]", ")", "\"", "”", "’")
+        return text[-1] not in terminal_chars
+
+    def _continue_answer(self, answer: str, lang: str) -> Optional[str]:
+        if lang == "es":
+            prompt = (
+                "Continua la respuesta a partir del texto dado. "
+                "Termina la ultima frase si esta incompleta. "
+                "No repitas contenido previo.\n\n"
+                f"Respuesta actual:\n{answer}\n\nContinuacion:"
+            )
+        else:
+            prompt = (
+                "Continue the answer from the given text. "
+                "Finish the last sentence if it is incomplete. "
+                "Do not repeat previous content.\n\n"
+                f"Current answer:\n{answer}\n\nContinuation:"
+            )
+
+        return self._llm.generate(
+            prompt,
+            max_new_tokens=rag_settings.RAG_CONTINUATION_MAX_TOKENS,
+        )
+
+    def _ensure_complete_answer(self, answer: str, lang: str) -> str:
+        if not self._needs_continuation(answer):
+            return answer
+
+        merged = answer
+        for _ in range(rag_settings.RAG_CONTINUATION_MAX_ATTEMPTS):
+            if not self._needs_continuation(merged):
+                break
+
+            continuation = self._continue_answer(merged, lang)
+            if not continuation:
+                break
+
+            merged = f"{merged.rstrip()} {continuation.lstrip()}"
+
+            # Stop if the model repeats without adding meaningful content.
+            if len(merged) <= len(answer) + 5:
+                break
+
+        return merged
 
     # -------------------------------------------------------------------
     # Citation Parsing and Confidence Scoring
@@ -269,6 +334,7 @@ class RAGPipeline:
         self,
         query: str,
         top_k: Optional[int] = None,
+        lang: Optional[str] = None,
     ) -> Dict:
         """
         Full RAG pipeline: retrieve → construct → generate → parse.
@@ -319,7 +385,7 @@ class RAGPipeline:
         # =============================================================
         # STAGE 2: CONSTRUCT PROMPT
         # =============================================================
-        lang = self._detect_language(query)
+        lang = lang if lang in {"es", "en"} else self._detect_language(query)
         max_context_chars = (
             rag_settings.RAG_MAX_CONTEXT_TOKENS * rag_settings.RAG_CHARS_PER_TOKEN
         )
@@ -335,6 +401,9 @@ class RAGPipeline:
         # STAGE 3: GENERATE
         # =============================================================
         answer = self._llm.generate(prompt)
+
+        if answer:
+            answer = self._ensure_complete_answer(answer, lang)
 
         if answer is None:
             # LLM failed — return retrieval-only fallback

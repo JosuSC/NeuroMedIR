@@ -88,6 +88,7 @@ class DiagnosisEngine:
         self,
         query: str,
         retrieval_results: List[Dict],
+        lang: Optional[str] = None,
     ) -> Dict:
         """
         Genera diagnósticos diferenciales con probabilidades.
@@ -154,7 +155,7 @@ class DiagnosisEngine:
         bibliography = self._build_bibliography(retrieval_results)
 
         # Paso 4: Generar resumen
-        summary = self._generate_summary(query, diagnoses)
+        summary = self._generate_summary(query, diagnoses, lang=lang)
 
         logger.info(
             f"Diagnóstico generado: {len(diagnoses)} condiciones, "
@@ -276,7 +277,7 @@ class DiagnosisEngine:
 
         return bibliography
 
-    def _generate_summary(self, query: str, diagnoses: List[Dict]) -> str:
+    def _generate_summary(self, query: str, diagnoses: List[Dict], lang: Optional[str] = None) -> str:
         """Genera un resumen textual del análisis diagnóstico."""
         if not diagnoses:
             return (
@@ -285,11 +286,14 @@ class DiagnosisEngine:
                 "Le recomendamos consultar con un profesional de la salud."
             )
 
-        is_spanish = any(
-            w in query.lower()
-            for w in ["tengo", "siento", "me duele", "dolor", "fiebre",
-                       "cansancio", "mareo", "nauseas"]
-        )
+        if lang in {"es", "en"}:
+            is_spanish = lang == "es"
+        else:
+            is_spanish = any(
+                w in query.lower()
+                for w in ["tengo", "siento", "me duele", "dolor", "fiebre",
+                           "cansancio", "mareo", "nauseas"]
+            )
 
         if is_spanish:
             lines = ["Basándome en los síntomas que describe, aquí están las posibles condiciones médicas:\n"]
@@ -298,7 +302,6 @@ class DiagnosisEngine:
                 if d.get("supporting_docs"):
                     doc_titles = [f"«{doc['title']}»" for doc in d["supporting_docs"][:2]]
                     lines.append(f"   _Sustentado por: {', '.join(doc_titles)}_")
-            lines.append(f"\n{chat_settings.DISCLAIMER_ES}")
         else:
             lines = ["Based on your described symptoms, here are the possible medical conditions:\n"]
             for i, d in enumerate(diagnoses, 1):
@@ -306,7 +309,6 @@ class DiagnosisEngine:
                 if d.get("supporting_docs"):
                     doc_titles = [f'"{doc['title']}"' for doc in d["supporting_docs"][:2]]
                     lines.append(f"   _Supported by: {', '.join(doc_titles)}_")
-            lines.append(f"\n{chat_settings.DISCLAIMER_EN}")
 
         return "\n".join(lines)
 

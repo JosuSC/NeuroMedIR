@@ -1,4 +1,11 @@
 {
-  "url": "https://pubmed.ncbi.nlm.nih.gov/account/settings",
-  "reason": "fetch_failed"
+  "id": 2244,
+  "title": "Resultados de la búsqueda - Manual MSD versión para público general",
+  "content": "honeypot link Professional",
+  "source": "MSD Manuals (Dinámico)",
+  "url": "https://www.msdmanuals.com/es/hogar/searchresults?query=no+tengo+ningun+sintoma%2C+lo+que+deseo+es+sabes+cuales+son+los+sintomas+de+la+fiebre+amarilla%2C+la+enfermedad+",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-25T19:58:08.673679+00:00",
+  "reason": "content_too_short"
 }

@@ -47,10 +47,41 @@ DOMAIN_SELECTORS = {
         "div.article-content",
         "body",
     ],
+    "cdc.gov": [
+        "main",
+        "article",
+        "#main-content",
+        "body",
+    ],
+    "mayoclinic.org": [
+        "main",
+        "article",
+        "div.content",
+        "body",
+    ],
+    "nhs.uk": [
+        "main",
+        "article",
+        "#main-content",
+        "body",
+    ],
+    "msdmanuals.com": [
+        "main",
+        "article",
+        "div#main-content",
+        "div.article-content",
+        "body",
+    ],
     "scielo.org": [
         "main",
         "article",
         "#articleText",
+        "body",
+    ],
+    "paho.org": [
+        "main",
+        "article",
+        "div.main-content",
         "body",
     ],
 }
