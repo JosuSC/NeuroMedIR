@@ -47,3 +47,7 @@ Thumbs.db
 
 # --- Node modules (frontend) ---
 frontend/node_modules/
+
+# Proyecto: ignorar fichero de entorno local con claves
+NeuroMedIR/.env
+NeuroMedIR/.env.example
