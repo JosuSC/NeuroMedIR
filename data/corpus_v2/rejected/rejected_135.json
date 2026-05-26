@@ -1,11 +1,11 @@
 {
-  "id": 683,
-  "title": "Medical Encyclopedia: Q: MedlinePlus",
-  "content": "Medical Encyclopedia: Q Q fever Quadruple screen test Quantitative Bence-Jones protein test Quantitative immunoglobulins Quantitative nephelometry test Questions to ask your child's doctor about cancer Questions to ask your doctor about getting pregnant Questions to ask your doctor about going home with your baby Questions to ask your doctor about hospital care after delivery Questions to ask your doctor about staying healthy during pregnancy Questions to ask your doctor after knee replacement Questions to ask your doctor before knee replacement Questions to ask your health care provider about labor and delivery Questions to ask your health care provider about post pregnancy care Questions to ask your surgeon about spinal surgery",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/ency/encyclopedia_Q.htm",
+  "id": 169,
+  "title": "Health Topics | MSD Manual Professional Edition",
+  "content": "Medical Topics Comprehensive medical information for health care professionals—browse the topics below. Search Index A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Sections Allergy and Immunology Cardiology Clinical Pharmacology Critical Care Medicine Dentistry Dermatology Endocrinology Gastroenterology Geriatrics Gynecology and Obstetrics Hematology Hepatology Infectious Disease Injuries; Poisoning Nephrology Neurology Nutrition Oncology Ophthalmology Otolaryngology Pediatrics Psychiatry Pulmonology Rheumatology and Orthopedics Special Subjects Urology",
+  "source": "MSD Manuals",
+  "url": "https://www.msdmanuals.com/professional/health-topics",
   "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-24T06:32:43.784298+00:00",
-  "reason": "duplicate_url"
+  "fetched_at": "2026-05-26T18:02:05.843423+00:00",
+  "reason": "content_too_short"
 }

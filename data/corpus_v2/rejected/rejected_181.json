@@ -1,4 +1,11 @@
 {
-  "url": "https://go.nih.gov/cQJNxMA",
-  "reason": "fetch_failed"
+  "id": 497,
+  "title": "Mouth cancer - NHS",
+  "content": "Mouth cancer Find out about mouth cancer, including the symptoms, causes, tests, treatments, and where to get support. What is mouth cancer? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/mouth-cancer",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-26T18:43:18.963389+00:00",
+  "reason": "content_too_short"
 }

@@ -1,11 +1,11 @@
 {
-  "id": 692,
-  "title": "Library Resources | National Institutes of Health (NIH)",
-  "content": "Medical Research Initiatives Science Highlights Science Education Research in NIH Labs & Clinics Training Opportunities Library Resources Research Resources Clinical Research Resources Safety, Regulation & Guidance Lasker Clinical Research Scholars Library Resources Library Resources National Library of Medicine (NLM) PubMed PubMed for NIH Staff National Library of Medicine LOCATORplus Catalog NIH Library Serving the needs of NIH staff Online Catalog Online Journals Order a Document Web of Science National Institute of Environmental Health Sciences (NIEHS) Library This page last reviewed on January 8, 2025",
-  "source": "NIH",
-  "url": "https://www.nih.gov/research-training/library-resources",
-  "category": "health_guideline",
-  "language": "en",
-  "fetched_at": "2026-04-24T06:36:58.743101+00:00",
-  "reason": "duplicate_url"
+  "id": 892,
+  "title": "Temas de salud: X,Y,Z: MedlinePlus en español",
+  "content": "Temas de salud: XYZ X Expand Section X Frágil ver Síndrome X frágil X Metabólico, Síndrome ver Síndrome metabólico Xerostomía ver Boca seca Y Expand Section Yaba ver Metanfetamina Yersinia ver Enfermedades transmitidas por alimentos Z Expand Section Zancudos, Picaduras de ver Picadura de mosquitos Zapatos ver Salud del pie Zika, Virus ver Virus del Zika Zollinger-Ellison, Síndrome ver Enfermedades del páncreas Zollinger-Ellison, Síndrome de ver Cáncer de páncreas Zumaque ver Hiedra, roble y zumaque venenosos",
+  "source": "MedlinePlus ES",
+  "url": "https://medlineplus.gov/spanish/healthtopics_xyz.html",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-26T19:16:11.730051+00:00",
+  "reason": "content_too_short"
 }

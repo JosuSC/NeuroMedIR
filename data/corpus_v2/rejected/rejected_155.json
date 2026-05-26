@@ -1,11 +1,11 @@
 {
-  "id": 687,
-  "title": "Checking your browser - reCAPTCHA",
-  "content": "",
-  "source": "PubMed",
-  "url": "https://pubmed.ncbi.nlm.nih.gov/40920485",
-  "category": "research_article",
+  "id": 231,
+  "title": "Public Health Media Library",
+  "content": "× Contact Us For-non technical or general public health questions, contact CDC-INFO by phone: 800-CDC-INFO (800-232-4636) or by email. Send us a message . Page last reviewed: {{main.CURRENT_DATE}} Page last updated: {{main.CURRENT_DATE}} Content source: Centers for Disease Control and Prevention , Office of the Associate Director for Communications, Division of Public Affairs",
+  "source": "CDC",
+  "url": "https://www.cdc.gov/rss",
+  "category": "health_guideline",
   "language": "en",
-  "fetched_at": "2026-04-24T06:33:44.454435+00:00",
-  "reason": "missing_or_empty_content"
+  "fetched_at": "2026-05-26T18:10:26.802561+00:00",
+  "reason": "content_too_short"
 }

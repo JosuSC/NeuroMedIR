@@ -1,11 +1,11 @@
 {
-  "id": 689,
-  "title": "Checking your browser - reCAPTCHA",
-  "content": "",
-  "source": "PubMed",
-  "url": "https://pubmed.ncbi.nlm.nih.gov/35417745",
-  "category": "research_article",
+  "id": 279,
+  "title": "Stroke - NHS",
+  "content": "Stroke A stroke is when blood stops flowing to a part of your brain. It can affect things like speech and movement, and take a long time to recover. A stroke needs urgent medical help in hospital because it can be life-threatening. Symptoms Diagnosis Treatment Recovery Causes Support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/stroke",
+  "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-24T06:34:13.448939+00:00",
-  "reason": "missing_or_empty_content"
+  "fetched_at": "2026-05-26T18:13:56.729860+00:00",
+  "reason": "content_too_short"
 }

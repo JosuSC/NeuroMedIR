@@ -1,11 +1,11 @@
 {
-  "id": 692,
-  "title": "Nondiscrimination Notice | National Institutes of Health (NIH)",
-  "content": "Nondiscrimination Notice Nondiscrimination Notice The National Institutes of Health (NIH) complies with applicable Federal civil rights laws and does not discriminate on the basis of race, color, national origin, age, disability, or sex. HHS does not exclude people or treat them differently because of race, color, national origin, age, disability, or sex. NIH: Provides free aids and services to people with disabilities to communicate effectively with us, such as: Qualified sign language interpreters Written information in other formats (large print, audio, accessible electronic formats, other formats) Provides free language services to people whose primary language is not English, such as: Qualified interpreters Information written in other languages If you need these services, contact the U.S. Department of Health and Human Services (HHS) at 1-877-696-6775. If you believe that NIH has failed to provide these services or discriminated in another way on the basis of race, color, national origin, age, disability, or sex, you can file a grievance with the U.S. Department of Health and Human Services, Office for Civil Rights, electronically through the Office for Civil Rights Complaint Portal , or by mail or phone at: U.S. Department of Health and Human Services 200 Independence Avenue, SW Room 509F, HHH Building Washington, D.C. 20201 1-800-368-1019, 800-537-7697 (TDD) This page last reviewed on March 24, 2025",
-  "source": "NIH",
-  "url": "https://www.nih.gov/nondiscrimination-notice",
-  "category": "health_guideline",
+  "id": 738,
+  "title": "NHS App - NHS",
+  "content": "NHS App Use the NHS App to manage your healthcare using a phone, tablet or computer. Setting up the NHS App How to download and register Help with using the NHS App Learn to use the app and get technical support About the NHS App Find out more about recent changes, privacy, accessibility and more Log in through the NHS website You can log in to use all services through the NHS website. You do not need to download anything. Log in to use NHS App services Get the app To use the NHS App, you must be aged 13 or over and registered with a GP surgery in England.",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/nhs-app",
+  "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-24T06:36:00.931582+00:00",
-  "reason": "duplicate_url"
+  "fetched_at": "2026-05-26T19:05:23.752713+00:00",
+  "reason": "content_too_short"
 }

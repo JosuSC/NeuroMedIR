@@ -1,11 +1,11 @@
 {
-  "id": 1314,
-  "title": "Establishing a secure connection ...",
-  "content": "Hold tight We are establishing a secure connection. This website is using a security service to protect itself from online attacks. We are checking your browser to establish a secure connection and keep you safe. ... Request ID: f49ce4dd8eb3fa3b8f41209fe31966a5",
-  "source": "SciELO",
-  "url": "http://www.scielo.br/",
-  "category": "research_article",
-  "language": "es",
-  "fetched_at": "2026-04-24T07:26:29.484801+00:00",
+  "id": 2037,
+  "title": "MedlinePlus: Using MedlinePlus",
+  "content": "Using MedlinePlus Find out more about policies and guidelines for MedlinePlus, and get guidance and tips for using this resource. Linking to and Using Content from MedlinePlus Guidelines for Links Search Tips Citing MedlinePlus Information for Trainers and Librarians Video Player Keyboard Shortcuts Related Information What's New About MedlinePlus Information for Developers MedlinePlus Connect",
+  "source": "MedlinePlus",
+  "url": "https://medlineplus.gov/about/using",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-26T20:57:09.010129+00:00",
   "reason": "content_too_short"
 }

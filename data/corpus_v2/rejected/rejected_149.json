@@ -1,4 +1,11 @@
 {
-  "url": "https://pubmed.ncbi.nlm.nih.gov/account/signout",
-  "reason": "fetch_failed"
+  "id": 181,
+  "title": "Partnerships | MSD Manual Consumer Version",
+  "content": "honeypot link Partnerships Content last modified Apr 2026",
+  "source": "MSD Manuals",
+  "url": "https://www.msdmanuals.com/home/content/partnerships",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-26T18:06:58.696393+00:00",
+  "reason": "content_too_short"
 }

@@ -1,11 +1,5 @@
 {
-  "id": 693,
-  "title": "MedlinePlus en espaÃ±ol: GenÃ©tica",
-  "content": "GenÃ©tica Una introducciÃ³n a temas fundamentales sobre la genÃ©tica humana, incluyendo ilustraciones y explicaciones bÃ¡sicas de conceptos de genÃ©tica. CÃ©lulas y ADN Variantes y la salud CÃ³mo funcionan los genes Herencia de condiciones genÃ©ticas GenÃ©tica y rasgos humanos Consulta genÃ©tica Pruebas genÃ©ticas Pruebas genÃ©ticas directas para el consumidor Terapia genÃ©tica y otros avances mÃ©dicos InvestigaciÃ³n genÃ³mica Medicina de precisiÃ³n Vuelva a visitarnos mientras seguimos agregando informaciÃ³n sobre temas de genÃ©tica.",
-  "source": "MedlinePlus ES",
-  "url": "https://medlineplus.gov/spanish/genetica",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-04-24T06:41:37.509856+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/lungtransplantation.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

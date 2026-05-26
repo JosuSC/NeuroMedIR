@@ -1,11 +1,5 @@
 {
-  "id": 693,
-  "title": "Cerebro y nervios: MedlinePlus en espaÃ±ol",
-  "content": "Cerebro y nervios Vea todos los temas Cerebro y nervios Seleccione una opciÃ³n: Cerebro MÃ©dula espinal Nervios El cerebro Accidente cerebrovascular Accidente cerebrovascular hemorrÃ¡gico Accidente cerebrovascular isquÃ©mico Afasia Aneurisma cerebral Ataque isquÃ©mico transitorio Coma ConmociÃ³n cerebral Convulsiones Delirio Demencia Demencia con cuerpos de Lewy Desmayo Deterioro cognitivo leve Dolor de cabeza Encefalitis Enfermedad de Alzheimer Enfermedad de Creutzfeldt-Jakob Enfermedad de Huntington Enfermedad de Parkinson Enfermedades del cerebelo Enfermedades del cerebro Enfermedades neurolÃ³gicas Epilepsia Esclerosis lateral amiotrÃ³fica Hidrocefalia LesiÃ³n cerebral traumÃ¡tica Malformaciones arteriovenosas Malformaciones de Chiari Malformaciones del cerebro Memoria MigraÃ±a Neuroblastoma ParÃ¡lisis cerebral ParÃ¡lisis supranuclear progresiva Problemas del habla y de la comunicaciÃ³n Problemas del habla y del lenguaje en niÃ±os SÃ­ndrome de Tourette Trastornos cerebrales genÃ©ticos Tumores cerebrales Tumores cerebrales en niÃ±os La mÃ©dula espinal Atrofia muscular espinal Defectos del tubo neural Enfermedades de la mÃ©dula espinal Esclerosis mÃºltiple Espina bÃ­fida Malformaciones arteriovenosas Meningitis Siringomielia Traumatismo de la mÃ©dula espinal Los nervios CiÃ¡tica Dolor Enfermedades del sistema nervioso perifÃ©rico Enfermedades neurodegenerativas Enfermedades neuromusculares Lesiones del plexo braquial Neuralgia del trigÃ©mino Neurofibromatosis ParÃ¡lisis de Bell Problemas neurolÃ³gicos asociados con la diabetes SÃ­ndrome de dolor regional complejo SÃ­ndrome del tÃºnel carpiano Trastornos del sistema nervioso autÃ³nomo",
-  "source": "MedlinePlus ES",
-  "url": "https://medlineplus.gov/spanish/brainandnerves.html",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-04-24T06:40:14.292471+00:00",
-  "reason": "duplicate_url"
+  "url": "https://medlineplus.gov/spanish/polioandpostpoliosyndrome.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

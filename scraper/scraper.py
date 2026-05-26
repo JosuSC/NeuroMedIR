@@ -16,7 +16,7 @@ Complejidad algorítmica:
 """
 
 import time
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from urllib.parse import urljoin
 
 import requests
@@ -136,7 +136,7 @@ class DomainScraper:
 
         return None
 
-    def extract_links(self, html: str, base_url: str) -> List[str]:
+    def extract_links(self, html: Union[str, bytes], base_url: str) -> List[str]:
         """Extrae enlaces absolutos y únicos desde el HTML.
 
         Resuelve URLs relativas contra la base_url, elimina fragmentos (#)
@@ -166,7 +166,7 @@ class DomainScraper:
         return list(enlaces)
 
     def parse_content(
-        self, html: str, source_domain: str = ""
+        self, html: Union[str, bytes], source_domain: str = ""
     ) -> Dict[str, str]:
         """Extrae título y cuerpo principal desde una página HTML.
 

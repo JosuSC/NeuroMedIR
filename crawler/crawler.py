@@ -350,13 +350,18 @@ class CorpusCrawler:
                 )
                 continue
 
-            html = respuesta.text
+            html_bytes = respuesta.content
             if self.config.save_raw_html:
-                self.storage.save_raw(self.next_doc_id, {"url": url, "html": html})
+                decode_enc = respuesta.encoding or getattr(respuesta, "apparent_encoding", None) or "utf-8"
+                try:
+                    decoded = html_bytes.decode(decode_enc, errors="replace")
+                except Exception:
+                    decoded = html_bytes.decode("utf-8", errors="replace")
+                self.storage.save_raw(self.next_doc_id, {"url": url, "html": decoded})
 
-            # Parse y validación
+            # Parse y validación (pasamos bytes para que BeautifulSoup detecte encoding)
             dominio_fuente = domain_from_url(url)
-            parsed = self.scraper.parse_content(html, source_domain=dominio_fuente)
+            parsed = self.scraper.parse_content(html_bytes, source_domain=dominio_fuente)
             documento = self._to_document(item, parsed, url)
             calidad = self.quality.validate(documento)
 
@@ -387,7 +392,7 @@ class CorpusCrawler:
 
             # Extraer y encolar enlaces si no se alcanzó la profundidad máxima
             if item.depth < self.config.max_depth:
-                enlaces = self.scraper.extract_links(html, base_url=url)
+                enlaces = self.scraper.extract_links(html_bytes, base_url=url)
                 for enlace in enlaces:
                     enlace_normalizado = normalize_url(enlace)
                     if enlace_normalizado in self.visited:

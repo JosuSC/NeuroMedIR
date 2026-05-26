@@ -1,11 +1,11 @@
 {
-  "id": 2244,
-  "title": "MedlinePlus - Información de Salud de la Biblioteca Nacional de Medicina",
-  "content": "Bienvenido a MedlinePlus en español MedlinePlus es un servicio informativo en línea de salud para pacientes, familiares y amigos. Es producida por la Biblioteca Nacional de Medicina de Estados Unidos (NLM, por sus siglas en inglés), la biblioteca médica más grande del mundo y parte de los Institutos Nacionales de la Salud de EE. UU. (NIH). Conozca más sobre MedlinePlus TEMA PRINCIPAL Dormir bien El sueño es un proceso natural que le ayuda a su cuerpo a reponer energía, facilitar el aprendizaje, la memoria y mantenerse saludable. Usted puede tomar medidas para mejorar sus hábitos de sueño. Más información Temas de salud Infórmese sobre temas de salud, bienestar, enfermedades y trastornos Medicinas y suplementos Conozca sobre medicamentos de receta, venta libre y suplementos Genética Una introducción a temas fundamentales sobre la genética humana Pruebas médicas Conozca por qué se realizan ciertas pruebas y qué significan los resultados Enciclopedia médica Artículos e imágenes sobre enfermedades, síntomas, exámenes, tratamientos Recetas saludables Estas ricas y rápidas recetas son parte de un estilo de vida saludable Documentos de lectura fácil Información de salud para participantes del Programa de Investigación All of Us Revista MedlinePlus de NIH",
-  "source": "MedlinePlus (Dinámico)",
-  "url": "https://medlineplus.gov/spanish",
+  "id": 50,
+  "title": "MedlinePlus: Viewers & Players",
+  "content": "Viewers & Players You may need to download the following viewers and players to your computer in order to access NLM content in various formats. Note that not all viewer and players will work on all mobile devices. Viewer or Player How It Works Example Formats Apple QuickTime Media Player Play video and audio files on Apple operating systems. mov Apple iTunes Download NLM podcasts and applications. mp3 mp4 mov Adobe Reader Read and print Portable Document Format (PDF) from your Web browser. pdf Windows Media Player Play video and audio files on PC operating systems. mp3 wav wmz",
+  "source": "MedlinePlus",
+  "url": "https://medlineplus.gov/plugins.html",
   "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-05-25T19:58:48.749381+00:00",
-  "reason": "duplicate_url"
+  "fetched_at": "2026-05-26T17:26:40.980041+00:00",
+  "reason": "content_too_short"
 }

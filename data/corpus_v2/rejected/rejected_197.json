@@ -1,11 +1,11 @@
 {
-  "id": 692,
-  "title": "mental health - NIH Health Information Search Results",
-  "content": "",
-  "source": "NIH",
-  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=mental health&commit=",
-  "category": "health_guideline",
+  "id": 708,
+  "title": "Psychosis - NHS",
+  "content": "Psychosis Read about psychosis, a mental health problem that causes people to perceive or interpret things differently from those around them. Overview - Psychosis Symptoms - Psychosis Causes - Psychosis Diagnosis - Psychosis Treatment - Psychosis",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/mental-health/conditions/psychosis",
+  "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-24T06:35:56.757507+00:00",
-  "reason": "missing_or_empty_content"
+  "fetched_at": "2026-05-26T19:03:27.365802+00:00",
+  "reason": "content_too_short"
 }

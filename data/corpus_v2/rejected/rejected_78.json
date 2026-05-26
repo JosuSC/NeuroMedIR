@@ -1,11 +1,11 @@
 {
-  "id": 683,
-  "title": "Ear, Nose and Throat: MedlinePlus",
-  "content": "Ear, Nose and Throat See all Ear, Nose and Throat topics Select One: Ear Nose Throat The Ear Acoustic Neuroma Balance Problems Dizziness and Vertigo Ear Disorders Ear Infections Hearing Disorders and Deafness Hearing Problems in Children Meniere's Disease Noise Tinnitus The Nose Allergy Common Cold Hay Fever Nasal Cancer Nose Injuries and Disorders Sinusitis Taste and Smell Disorders The Throat Allergy Common Cold Cough Diphtheria Head and Neck Cancer Sore Throat Streptococcal Infections Throat Cancer Throat Disorders",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/earnoseandthroat.html",
-  "category": "health_topic",
+  "id": 103,
+  "title": "Checking your browser - reCAPTCHA",
+  "content": "",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/34949404",
+  "category": "research_article",
   "language": "en",
-  "fetched_at": "2026-04-24T06:30:25.489129+00:00",
-  "reason": "content_too_short"
+  "fetched_at": "2026-05-26T17:49:45.126318+00:00",
+  "reason": "missing_or_empty_content"
 }

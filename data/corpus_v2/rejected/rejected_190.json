@@ -1,11 +1,11 @@
 {
-  "id": 692,
-  "title": "Clinical Research Resources | National Institutes of Health (NIH)",
-  "content": "Medical Research Initiatives Science Highlights Science Education Research in NIH Labs & Clinics Training Opportunities Library Resources Research Resources Clinical Research Resources Safety, Regulation & Guidance Lasker Clinical Research Scholars Clinical Research Resources Clinical Research Resources NIH Clinical Research Trials and You Children and Clinical Studies Clinicaltrials.gov NIH Office of Human Subjects Research Protection Clinical Research and Bioethics Policy This page last reviewed on January 8, 2025",
-  "source": "NIH",
-  "url": "https://www.nih.gov/research-training/clinical-research-resources",
-  "category": "health_guideline",
+  "id": 635,
+  "title": "Access your NHS account - NHS",
+  "content": "Access your NHS account Log in to view your health information and manage your healthcare online. Access NHS App services using the NHS App or by logging in through the NHS website. You can create an account if you do not have one. You must be aged 13 or over and registered at a GP surgery in England. Continue You can: request repeat prescriptions check your test results view messages from the NHS book and manage appointments Get the NHS App You can also download the NHS App on your smartphone or tablet.",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/nhs-services/gps/view-your-gp-health-record",
+  "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-24T06:35:38.486283+00:00",
+  "fetched_at": "2026-05-26T18:58:25.839491+00:00",
   "reason": "content_too_short"
 }

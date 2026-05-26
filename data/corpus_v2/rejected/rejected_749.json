@@ -1,5 +1,4 @@
 {
-  "url": "https://www.scielo.org/es/listar-por-el-publicador",
-  "reason": "language_over_target",
-  "language": "es"
+  "url": "http://www.scielo.org.mx/",
+  "reason": "fetch_failed"
 }

@@ -1,11 +1,11 @@
 {
-  "id": 683,
-  "title": "Health Topics: Q: MedlinePlus",
-  "content": "Skip navigation Official websites use .gov A .gov website belongs to an official government organization in the United States. Secure .gov websites use HTTPS A lock ( Lock Locked padlock icon ) or https:// means youâve safely connected to the .gov website. Share sensitive information only on official, secure websites. You Are Here: Home → Health Topics → Health Topics: Q URL of this page: https://medlineplus.gov/healthtopics_q.html Health Topics: Q Q Fever see Bacterial Infections Quackery see Health Fraud Quadriplegia see Paralysis Quitting Smoking",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/healthtopics_q.html",
-  "category": "health_topic",
+  "id": 118,
+  "title": "NIH News Publications | National Institutes of Health (NIH)",
+  "content": "News Releases Media Inquiries NIH on Social Media Images and B-roll Calendar of Events NIH News Publications NIH News in Health NIH Research Matters NIH News Publications NIH News in Health A monthly newsletter of practical consumer health news and information based on NIH research. NIH Research Matters A weekly update of research advances from the National Institutes of Health. This page last reviewed on February 26, 2026",
+  "source": "NIH",
+  "url": "https://www.nih.gov/news-events/nih-news-publications",
+  "category": "health_guideline",
   "language": "en",
-  "fetched_at": "2026-04-24T06:31:26.640395+00:00",
+  "fetched_at": "2026-05-26T17:53:35.604981+00:00",
   "reason": "content_too_short"
 }

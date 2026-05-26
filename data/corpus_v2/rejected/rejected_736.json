@@ -1,5 +1,4 @@
 {
-  "url": "https://medlineplus.gov/spanish/covid19vaccines.html",
-  "reason": "language_over_target",
-  "language": "es"
+  "url": "https://www.paho.org/es/temas/actividad-fisica",
+  "reason": "fetch_failed"
 }
