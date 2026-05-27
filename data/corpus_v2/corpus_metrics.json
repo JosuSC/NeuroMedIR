@@ -1,36 +1,37 @@
 {
-  "generated_at_utc": "2026-05-26T21:20:17.334687+00:00",
-  "total_valid_documents": 2106,
-  "total_rejected_documents": 8,
-  "validity_ratio": 0.9962,
+  "generated_at_utc": "2026-05-27T14:25:37.352147+00:00",
+  "total_valid_documents": 3463,
+  "total_rejected_documents": 29,
+  "validity_ratio": 0.9917,
   "distribution_by_language": {
-    "es": 901,
-    "en": 1205
+    "es": 1579,
+    "en": 1884
   },
   "distribution_by_source": {
     "CDC ES": 1,
     "OPS/PAHO": 1,
-    "MedlinePlus ES": 897,
+    "MedlinePlus ES": 1574,
     "MSD Manuals ES": 1,
-    "SciELO": 1,
+    "SciELO": 2,
     "CDC": 65,
-    "NIH": 64,
-    "CDC (Dinámico)": 1,
-    "MedlinePlus": 396,
+    "NIH": 65,
+    "CDC (Dinámico)": 2,
+    "MedlinePlus": 989,
     "NHS": 644,
     "MSD Manuals": 21,
-    "MedlinePlus (Dinámico)": 3,
-    "NHS (Dinámico)": 1,
-    "PubMed": 10
+    "MedlinePlus (Dinámico)": 17,
+    "NHS (Dinámico)": 14,
+    "PubMed": 43,
+    "PubMed (Dinámico)": 24
   },
   "distribution_by_category": {
-    "health_guideline": 132,
-    "health_topic": 1963,
-    "research_article": 11
+    "health_guideline": 134,
+    "health_topic": 3260,
+    "research_article": 69
   },
-  "average_content_length_chars": 5293.67,
-  "crawl_duration_seconds": 47.8,
-  "docs_per_minute": 2643.31,
+  "average_content_length_chars": 5386.0,
+  "crawl_duration_seconds": 101.19,
+  "docs_per_minute": 2053.44,
   "examples": [
     {
       "id": 34,
