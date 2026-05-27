@@ -126,73 +126,68 @@ class DiagnosisEngine:
 
         if is_spanish:
             system_prompt = (
-                "Eres un médico diagnosticador experto con años de experiencia clínica. "
-                "Analiza la información del paciente y los documentos médicos recuperados "
-                "para generar un diagnóstico diferencial con probabilidades fundadas en evidencia.\n\n"
+                "Eres un médico diagnosticador experto. "
+                "Analiza los síntomas del paciente y genera un diagnóstico diferencial. "
                 "DEBES responder SOLO con un objeto JSON válido, sin texto adicional.\n\n"
-                "El JSON debe tener esta estructura exacta:\n"
+                "Estructura EXACTA (sé CONCISO, máximo 100 caracteres por campo de texto):\n"
                 '{\n'
                 '  "diagnoses": [\n'
                 '    {\n'
-                '      "condition": "Nombre de la condición",\n'
+                '      "condition": "Nombre corto de la condición",\n'
                 '      "probability": 45.0,\n'
-                '      "reasoning": "Explicación de por qué esta condición es probable",\n'
-                '      "supporting_evidence": "Evidencia específica de los documentos"\n'
+                '      "reasoning": "Razón breve (max 80 chars)"\n'
                 '    }\n'
                 '  ],\n'
-                '  "summary": "Resumen general del análisis",\n'
-                '  "recommendations": "Recomendaciones para el paciente"\n'
+                '  "summary": "Resumen breve (max 150 chars)",\n'
+                '  "recommendations": "Recomendación breve (max 100 chars)"\n'
                 '}\n\n'
                 "Reglas:\n"
-                "- Las probabilidades deben sumar aproximadamente 100%\n"
-                "- Ordena de más probable a menos probable\n"
-                "- Incluye al menos 3 condiciones posibles\n"
-                "- Basa tu razonamiento en los documentos cuando sea posible\n"
-                "- Si los documentos no son suficientes, indícalo\n"
-                "- NUNCA inventes información médica\n"
-                "- Incluye un aviso de que esto no sustituye una consulta profesional\n"
+                "- Exactamente 3 condiciones\n"
+                "- Probabilidades suman 100%\n"
+                "- NUNCA inventes información\n"
+                "- Sé MUY conciso en todos los campos de texto\n"
             )
 
+            # Limitar contexto de documentos para no exceder límite de tokens
+            short_context = documents_context[:800] if len(documents_context) > 800 else documents_context
+
             user_message = (
-                f"CONSULTA DEL PACIENTE: \"{query}\"\n\n"
-                f"DATOS DEL FORMULARIO:\n{form_summary}\n\n"
-                f"DOCUMENTOS MÉDICOS RECUPERADOS:\n{documents_context}\n\n"
-                "Genera el diagnóstico diferencial. Responde SOLO con el JSON."
+                f"Síntomas: \"{query}\"\n"
+                f"Formulario: {form_summary[:300]}\n\n"
+                f"Contexto médico:\n{short_context}\n\n"
+                "JSON con exactamente 3 diagnósticos:"
             )
         else:
             system_prompt = (
-                "You are an expert medical diagnostician with years of clinical experience. "
-                "Analyze the patient's information and the retrieved medical documents "
-                "to generate a differential diagnosis with evidence-based probabilities.\n\n"
+                "You are an expert medical diagnostician. "
+                "Analyze the patient's symptoms and generate a differential diagnosis. "
                 "You MUST respond ONLY with a valid JSON object, no additional text.\n\n"
-                "The JSON must have this exact structure:\n"
+                "EXACT structure (be CONCISE, max 100 chars per text field):\n"
                 '{\n'
                 '  "diagnoses": [\n'
                 '    {\n'
-                '      "condition": "Condition name",\n'
+                '      "condition": "Short condition name",\n'
                 '      "probability": 45.0,\n'
-                '      "reasoning": "Explanation of why this condition is likely",\n'
-                '      "supporting_evidence": "Specific evidence from the documents"\n'
+                '      "reasoning": "Brief reason (max 80 chars)"\n'
                 '    }\n'
                 '  ],\n'
-                '  "summary": "Overall analysis summary",\n'
-                '  "recommendations": "Recommendations for the patient"\n'
+                '  "summary": "Brief summary (max 150 chars)",\n'
+                '  "recommendations": "Brief recommendation (max 100 chars)"\n'
                 '}\n\n'
                 "Rules:\n"
-                "- Probabilities should sum to approximately 100%\n"
-                "- Order from most likely to least likely\n"
-                "- Include at least 3 possible conditions\n"
-                "- Base your reasoning on the documents when possible\n"
-                "- If documents are insufficient, state it\n"
-                "- NEVER invent medical information\n"
-                "- Include a disclaimer that this does not replace professional consultation\n"
+                "- Exactly 3 conditions\n"
+                "- Probabilities sum to 100%\n"
+                "- NEVER invent information\n"
+                "- Be VERY concise in all text fields\n"
             )
 
+            short_context = documents_context[:800] if len(documents_context) > 800 else documents_context
+
             user_message = (
-                f"PATIENT QUERY: \"{query}\"\n\n"
-                f"FORM DATA:\n{form_summary}\n\n"
-                f"RETRIEVED MEDICAL DOCUMENTS:\n{documents_context}\n\n"
-                "Generate the differential diagnosis. Respond ONLY with the JSON."
+                f"Symptoms: \"{query}\"\n"
+                f"Form: {form_summary[:300]}\n\n"
+                f"Medical context:\n{short_context}\n\n"
+                "JSON with exactly 3 diagnoses:"
             )
 
         try:
@@ -206,7 +201,7 @@ class DiagnosisEngine:
             if not response:
                 logger.warning("LLM diagnosis: empty response.")
                 return None
-
+            logger.error(f"LLM diagnosis raw response: {repr(response[:500])}")
             data = json.loads(response)
 
             if "diagnoses" not in data or not isinstance(data["diagnoses"], list):
@@ -233,7 +228,6 @@ class DiagnosisEngine:
                     "condition": condition,
                     "probability": round(probability, 1),
                     "reasoning": diag.get("reasoning", ""),
-                    "supporting_evidence": diag.get("supporting_evidence", ""),
                     "supporting_docs": [],
                 })
 

@@ -251,6 +251,7 @@ class IntentClassifier:
 
         symptom_patterns = [
             (r'dolor de (\w+(?:\s+(?!y\s|e\s|o\s|u\s)\w+){0,1})', 'dolor de {}'),
+            (r'dolor en (?:el|la|los|las) (\w+(?:\s+\w+){0,1})', 'dolor en {}'),
             (r'me duele[sn]? (?:el|la|los|las) (\w+(?:\s+(?!y\s|e\s|o\s|u\s)\w+){0,1})', 'dolor de {}'),
             (r'estoy con (?:mucha\s+|mucho\s+)?(tos|fiebre|cansancio|nauseas|mareo|vertigo|congestion|diarrea|vomito)', '{}'),
             (r'tengo (fiebre|cansancio|nauseas|mareo|vertigo|tos|congestion|diarrea|vomito)', '{}'),

@@ -16,10 +16,10 @@ OPENROUTER_API_KEY_ENV = "OPENROUTER_API_KEY"
 # OpenRouter API defaults (OpenAI-compatible endpoint).
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 OPENROUTER_MODEL = "openai/gpt-4o-mini"
-OPENROUTER_REQUEST_TIMEOUT_SECONDS = 60
+OPENROUTER_REQUEST_TIMEOUT_SECONDS = 90
 
 # Gemini request timeout.
-GEMINI_REQUEST_TIMEOUT_SECONDS = 60
+GEMINI_REQUEST_TIMEOUT_SECONDS = 90
 
 # Gemini generation defaults.
 GEMINI_TEMPERATURE = 0.3
@@ -34,7 +34,7 @@ OPENROUTER_TOP_P = 0.9
 # Generation Parameters
 # ---------------------------------------------------------------------------
 RAG_TEMPERATURE = GEMINI_TEMPERATURE
-RAG_MAX_NEW_TOKENS = 1024       # Maximum tokens the LLM generates per response
+RAG_MAX_NEW_TOKENS = 2048       # Maximum tokens the LLM generates per response
 RAG_MIN_NEW_TOKENS = 50         # Minimum tokens to generate (avoids empty responses)
 RAG_CONTINUATION_MAX_TOKENS = 256  # Tokens for finishing incomplete answers
 RAG_CONTINUATION_MAX_ATTEMPTS = 3  # Extra calls to finish a cut-off response

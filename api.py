@@ -533,6 +533,7 @@ def _handle_question(message: str, lang_code: str) -> dict:
                 rag_result = rag_pipeline.query(message, top_k=5, lang=lang_code)
                 answer_text = rag_result.get("answer")
                 sources = rag_result.get("sources", [])
+                sources = _filter_by_language(sources, lang_code)
                 confidence = rag_result.get("confidence", 0.0)
             except Exception as e:
                 logger.error(f"RAG falló tras expansión web: {e}")
@@ -623,18 +624,20 @@ def submit_form(req: FormSubmitRequest):
     logger.info(f"Retrieval query: {retrieval_query}")
     macro_query = retrieval_query  # mantener compatibilidad con el resto del código
 
-    # Recuperar documentos
-    results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
-    if _should_expand(results):
-        _try_expand_corpus(macro_query)
-        results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
-
-    # Detectar idioma
+    # Detectar idioma PRIMERO
     requested_lang = req.lang if req.lang in {"es", "en"} else None
     lang_code = "es" if requested_lang == "es" else "en" if requested_lang == "en" else None
     lang_final = lang_code or ("es" if _detect_spanish(req.original_query) else "en")
 
-    # Recopilar todos los datos del formulario (incluyendo campos dinámicos)
+    # Recuperar documentos
+    results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
+    results = _filter_by_language(results, lang_final)
+    if _should_expand(results):
+        _try_expand_corpus(macro_query)
+        results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
+        results = _filter_by_language(results, lang_final)
+
+    # Recopilar todos los datos del formulario
     form_data = req.model_dump()
 
     # ============================================================
@@ -835,6 +838,33 @@ def _detect_spanish(text: str) -> bool:
     words = set(text.lower().split())
     overlap = len(words & spanish_markers)
     return overlap >= 1
+
+def _filter_by_language(results: list, lang_code: str, min_results: int = 3) -> list:
+    """Filtra resultados por idioma."""
+    if not results:
+        return results
+
+    NOISE_TITLES = {
+        "health topics", "temas de salud", "síntomas", "symptoms",
+        "no results for", "sin resultados"
+    }
+
+    def is_noise(r):
+        title = r.get("title", "").lower()
+        return any(noise in title for noise in NOISE_TITLES)
+
+    def is_target_lang(r):
+        source = r.get("source", "").lower()
+        title = r.get("title", "").lower()
+        if lang_code == "es":
+            return ("español" in source or "es" in source or
+                    "español" in title or "en español" in title)
+        else:
+            return ("nhs" in source or
+                    ("medlineplus" in source and "español" not in source and "es" not in source))
+
+    filtered = [r for r in results if not is_noise(r) and is_target_lang(r)]
+    return filtered if len(filtered) >= min_results else [r for r in results if not is_noise(r)]
 
 
 def _build_answer_from_results(results: list, lang: str) -> str:
