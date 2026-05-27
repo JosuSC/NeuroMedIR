@@ -186,7 +186,7 @@ def startup_event():
     print("OK: Clasificador de intención inicializado.")
 
     # --- Motor de Diagnóstico (con LLM) ---
-    diagnosis_engine = DiagnosisEngine(llm_client=llm_client)
+    diagnosis_engine = DiagnosisEngine(llm_client=rag_pipeline._llm if rag_pipeline else None)
     print("OK: Motor de diagnóstico inicializado.")
 
     print(f"OK: Sistema listo. Documentos: {doc_store.count}")
@@ -586,22 +586,42 @@ def submit_form(req: FormSubmitRequest):
     """
     t_start = time.time()
 
-    # Construir macro-query enriquecida
+    # Paso 1: Construir macro-query semántica limpia
+    # Solo usamos síntomas + notas adicionales para el retrieval
+    # Los metadatos (intensidad, duración) se pasan al LLM pero NO al retriever
     query_parts = [req.original_query]
 
-    if req.intensity:
-        query_parts.append(f"intensidad {req.intensity}")
-    if req.duration:
-        query_parts.append(f"duracion {req.duration}")
+    # Agregar síntomas adicionales seleccionados en el formulario
     if req.dynamic_symptoms:
-        query_parts.append(" ".join(req.dynamic_symptoms))
-    if req.extra_fields:
-        query_parts.append(" ".join(req.extra_fields))
-    if req.additional_notes:
+        # Filtrar síntomas que no sean ruido (fuentes, etc.)
+        clean_symptoms = [
+            s for s in req.dynamic_symptoms
+            if len(s) > 3 and not any(
+                noise in s.lower()
+                for noise in ["medline", "nhs", "pubmed", "scielo", "español", "english"]
+            )
+        ]
+        if clean_symptoms:
+            query_parts.append(" ".join(clean_symptoms))
+
+    # Agregar notas adicionales si existen y son sustanciales
+    if req.additional_notes and len(req.additional_notes.strip()) > 5:
         query_parts.append(req.additional_notes)
 
-    macro_query = " ".join(query_parts)
-    logger.info(f"Macro-query para diagnóstico: {macro_query}")
+    # Query para retrieval: solo síntomas, sin metadatos numéricos
+    retrieval_query = " ".join(query_parts)
+
+    # Contexto clínico completo para el LLM (incluye intensidad, duración, etc.)
+    form_context = {
+        "original_query": req.original_query,
+        "intensity": req.intensity,
+        "duration": req.duration,
+        "dynamic_symptoms": req.dynamic_symptoms,
+        "additional_notes": req.additional_notes,
+    }
+
+    logger.info(f"Retrieval query: {retrieval_query}")
+    macro_query = retrieval_query  # mantener compatibilidad con el resto del código
 
     # Recuperar documentos
     results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
@@ -654,10 +674,17 @@ def submit_form(req: FormSubmitRequest):
                 if lang_final == "es"
                 else f"Differential diagnosis for: {macro_query}"
             )
+            # Construir prompt enriquecido con contexto clínico completo
+            enriched_query = (
+                f"Diagnóstico diferencial para paciente con: {req.original_query}. "
+                f"Intensidad: {req.intensity}/10. "
+                f"Duración: {req.duration}. "
+                + (f"Síntomas adicionales: {', '.join(req.dynamic_symptoms)}. " if req.dynamic_symptoms else "")
+                + (f"Notas: {req.additional_notes}." if req.additional_notes else "")
+            )
             rag_result = rag_pipeline.query(
-                diag_prompt,
+                enriched_query,
                 top_k=chat_settings.DIAGNOSIS_TOP_K,
-                lang=lang_final,
             )
             answer_text = rag_result.get("answer")
         except Exception as e:

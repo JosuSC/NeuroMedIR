@@ -152,11 +152,24 @@ def extract_form_symptoms_prf(query: str, retrieved_docs: list, top_n: int = 10)
     if not retrieved_docs:
         return []
 
+    # Stopwords ampliadas para filtrar fuentes y términos no médicos
     stop_words = [
         "el", "la", "los", "las", "un", "una", "de", "del", "al", "en", "para",
         "por", "con", "sin", "su", "sus", "como", "esta", "esto", "este", "es", "son",
         "paciente", "estudio", "caso", "the", "and", "of", "to", "in", "for", "with",
-        "on", "is", "was",
+        "on", "is", "was", "also", "may", "can", "more", "information", "page",
+        # Fuentes y sitios web — crítico filtrar estos
+        "medlineplus", "medline", "plus", "nhs", "pubmed", "scielo", "ncbi",
+        "español", "espanol", "english", "spanish", "medlineplus español",
+        "medlineplus espanol", "nhs uk", "britanico", "britannica",
+        # Términos estructurales de documentos médicos
+        "introduccion", "introduction", "summary", "resumen", "basics",
+        "diagnosis", "diagnostico", "treatment", "tratamiento", "overview",
+        "start", "here", "learn", "more", "see", "also", "called", "nombres",
+        "otros", "other", "names", "pagina", "page", "basics", "tests",
+        "prevention", "factors", "therapies", "terapias", "related", "issues",
+        "living", "clinical", "trials", "research", "referencias", "referencias",
+        "also called", "on this", "this page",
     ]
 
     vectorizer = TfidfVectorizer(
@@ -164,6 +177,7 @@ def extract_form_symptoms_prf(query: str, retrieved_docs: list, top_n: int = 10)
         ngram_range=(1, 2),
         max_features=200,
         lowercase=True,
+        token_pattern=r'\b[a-záéíóúüñA-ZÁÉÍÓÚÜÑ]{4,}\b',
     )
 
     try:
@@ -175,19 +189,63 @@ def extract_form_symptoms_prf(query: str, retrieved_docs: list, top_n: int = 10)
     feature_names = vectorizer.get_feature_names_out()
 
     query_terms = set(sanitize_text(query.lower()).split())
-    word_scores = []
 
+    # Lista de términos médicos válidos para filtrar
+    MEDICAL_TERMS_ES = {
+        "dolor", "fiebre", "tos", "nausea", "nauseas", "mareo", "vertigo",
+        "cansancio", "fatiga", "diarrea", "vomito", "vomitos", "congestion",
+        "inflamacion", "hinchazón", "hinchaz", "sangrado", "hemorragia",
+        "picazon", "ardor", "escalofrío", "escalofríos", "perdida", "debilidad",
+        "palpitaciones", "disnea", "edema", "erupciones", "sarpullido",
+        "temblores", "convulsiones", "desmayo", "sincope", "presion", "tension",
+        "glucosa", "azucar", "colesterol", "infeccion", "bacteria", "virus",
+        "alergia", "asma", "diabetes", "hipertension", "anemia", "artritis",
+        "migraña", "migrana", "cefalea", "bronquitis", "neumonia", "gripe",
+        "resfriado", "sinusitis", "otitis", "gastritis", "colitis", "hepatitis",
+        "insuficiencia", "arritmia", "taquicardia", "bradicardia",
+    }
+    MEDICAL_TERMS_EN = {
+        "pain", "fever", "cough", "nausea", "dizziness", "fatigue", "diarrhea",
+        "vomiting", "inflammation", "swelling", "bleeding", "hemorrhage",
+        "itching", "burning", "chills", "weakness", "palpitations", "dyspnea",
+        "edema", "rash", "tremors", "seizures", "fainting", "syncope",
+        "pressure", "glucose", "sugar", "cholesterol", "infection", "bacteria",
+        "virus", "allergy", "asthma", "diabetes", "hypertension", "anemia",
+        "arthritis", "migraine", "headache", "bronchitis", "pneumonia",
+        "influenza", "cold", "sinusitis", "otitis", "gastritis", "colitis",
+        "hepatitis", "insufficiency", "arrhythmia", "tachycardia",
+    }
+    VALID_MEDICAL = MEDICAL_TERMS_ES | MEDICAL_TERMS_EN
+
+    # Patrones a excluir explícitamente
+    EXCLUDE_PATTERNS = re.compile(
+        r'(medline|medplus|pubmed|scielo|ncbi|nhs|español|espanol|english|'
+        r'introduction|summary|basics|diagnosis|treatment|overview|'
+        r'called|page|learn|more|also|names|tests|prevention|therapies|'
+        r'living|trials|research|related|issues)',
+        re.IGNORECASE
+    )
+
+    word_scores = []
     for word, score in zip(feature_names, sum_tfidf):
         word_clean = normalize_candidate_term(word)
         if not word_clean:
             continue
-        if not any(q_term in word_clean for q_term in query_terms):
-            word_scores.append((word_clean, score))
+        # Excluir si contiene patrones de fuentes/estructura
+        if EXCLUDE_PATTERNS.search(word_clean):
+            continue
+        # Solo incluir si es término médico conocido O no está en query
+        if any(q_term in word_clean for q_term in query_terms):
+            continue
+        # Preferir términos médicos conocidos, pero incluir otros si son relevantes
+        is_medical = any(med in word_clean for med in VALID_MEDICAL)
+        if is_medical or (len(word_clean) >= 5 and score > 0.1):
+            word_scores.append((word_clean, score, is_medical))
 
-    word_scores.sort(key=lambda x: x[1], reverse=True)
-    top_terms = [word for word, score in word_scores[:top_n]]
+    # Ordenar: primero los términos médicos conocidos, luego por score
+    word_scores.sort(key=lambda x: (not x[2], -x[1]))
+    top_terms = [word for word, score, _ in word_scores[:top_n]]
     return list(dict.fromkeys(top_terms))
-
 
 # =========================================================================
 # LLM-DRIVEN FORM GENERATION (primary method)
