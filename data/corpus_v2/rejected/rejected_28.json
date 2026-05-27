@@ -1,11 +1,11 @@
 {
-  "id": 2256,
-  "title": "MedlinePlus: Information about MedlinePlus for Developers",
-  "content": "Information about MedlinePlus for Developers Find technical information for web developers, including our web service, data files, RSS feed, and MedlinePlus Connect for electronic health records (EHRs). MedlinePlus Connect API for use with EHR systems and patient portals Web Service Search-based health topic data in XML format XML Files Downloadable records for all English & Spanish health topics MedlinePlus Genetics Data Files & API Retrieve data from MedlinePlus Genetics in XML or JSON RSS Feeds Subscribe to general and topic-specific feeds Related Information What's New About MedlinePlus Using MedlinePlus",
+  "id": 2260,
+  "title": "Drugs, Herbs and Supplements: MedlinePlus",
+  "content": "Drugs, Herbs and Supplements Drugs Learn about your prescription drugs and over-the-counter medicines. Includes side effects, dosage, special precautions, and more. For FDA approved labels included in drug packages, see DailyMed . Herbs and Supplements Browse dietary supplements and herbal remedies to learn about their effectiveness, usual dosage, and drug interactions. All herbs and supplements Drug Related Topics HIV/AIDS Medicines Antibiotics Antidepressants Blood Pressure Medicines Blood Thinners Cancer Alternative Therapies Cancer Chemotherapy Cold and Cough Medicines Complementary and Alternative Medicine Diabetes Medicines Dietary Supplements Drug Safety Herbal Medicine Hormone Replacement Therapy Medicines Over-the-Counter Medicines Pain Relievers Statins Steroids Vitamins Prescription and over-the-counter medication information is from AHFS® Consumer Medication Information, copyrighted by the American Society of Health-System Pharmacists (ASHP), Inc. , Bethesda, Maryland; Copyright © 2026. All Rights Reserved.",
   "source": "MedlinePlus (Dinámico)",
-  "url": "https://medlineplus.gov/about/developers",
+  "url": "https://medlineplus.gov/druginformation.html",
   "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-05-27T15:34:54.517448+00:00",
+  "fetched_at": "2026-05-27T15:51:27.757963+00:00",
   "reason": "duplicate_url"
 }

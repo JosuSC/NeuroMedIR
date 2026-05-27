@@ -1,11 +1,11 @@
 {
-  "generated_at_utc": "2026-05-27T15:35:01.382627+00:00",
-  "total_valid_documents": 3464,
+  "generated_at_utc": "2026-05-27T15:51:34.877002+00:00",
+  "total_valid_documents": 3468,
   "total_rejected_documents": 29,
   "validity_ratio": 0.9917,
   "distribution_by_language": {
     "es": 1579,
-    "en": 1885
+    "en": 1889
   },
   "distribution_by_source": {
     "CDC ES": 1,
@@ -20,18 +20,18 @@
     "NHS": 644,
     "MSD Manuals": 21,
     "MedlinePlus (Dinámico)": 17,
-    "NHS (Dinámico)": 15,
+    "NHS (Dinámico)": 19,
     "PubMed": 43,
     "PubMed (Dinámico)": 24
   },
   "distribution_by_category": {
     "health_guideline": 134,
-    "health_topic": 3261,
+    "health_topic": 3265,
     "research_article": 69
   },
-  "average_content_length_chars": 5385.25,
-  "crawl_duration_seconds": 102.71,
-  "docs_per_minute": 2023.58,
+  "average_content_length_chars": 5380.83,
+  "crawl_duration_seconds": 103.6,
+  "docs_per_minute": 2008.45,
   "examples": [
     {
       "id": 34,
