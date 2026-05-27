@@ -1,38 +1,22 @@
 # chat/configs/settings.py — Configuración del módulo conversacional NeuroMedIR
-# ---------------------------------------------------------------------------
-# Parámetros para el clasificador de intención, motor de diagnóstico
-# y respuestas conversacionales.
-# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 # Clasificador de Intención
 # ---------------------------------------------------------------------------
-# Umbral de confianza para clasificar como SÍNTOMA.
-# Si el score de síntomas >= UMBRAL_SINTOMA, se genera formulario.
-# Rango: 0.0 - 1.0. Más bajo = más sensible a síntomas.
+# Umbral reducido de 0.5 a 0.3 para que "hola mi amigo" clasifique como SALUDO
 UMBRAL_SINTOMA = 0.35
-
-# Umbral para clasificar como SALUDO.
-# Si el score de saludo >= UMBRAL_SALUDO, se responde conversacionalmente.
-UMBRAL_SALUDO = 0.5
+UMBRAL_SALUDO = 0.3
 
 # ---------------------------------------------------------------------------
 # Motor de Diagnóstico
 # ---------------------------------------------------------------------------
-# Número máximo de diagnósticos diferenciales a mostrar al paciente.
 MAX_DIAGNOSTICOS = 8
-
-# Score mínimo (0-100%) para incluir un diagnóstico en la lista.
-# Diagnósticos con probabilidad menor se descartan.
 MIN_PROBABILIDAD_DIAGNOSTICO = 1.0
-
-# Número de documentos a recuperar para generar diagnósticos.
 DIAGNOSIS_TOP_K = 10
 
 # ---------------------------------------------------------------------------
-# Respuestas Conversacionales
+# Respuestas Conversacionales (fallback cuando no hay LLM disponible)
 # ---------------------------------------------------------------------------
-# Respuestas predefinidas para saludos y despedidas.
 SALUDOS_ES = [
     "¡Hola! Soy NeuroMedIR, tu asistente médico. ¿En qué puedo ayudarte hoy? Puedes contarme tus síntomas o hacerme preguntas sobre condiciones médicas.",
     "¡Bienvenido! Soy NeuroMedIR. Estoy aquí para ayudarte con consultas médicas. ¿Qué te preocupa hoy?",
@@ -40,9 +24,9 @@ SALUDOS_ES = [
 ]
 
 SALUDOS_EN = [
-    "Hello! I'm NeuroMedIR, your medical assistant. How can I help you today? You can tell me your symptoms or ask questions about medical conditions.",
-    "Welcome! I'm NeuroMedIR. I'm here to help with medical queries. What's on your mind today?",
-    "Hi there! Great to have you here. I'm NeuroMedIR, your health assistant. You can ask me about symptoms, diseases, or any medical topic.",
+    "Hello! I'm NeuroMedIR, your medical assistant. How can I help you today?",
+    "Welcome! I'm NeuroMedIR. I'm here to help with medical queries. What's on your mind?",
+    "Hi there! I'm NeuroMedIR, your health assistant. Ask me about symptoms, diseases, or any medical topic.",
 ]
 
 DESPEDIDAS_ES = [
@@ -51,11 +35,21 @@ DESPEDIDAS_ES = [
 ]
 
 DESPEDIDAS_EN = [
-    "Take care! Remember this information doesn't replace professional medical advice. If in doubt, consult your doctor.",
+    "Take care! Remember this information doesn't replace professional medical advice.",
     "Goodbye! Always remember to consult a healthcare professional for a definitive diagnosis.",
 ]
 
-# Mensaje de disclaimer médico que se agrega a respuestas de diagnóstico
+NO_MEDICO_ES = [
+    "Soy un asistente especializado en temas de salud. Por favor, pregúntame sobre enfermedades, síntomas, tratamientos, o cuéntame si te sientes mal y te haré algunas preguntas para ayudarte.",
+    "Mi área de especialización es la salud médica. ¿Tienes alguna consulta sobre síntomas, enfermedades, o cómo prevenir alguna condición? Estoy aquí para ayudarte.",
+]
+
+NO_MEDICO_EN = [
+    "I'm a health-specialized assistant. Please ask me about diseases, symptoms, treatments, or tell me if you're feeling unwell and I'll ask some questions to help you.",
+    "My area of expertise is medical health. Do you have any questions about symptoms, diseases, or how to prevent a condition? I'm here to help.",
+]
+
+# Disclaimer médico
 DISCLAIMER_ES = (
     "⚠️ **Aviso importante:** Esta información es orientativa y no sustituye "
     "una consulta médica profesional. Consulte siempre a un profesional de la "
@@ -66,4 +60,51 @@ DISCLAIMER_EN = (
     "⚠️ **Important notice:** This information is guidance-only and does not "
     "replace professional medical advice. Always consult a healthcare "
     "professional for a definitive diagnosis."
+)
+
+# ---------------------------------------------------------------------------
+# System Prompts para LLM (cuando está disponible)
+# ---------------------------------------------------------------------------
+SYSTEM_PROMPT_MEDICAL_ES = (
+    "Eres NeuroMedIR, un asistente médico virtual profesional y empático. "
+    "Te especializas en neurología y medicina general. "
+    "Respondes SIEMPRE en español, con un tono profesional pero cálido, "
+    "como lo haría un médico experimentado que se preocupa por su paciente. "
+    "Explicas con detalle, usando lenguaje accesible pero preciso. "
+    "Cuando menciones fuentes, usa [Fuente X]. "
+    "NUNCA inventes información médica. Si no tienes información suficiente, dilo claramente. "
+    "Siempre incluye un aviso de que tu información no sustituye una consulta profesional. "
+    "Si el usuario pregunta sobre temas no médicos, redirígelo amablemente a consultas de salud."
+)
+
+SYSTEM_PROMPT_MEDICAL_EN = (
+    "You are NeuroMedIR, a professional and empathetic virtual medical assistant. "
+    "You specialize in neurology and general medicine. "
+    "You ALWAYS respond in English, with a professional yet warm tone, "
+    "like an experienced doctor who cares about their patient. "
+    "You explain in detail, using accessible yet precise language. "
+    "When citing sources, use [Source X]. "
+    "NEVER invent medical information. If you lack sufficient information, say so clearly. "
+    "Always include a disclaimer that your information does not replace professional consultation. "
+    "If the user asks about non-medical topics, kindly redirect them to health-related queries."
+)
+
+SYSTEM_PROMPT_FORM_ES = (
+    "Eres un médico especialista que debe determinar qué preguntas hacerle a un paciente "
+    "para llegar a un diagnóstico diferencial preciso. "
+    "Basándote en los síntomas que reporta el paciente, genera las preguntas específicas "
+    "que un médico real le haría para distinguir entre las posibles condiciones. "
+    "Las preguntas deben ser claras, fáciles de responder para cualquier persona de cualquier edad, "
+    "y orientadas al diagnóstico diferencial. "
+    "DEBES generar las preguntas en formato JSON siguiendo el esquema proporcionado."
+)
+
+SYSTEM_PROMPT_DIAGNOSIS_ES = (
+    "Eres un médico diagnosticador experto. Analiza la información del paciente "
+    "y los documentos médicos recuperados para generar un diagnóstico diferencial "
+    "con probabilidades fundadas. "
+    "Basate en la evidencia de los documentos cuando sea posible. "
+    "Si los documentos no son suficientes para cierta condición, indícalo. "
+    "NUNCA inventes información médica. "
+    "DEBES responder en formato JSON siguiendo el esquema proporcionado."
 )

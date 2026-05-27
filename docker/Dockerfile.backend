@@ -2,23 +2,24 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Instalar dependencias del sistema operativo que puedan ser necesarias
+# Instalar dependencias del sistema operativo
 RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 
-# Instalar las librerías
+# Instalar las librerías (PyTorch CPU-only para evitar problemas de CUDA en Docker)
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu || true
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Descargar datos de NLTK necesarios (punkt, stopwords) si se requieren
-RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
+# Descargar datos de NLTK necesarios
+RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')" || true
 
 COPY . .
 
 # Exponer el puerto
 EXPOSE 8000
 
-# Lanzar API
-CMD ["uvicorn", "NeuroMedIR.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Lanzar API — usar api:app (no NeuroMedIR.api:app) porque api.py está en la raíz
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,10 +1,12 @@
 """
 intent_classifier.py — Clasificador de intención para NeuroMedIR.
 
-Clasifica el mensaje del usuario en una de tres categorías:
-    - SALUDO:     "hola", "buenas", "hello", "hi" → respuesta conversacional
+Clasifica el mensaje del usuario en una de las categorías:
+    - SALUDO:     "hola", "buenas", "hello", "hi" → saludo conversacional
     - PREGUNTA:   Pregunta general sobre un tema médico → RAG conversacional
     - SÍNTOMAS:   Describe síntomas o malestares → formulario + diagnóstico
+    - DESPEDIDA:  "adiós", "gracias" → despedida + disclaimer
+    - NO_MEDICO:  Tema no relacionado con salud → redirección amable
 
 Algoritmo:
     Sistema basado en reglas con scoring ponderado.
@@ -12,18 +14,8 @@ Algoritmo:
     con pesos asignados. El score final es la suma de los pesos de
     los patrones que hacen match.
 
-    La normalización se hace relativa al peso máximo de un solo patrón
-    (no la suma total), porque es improbable que TODOS los patrones
-    coincidan simultáneamente.
-
     Complejidad: O(n * m) donde n = longitud del mensaje,
     m = número de patrones por categoría.
-
-Por qué rule-based y no ML:
-    - Latencia: 0ms vs 50-200ms de un modelo de clasificación.
-    - Sin dependencia de modelos adicionales (ya cargamos 3).
-    - Determinista y explicable (crucial en contexto médico).
-    - Fácilmente extensible agregando nuevos patrones.
 """
 
 import re
@@ -42,25 +34,21 @@ class IntentType(str, Enum):
     PREGUNTA = "pregunta"
     SINTOMAS = "sintomas"
     DESPEDIDA = "despedida"
+    NO_MEDICO = "no_medico"
 
 
 # ---------------------------------------------------------------------------
 # Patrones de clasificación con pesos
 # ---------------------------------------------------------------------------
 # Cada patrón es una tupla (regex, peso).
-# El peso indica la importancia del match:
-#   1.0+ = evidencia fuerte
-#   0.7-0.9 = evidencia moderada
-#   0.3-0.6 = evidencia débil
 
 _PATTERNS_SALUDO: List[Tuple[str, float]] = [
-    # Saludos directos en español
     (r'\b(hola|buenas|buenos dias|buenas tardes|buenas noches|hey|ey|que tal|qtal)\b', 1.0),
-    # Saludos directos en inglés
     (r'\b(hello|hi|hey|good morning|good afternoon|good evening|howdy|greetings)\b', 1.0),
-    # Preguntas de disponibilidad/capacidad
     (r'\b(estas ahi|estas disponible|puedes ayudarme|puedes hablar|estas listo)\b', 0.6),
     (r'\b(are you there|can you help|are you available|are you ready)\b', 0.6),
+    # Saludos coloquiales con adjetivos ("hola mi amigo", "buenas gente")
+    (r'\b(hola\s+(mi|amigo|amiga|compa|hermano|hermana|gente|chico|chica))\b', 1.2),
 ]
 
 _PATTERNS_DESPEDIDA: List[Tuple[str, float]] = [
@@ -69,23 +57,19 @@ _PATTERNS_DESPEDIDA: List[Tuple[str, float]] = [
 ]
 
 _PATTERNS_PREGUNTA: List[Tuple[str, float]] = [
-    # Patrones interrogativos en español
     (r'\b(que es|que son|que significa|como se|como funciona|por que|cuales son|cual es|donde)\b', 0.8),
-    # Patrones interrogativos en inglés
     (r'\b(what is|what are|what does|how does|how do|why is|why do|which are|where is)\b', 0.8),
-    # Preguntas sobre definiciones o explicaciones
     (r'\b(definicion|defineme|expliqueme|explica|describe|dime que es|hablame de)\b', 0.7),
     (r'\b(define|explain|describe|tell me about|tell me what)\b', 0.7),
-    # Preguntas sobre tratamientos/causas (tercera persona, NO primera persona)
     (r'\b(tratamiento de|causas de|prevencion de|diagnostico de|sintomas de)\b', 0.6),
     (r'\b(treatment of|causes of|prevention of|diagnosis of|symptoms of)\b', 0.6),
 ]
 
 _PATTERNS_SINTOMAS: List[Tuple[str, float]] = [
-    # Primera persona — el usuario describe su experiencia (SEÑAL FUERTE)
+    # Primera persona — señal FUERTE
     (r'\b(tengo|siento|me duele|me duelen|me molesta|sufro de|padezco|me pica|me arde)\b', 1.5),
     (r'\b(i have|i feel|im suffering|i suffer|i experience)\b', 1.5),
-    # Síntomas comunes en español (SEÑAL MODERADA-ALTA)
+    # Síntomas comunes en español
     (r'\b(dolor|fiebre|cansancio|nauseas|mareo|vertigo|tos|congestion|diarrea|vomito)\b', 1.2),
     (r'\b(dificultad para respirar|falta de aire|opresion en el pecho|perdida de olfato|perdida de gusto)\b', 1.5),
     (r'\b(dolor de cabeza|dolor de estomago|dolor de garganta|dolor de oido|dolor de espalda)\b', 1.5),
@@ -108,27 +92,39 @@ _PATTERNS_SINTOMAS: List[Tuple[str, float]] = [
     (r'\b(and also|i also|i also have|i also feel|additionally)\b', 1.0),
 ]
 
+_PATTERNS_NO_MEDICO: List[Tuple[str, float]] = [
+    # Deportes y entretenimiento
+    (r'\b(futbol|basketball|beisbol|deporte|jugar|partido|gol|liga)\b', 1.0),
+    (r'\b(football|basketball|baseball|sport|game|match|score|league)\b', 1.0),
+    # Cocina y recetas
+    (r'\b(receta|cocinar|cocina|ingrediente|plato|comida|sopa|pastel)\b', 0.9),
+    (r'\b(recipe|cook|kitchen|ingredient|dish|food|soup|cake)\b', 0.9),
+    # Clima
+    (r'\b(clima|lluvia|soleado|tormenta|temperatura|pronostico)\b', 0.9),
+    (r'\b(weather|rain|sunny|storm|temperature|forecast)\b', 0.9),
+    # Música y películas
+    (r'\b(pelicula|cancion|musica|cantante|actor|pelicula|serie|netflix)\b', 0.9),
+    (r'\b(movie|song|music|singer|actor|film|series|netflix)\b', 0.9),
+    # Matemáticas y programación
+    (r'\b(cuanto es|suma|resta|multiplicacion|division|calcular|ecuacion)\b', 1.0),
+    (r'\b(programar|codigo|python|javascript|algoritmo|software)\b', 1.0),
+    (r'\b(programming|code|python|javascript|algorithm|software)\b', 1.0),
+    # Chistes y temas casuales
+    (r'\b(chiste|broma|divertido|risa|humor|contar)\b', 0.8),
+    (r'\b(joke|funny|laugh|humor|tell me a)\b', 0.8),
+]
+
 
 class IntentClassifier:
     """
     Clasificador de intención basado en reglas con scoring ponderado.
 
-    Procesa el mensaje del usuario y devuelve la intención detectada
-    junto con un score de confianza para cada categoría.
-
     Uso:
         classifier = IntentClassifier()
         result = classifier.classify("tengo dolor de cabeza y fiebre")
-        # result = {
-        #     "intent": "sintomas",
-        #     "confidence": 0.85,
-        #     "scores": {"saludo": 0.0, "pregunta": 0.1, "sintomas": 0.85, "despedida": 0.0}
-        # }
     """
 
     def __init__(self):
-        """Inicializa el clasificador compilando los patrones regex."""
-        # Pre-compilar todos los patrones para O(1) matching en runtime
         self._patterns: Dict[IntentType, List[Tuple[re.Pattern, float]]] = {
             IntentType.SALUDO: [
                 (re.compile(p, re.IGNORECASE), w) for p, w in _PATTERNS_SALUDO
@@ -142,6 +138,9 @@ class IntentClassifier:
             IntentType.SINTOMAS: [
                 (re.compile(p, re.IGNORECASE), w) for p, w in _PATTERNS_SINTOMAS
             ],
+            IntentType.NO_MEDICO: [
+                (re.compile(p, re.IGNORECASE), w) for p, w in _PATTERNS_NO_MEDICO
+            ],
         }
 
         logger.info(
@@ -153,21 +152,11 @@ class IntentClassifier:
         """
         Clasifica un mensaje del usuario en una categoría de intención.
 
-        Algoritmo:
-            1. Para cada categoría, calcular score = suma de pesos de matches
-            2. Normalizar relativo al máximo peso de un solo patrón (1.5 para síntomas)
-            3. Aplicar umbrales para determinar la intención final
-            4. Resolver conflictos con prioridad: SÍNTOMAS > DESPEDIDA > PREGUNTA > SALUDO
-
         Args:
             message: Mensaje del usuario (texto libre).
 
         Returns:
-            Diccionario con:
-                - intent: IntentType detectado
-                - confidence: Score de confianza [0, 1]
-                - scores: Scores detallados por categoría
-                - detected_symptoms: Lista de síntomas detectados (si aplica)
+            Diccionario con intent, confidence, scores, detected_symptoms.
         """
         if not message or not message.strip():
             return {
@@ -188,17 +177,13 @@ class IntentClassifier:
                     score += weight
             raw_scores[intent_type] = score
 
-        # Paso 2: Normalización relativa
-        # El máximo score realista es ~3.0 (2-3 patrones fuertes coincidiendo)
-        # Usamos 3.0 como denominador para todas las categorías.
-        # Esto produce scores en [0, ~1.0+], que capamos a [0, 1.0].
+        # Paso 2: Normalización
         NORMALIZATION_FACTOR = 3.0
-
         norm_scores: Dict[IntentType, float] = {}
         for intent_type, raw in raw_scores.items():
             norm_scores[intent_type] = min(raw / NORMALIZATION_FACTOR, 1.0)
 
-        # Paso 3: Extraer síntomas detectados (para enriquecer el formulario)
+        # Paso 3: Extraer síntomas detectados
         detected_symptoms = self._extract_symptoms(text)
 
         # Paso 4: Determinar intención con prioridades
@@ -206,13 +191,15 @@ class IntentClassifier:
         score_pregunta = norm_scores.get(IntentType.PREGUNTA, 0.0)
         score_saludo = norm_scores.get(IntentType.SALUDO, 0.0)
         score_despedida = norm_scores.get(IntentType.DESPEDIDA, 0.0)
+        score_no_medico = norm_scores.get(IntentType.NO_MEDICO, 0.0)
 
         # Lógica de decisión con prioridades:
-        # 1. Si hay despedida con score alto → despedida
-        # 2. Si hay síntomas por encima del umbral → síntomas (prioridad más alta)
-        # 3. Si hay pregunta con score significativo → pregunta
-        # 4. Si es saludo → saludo
-        # 5. Default: pregunta (tratar como consulta general)
+        # 1. Despedida con score alto → despedida
+        # 2. Síntomas por encima del umbral → síntomas (prioridad alta)
+        # 3. Pregunta con score significativo → pregunta
+        # 4. No médico con score alto → redirigir
+        # 5. Saludo → saludo (UMBRAL_SALUDO reducido para "hola mi amigo")
+        # 6. Default: si parece sustancial → pregunta, si no → no_medico
 
         if score_despedida >= chat_settings.UMBRAL_SALUDO:
             intent = IntentType.DESPEDIDA
@@ -223,20 +210,23 @@ class IntentClassifier:
         elif score_pregunta >= 0.2:
             intent = IntentType.PREGUNTA
             confidence = score_pregunta
+        elif score_no_medico >= 0.3:
+            intent = IntentType.NO_MEDICO
+            confidence = score_no_medico
         elif score_saludo >= chat_settings.UMBRAL_SALUDO:
             intent = IntentType.SALUDO
             confidence = score_saludo
         else:
-            # Si no hay señal clara, y el mensaje es sustancial (>10 chars),
-            # tratar como pregunta general. Si es muy corto, saludo.
-            if len(text) > 10:
+            # Si no hay señal clara
+            if len(text) > 15:
+                # Mensaje largo sin señales → tratar como pregunta médica
                 intent = IntentType.PREGUNTA
                 confidence = 0.3
             else:
+                # Mensaje corto sin señales → saludo genérico
                 intent = IntentType.SALUDO
-                confidence = 0.5
+                confidence = 0.4
 
-        # Construir resultado
         scores_dict = {
             t.value: round(norm_scores.get(t, 0.0), 4)
             for t in IntentType
@@ -255,39 +245,18 @@ class IntentClassifier:
         }
 
     def _extract_symptoms(self, text: str) -> List[str]:
-        """
-        Extrae síntomas específicos mencionados en el texto.
-
-        Usa los patrones de síntomas para identificar las frases exactas
-        que el paciente mencionó, para incluirlos en el formulario.
-
-        Args:
-            text: Texto del mensaje en minúsculas.
-
-        Returns:
-            Lista de strings con los síntomas detectados.
-        """
+        """Extrae síntomas específicos mencionados en el texto."""
         symptoms = []
-
-        # Conectores a excluir del final del síntoma ("y", "e", "o", "u", "pero")
         _CONNECTORS = re.compile(r'\s+(y|e|o|u|pero|and|or|but)\s*$')
 
         symptom_patterns = [
-            # Español: "dolor de X"
             (r'dolor de (\w+(?:\s+(?!y\s|e\s|o\s|u\s)\w+){0,1})', 'dolor de {}'),
-            # Español: "me duele el/la X"
             (r'me duele[sn]? (?:el|la|los|las) (\w+(?:\s+(?!y\s|e\s|o\s|u\s)\w+){0,1})', 'dolor de {}'),
-            # Español: "estoy con ..."
             (r'estoy con (?:mucha\s+|mucho\s+)?(tos|fiebre|cansancio|nauseas|mareo|vertigo|congestion|diarrea|vomito)', '{}'),
-            # Español: "tengo X" (solo para síntomas específicos)
             (r'tengo (fiebre|cansancio|nauseas|mareo|vertigo|tos|congestion|diarrea|vomito)', '{}'),
-            # Español: síntomas directos aislados
             (r'\b(tos|fiebre|cansancio|nauseas|mareo|vertigo|congestion|diarrea|vomito)\b', '{}'),
-            # Inglés: "I have X"
             (r'i have (fever|fatigue|nausea|dizziness|cough|congestion|diarrhea|vomiting)', '{}'),
-            # Inglés: "my X hurts"
             (r'my (\w+) hurts?', 'pain in {}'),
-            # Inglés: síntomas directos
             (r'\b(headache|stomachache|sore throat|earache|backache|chest pain)\b', '{}'),
         ]
 
@@ -296,24 +265,13 @@ class IntentClassifier:
             for match in matches:
                 cleaned = _CONNECTORS.sub('', match.strip())
                 symptom_text = template.format(cleaned)
-                # Evitar duplicados y palabras vacías
                 if symptom_text not in symptoms and len(symptom_text) > 2:
                     symptoms.append(symptom_text)
 
-        # Normalizar equivalencias EN->ES para mostrar resultados consistentes.
-        normalized = []
         synonym_map = {
-            "cough": "tos",
-            "fever": "fiebre",
-            "fatigue": "cansancio",
-            "nausea": "nauseas",
-            "dizziness": "mareo",
-            "congestion": "congestion",
-            "diarrhea": "diarrea",
-            "vomiting": "vomito",
+            "cough": "tos", "fever": "fiebre", "fatigue": "cansancio",
+            "nausea": "nauseas", "dizziness": "mareo", "congestion": "congestion",
+            "diarrhea": "diarrea", "vomiting": "vomito",
         }
-        for symptom in symptoms:
-            normalized.append(synonym_map.get(symptom, symptom))
-
-        # Preservar orden y quitar duplicados.
+        normalized = [synonym_map.get(s, s) for s in symptoms]
         return list(dict.fromkeys(normalized))

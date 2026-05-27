@@ -8,23 +8,25 @@ Endpoints:
     POST /api/query              — Retrieval híbrido directo (legacy)
     POST /api/rag_query          — Pipeline RAG directo (legacy)
 
-Flujo conversacional:
-    Mensaje del usuario → IntentClassifier → Saludo/Pregunta/Síntomas
-        - SALUDO:     Respuesta amigable conversacional
-        - PREGUNTA:   RAG → Respuesta conversacional + Bibliografía
-        - SÍNTOMAS:   Formulario dinámico → [usuario rellena] → Diagnóstico + Bibliografía
-        - DESPEDIDA:  Respuesta de despedida con disclaimer
+Flujo conversacional (LLM-driven):
+    Mensaje del usuario → IntentClassifier → Saludo/Pregunta/Síntomas/NoMédico/Despedida
+        - SALUDO:     LLM genera saludo natural + invitación a consultar
+        - PREGUNTA:   RAG → respuesta experta + bibliografía
+        - SÍNTOMAS:   LLM genera formulario dinámico → [usuario rellena] → LLM diagnóstico
+        - NO_MÉDICO:  LLM redirige amablemente a temas médicos
+        - DESPEDIDA:  LLM genera despedida + disclaimer
 """
 
+import json
 import random
 import logging
 import time
+from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
-from typing import Optional, List
+from pydantic import BaseModel, ConfigDict
 from pathlib import Path
 
 from retrieval.retriever import Retriever
@@ -39,7 +41,11 @@ from indexing.configs import settings as idx_settings
 from chat.intent_classifier import IntentClassifier, IntentType
 from chat.diagnosis_engine import DiagnosisEngine
 from chat.configs import settings as chat_settings
-from form.form_generator import extract_form_symptoms_prf, generate_dynamic_form_schema
+from form.form_generator import (
+    extract_form_symptoms_prf,
+    generate_dynamic_form_schema,
+    generate_llm_form_schema,
+)
 from dynamic_expansion import expand_corpus_from_query
 
 logger = logging.getLogger(__name__)
@@ -63,9 +69,10 @@ doc_store: Optional[DocumentStore] = None
 rag_pipeline = None
 intent_classifier: Optional[IntentClassifier] = None
 diagnosis_engine: Optional[DiagnosisEngine] = None
+llm_client = None  # LLM client para uso directo en chat
 
 # ---------------------------------------------------------------------------
-# Configuracion de expansion web automatica
+# Configuración de expansión web automática
 # ---------------------------------------------------------------------------
 MIN_RESULTS_FOR_ANSWER = 3
 WEB_EXPANSION_TARGET_DOCS = 5
@@ -83,6 +90,8 @@ class ChatRequest(BaseModel):
 
 class FormSubmitRequest(BaseModel):
     """Request para envío de formulario de síntomas."""
+    model_config = ConfigDict(extra="allow")
+
     original_query: str
     intensity: str = "5"
     duration: str = ""
@@ -111,7 +120,7 @@ class RAGQueryRequest(BaseModel):
 def startup_event():
     """Inicializa todos los motores del sistema al arrancar."""
     global retriever, indexer, doc_store, rag_pipeline
-    global intent_classifier, diagnosis_engine
+    global intent_classifier, diagnosis_engine, llm_client
 
     print("Inicializando Motor BM25 + FAISS + Cross-Encoder para API...")
 
@@ -149,7 +158,7 @@ def startup_event():
         indexer.encoder = encoder
     indexer.storage = io
 
-    # --- Pipeline RAG (LLM local) ---
+    # --- Pipeline RAG (LLM) ---
     try:
         from rag.llm_client import GeminiLLMClient, OpenRouterLLMClient, FallbackLLMClient
         from rag.pipeline import RAGPipeline
@@ -162,20 +171,22 @@ def startup_event():
         if llm_client.is_available:
             print(f"OK: RAG Pipeline configurado ({llm_client.model_name})")
         else:
-            print("Advertencia: no hay LLM configurado. RAG quedará deshabilitado hasta definirlo.")
+            print("Advertencia: no hay LLM configurado. RAG quedará deshabilitado.")
     except ImportError as e:
         print(f"RAG: Módulo no disponible: {e}")
         rag_pipeline = None
+        llm_client = None
     except Exception as e:
         print(f"RAG: Error de inicialización: {e}")
         rag_pipeline = None
+        llm_client = None
 
     # --- Clasificador de Intención ---
     intent_classifier = IntentClassifier()
     print("OK: Clasificador de intención inicializado.")
 
-    # --- Motor de Diagnóstico ---
-    diagnosis_engine = DiagnosisEngine()
+    # --- Motor de Diagnóstico (con LLM) ---
+    diagnosis_engine = DiagnosisEngine(llm_client=llm_client)
     print("OK: Motor de diagnóstico inicializado.")
 
     print(f"OK: Sistema listo. Documentos: {doc_store.count}")
@@ -198,22 +209,10 @@ def health_check():
 @app.post("/api/chat")
 def chat_endpoint(req: ChatRequest):
     """
-    Endpoint conversacional unificado.
+    Endpoint conversacional unificado — LLM-driven.
 
-    Clasifica la intención del usuario y responde según el flujo:
-        - SALUDO:     Respuesta amigable
-        - PREGUNTA:   RAG → respuesta conversacional + bibliografía
-        - SÍNTOMAS:   Genera formulario dinámico para que el paciente rellene
-        - DESPEDIDA:  Respuesta de despedida + disclaimer médico
-
-    Returns:
-        {
-            "type": "greeting" | "question" | "symptoms" | "farewell",
-            "message": str,           # Respuesta conversacional
-            "form_schema": dict|null, # Solo si type=symptoms
-            "diagnoses": list|null,   # Solo si type=question con RAG
-            "bibliography": list|null,# Referencias usadas
-        }
+    TODAS las respuestas pasan por el LLM cuando está disponible,
+    produciendo un flujo conversacional natural y profesional.
     """
     if not req.message or not req.message.strip():
         raise HTTPException(status_code=400, detail="Mensaje vacío")
@@ -223,43 +222,31 @@ def chat_endpoint(req: ChatRequest):
     intent = classification["intent"]
     detected_symptoms = classification.get("detected_symptoms", [])
 
-    # Detectar idioma (o respetar selección de UI si viene definida)
+    # Detectar idioma
     requested_lang = req.lang if req.lang in {"es", "en"} else None
     is_spanish = True if requested_lang == "es" else False if requested_lang == "en" else _detect_spanish(req.message)
     lang_code = "es" if is_spanish else "en"
 
     # ============================================================
-    # SALUDO → Respuesta amigable conversacional
+    # SALUDO → LLM genera saludo natural
     # ============================================================
     if intent == IntentType.SALUDO:
-        greetings = chat_settings.SALUDOS_ES if is_spanish else chat_settings.SALUDOS_EN
-        message = random.choice(greetings)
-
-        return {
-            "type": "greeting",
-            "message": message,
-            "form_schema": None,
-            "diagnoses": None,
-            "bibliography": None,
-        }
+        return _handle_greeting_llm(req.message, lang_code)
 
     # ============================================================
-    # DESPEDIDA → Respuesta de despedida + disclaimer
+    # DESPEDIDA → LLM genera despedida + disclaimer
     # ============================================================
     if intent == IntentType.DESPEDIDA:
-        farewells = chat_settings.DESPEDIDAS_ES if is_spanish else chat_settings.DESPEDIDAS_EN
-        message = random.choice(farewells)
-
-        return {
-            "type": "farewell",
-            "message": message,
-            "form_schema": None,
-            "diagnoses": None,
-            "bibliography": None,
-        }
+        return _handle_farewell_llm(req.message, lang_code)
 
     # ============================================================
-    # SÍNTOMAS → Generar formulario dinámico
+    # NO_MÉDICO → LLM redirige amablemente
+    # ============================================================
+    if intent == IntentType.NO_MEDICO:
+        return _handle_non_medical_llm(req.message, lang_code)
+
+    # ============================================================
+    # SÍNTOMAS → Formulario dinámico (LLM o rule-based)
     # ============================================================
     if intent == IntentType.SINTOMAS:
         return _handle_symptoms(req.message, detected_symptoms, lang_code)
@@ -271,9 +258,148 @@ def chat_endpoint(req: ChatRequest):
         return _handle_question(req.message, lang_code)
 
     # Fallback
+    return _handle_greeting_llm(req.message, lang_code)
+
+
+# ---------------------------------------------------------------------------
+# Handlers con LLM
+# ---------------------------------------------------------------------------
+
+def _handle_greeting_llm(message: str, lang_code: str) -> dict:
+    """Usa el LLM para generar un saludo natural y profesional."""
+    is_spanish = lang_code == "es"
+
+    if llm_client and llm_client.is_available:
+        try:
+            if is_spanish:
+                system_prompt = chat_settings.SYSTEM_PROMPT_MEDICAL_ES
+                user_msg = (
+                    f"El usuario te saluda: \"{message}\"\n\n"
+                    "Responde con un saludo cálido y profesional. Preséntate brevemente como NeuroMedIR "
+                    "y menciona que puedes ayudar con consultas médicas, síntomas, enfermedades, "
+                    "tratamientos, prevención, etc. Sé conversacional y amigable."
+                )
+            else:
+                system_prompt = chat_settings.SYSTEM_PROMPT_MEDICAL_EN
+                user_msg = (
+                    f"The user greets you: \"{message}\"\n\n"
+                    "Respond with a warm, professional greeting. Briefly introduce yourself as NeuroMedIR "
+                    "and mention you can help with medical queries, symptoms, diseases, "
+                    "treatments, prevention, etc. Be conversational and friendly."
+                )
+
+            response = llm_client.chat(system_prompt, user_msg, max_new_tokens=512)
+
+            if response:
+                return {
+                    "type": "greeting",
+                    "message": response,
+                    "form_schema": None,
+                    "diagnoses": None,
+                    "bibliography": None,
+                }
+        except Exception as e:
+            logger.error(f"LLM greeting failed: {e}")
+
+    # Fallback: saludos predefinidos
+    greetings = chat_settings.SALUDOS_ES if is_spanish else chat_settings.SALUDOS_EN
     return {
         "type": "greeting",
-        "message": "¿En qué puedo ayudarte? Puedes preguntarme sobre temas médicos o contarme tus síntomas.",
+        "message": random.choice(greetings),
+        "form_schema": None,
+        "diagnoses": None,
+        "bibliography": None,
+    }
+
+
+def _handle_farewell_llm(message: str, lang_code: str) -> dict:
+    """Usa el LLM para generar una despedida profesional con disclaimer."""
+    is_spanish = lang_code == "es"
+
+    if llm_client and llm_client.is_available:
+        try:
+            if is_spanish:
+                system_prompt = chat_settings.SYSTEM_PROMPT_MEDICAL_ES
+                user_msg = (
+                    f"El usuario se despide: \"{message}\"\n\n"
+                    "Despídete profesionalmente. Incluye un aviso importante de que "
+                    "tu información no sustituye una consulta médica profesional. "
+                    "Sé cálido y preocupado por el bienestar del paciente."
+                )
+            else:
+                system_prompt = chat_settings.SYSTEM_PROMPT_MEDICAL_EN
+                user_msg = (
+                    f"The user says goodbye: \"{message}\"\n\n"
+                    "Say goodbye professionally. Include an important disclaimer that "
+                    "your information does not replace professional medical consultation. "
+                    "Be warm and caring about the patient's wellbeing."
+                )
+
+            response = llm_client.chat(system_prompt, user_msg, max_new_tokens=512)
+
+            if response:
+                return {
+                    "type": "farewell",
+                    "message": response,
+                    "form_schema": None,
+                    "diagnoses": None,
+                    "bibliography": None,
+                }
+        except Exception as e:
+            logger.error(f"LLM farewell failed: {e}")
+
+    farewells = chat_settings.DESPEDIDAS_ES if is_spanish else chat_settings.DESPEDIDAS_EN
+    return {
+        "type": "farewell",
+        "message": random.choice(farewells),
+        "form_schema": None,
+        "diagnoses": None,
+        "bibliography": None,
+    }
+
+
+def _handle_non_medical_llm(message: str, lang_code: str) -> dict:
+    """Usa el LLM para redirigir amablemente a temas médicos."""
+    is_spanish = lang_code == "es"
+
+    if llm_client and llm_client.is_available:
+        try:
+            if is_spanish:
+                system_prompt = chat_settings.SYSTEM_PROMPT_MEDICAL_ES
+                user_msg = (
+                    f"El usuario pregunta algo que no es médico: \"{message}\"\n\n"
+                    "Explica amablemente que eres un asistente especializado en salud y que "
+                    "tu función es ayudar con consultas médicas. Menciona ejemplos de lo que "
+                    "SÍ puedes hacer: responder sobre síntomas, enfermedades, tratamientos, "
+                    "prevención, contagiología, etc. Sé amable pero claro en tu redirección."
+                )
+            else:
+                system_prompt = chat_settings.SYSTEM_PROMPT_MEDICAL_EN
+                user_msg = (
+                    f"The user asks something non-medical: \"{message}\"\n\n"
+                    "Kindly explain that you are a health-specialized assistant and that "
+                    "your function is to help with medical queries. Mention examples of what "
+                    "you CAN do: answer about symptoms, diseases, treatments, "
+                    "prevention, contagion, etc. Be kind but clear in your redirection."
+                )
+
+            response = llm_client.chat(system_prompt, user_msg, max_new_tokens=512)
+
+            if response:
+                return {
+                    "type": "greeting",
+                    "message": response,
+                    "form_schema": None,
+                    "diagnoses": None,
+                    "bibliography": None,
+                }
+        except Exception as e:
+            logger.error(f"LLM non-medical redirect failed: {e}")
+
+    no_med = chat_settings.NO_MEDICO_ES if is_spanish else chat_settings.NO_MEDICO_EN
+    return {
+        "type": "greeting",
+        "message": random.choice(no_med),
         "form_schema": None,
         "diagnoses": None,
         "bibliography": None,
@@ -283,18 +409,17 @@ def chat_endpoint(req: ChatRequest):
 def _handle_symptoms(message: str, detected_symptoms: list, lang_code: str) -> dict:
     """
     Maneja mensajes con síntomas: genera formulario dinámico.
-    Usa PRF (Pseudo-Relevance Feedback) para extraer términos médicos
-    adicionales de los documentos recuperados y enriquecer el formulario.
+    Intenta LLM-driven primero, fallback a rule-based.
     """
     t_start = time.time()
+    is_spanish = lang_code == "es"
 
     # Recuperar documentos para PRF
     results = retriever.retrieve(message, top_k=10)
 
     if _should_expand(results):
-        used_web_search = _try_expand_corpus(message)
-        if used_web_search:
-            results = retriever.retrieve(message, top_k=10)
+        _try_expand_corpus(message)
+        results = retriever.retrieve(message, top_k=10)
 
     # Extraer términos médicos adicionales de los documentos
     docs_text = []
@@ -312,13 +437,34 @@ def _handle_symptoms(message: str, detected_symptoms: list, lang_code: str) -> d
         if not any(term_lower in s.lower() for s in combined_symptoms):
             combined_symptoms.append(term)
 
-    # Generar esquema del formulario dinámico
-    form_schema = generate_dynamic_form_schema(
-        message,
-        combined_symptoms,
-        detected_symptoms=detected_symptoms,
-        lang=lang_code,
-    )
+    # ============================================================
+    # INTENTO 1: Formulario LLM-driven (preguntas de un médico real)
+    # ============================================================
+    form_schema = None
+    if llm_client and llm_client.is_available:
+        try:
+            form_schema = generate_llm_form_schema(
+                query=message,
+                detected_symptoms=detected_symptoms,
+                llm_client=llm_client,
+                lang=lang_code,
+            )
+            if form_schema:
+                logger.info("Formulario generado por LLM exitosamente.")
+        except Exception as e:
+            logger.error(f"LLM form generation failed: {e}")
+
+    # ============================================================
+    # INTENTO 2: Fallback a rule-based
+    # ============================================================
+    if not form_schema:
+        form_schema = generate_dynamic_form_schema(
+            message,
+            combined_symptoms,
+            detected_symptoms=detected_symptoms,
+            lang=lang_code,
+        )
+        logger.info("Formulario generado por reglas (fallback).")
 
     # Agregar síntomas detectados del mensaje al esquema
     if detected_symptoms:
@@ -327,7 +473,7 @@ def _handle_symptoms(message: str, detected_symptoms: list, lang_code: str) -> d
     latency_ms = round((time.time() - t_start) * 1000, 1)
     logger.info(f"Formulario generado en {latency_ms}ms para: '{message[:50]}...'")
 
-    if lang_code == "es":
+    if is_spanish:
         intro_msg = (
             "Entiendo que tienes algunos síntomas. Para poder ayudarte mejor, "
             "por favor completa el siguiente formulario con más detalles sobre tu caso. "
@@ -350,25 +496,21 @@ def _handle_symptoms(message: str, detected_symptoms: list, lang_code: str) -> d
 
 
 def _handle_question(message: str, lang_code: str) -> dict:
-    """
-    Maneja preguntas generales: RAG → respuesta conversacional + bibliografía.
-    """
+    """Maneja preguntas generales: RAG → respuesta experta + bibliografía."""
     t_start = time.time()
-
-    # Evaluar si la base local es insuficiente y activar expansion web
     used_web_search = False
+
+    # Evaluar si la base local es insuficiente
     try:
         initial_results = retriever.retrieve(message, top_k=5)
     except Exception as e:
-        logger.error(f"Retrieval inicial fallo: {e}")
+        logger.error(f"Retrieval inicial falló: {e}")
         initial_results = []
 
     if _should_expand(initial_results):
         used_web_search = _try_expand_corpus(message)
-        if used_web_search:
-            logger.info("Expansion web activa: reintentando retrieval tras indexacion dinamica.")
 
-    # Intentar RAG primero (genera respuesta natural)
+    # Intentar RAG (genera respuesta natural con LLM)
     answer_text = None
     sources = []
     confidence = 0.0
@@ -381,9 +523,8 @@ def _handle_question(message: str, lang_code: str) -> dict:
             confidence = rag_result.get("confidence", 0.0)
         except Exception as e:
             logger.error(f"RAG falló para pregunta: {e}")
-            answer_text = None
 
-    # Si la respuesta indica insuficiencia, intentar expansión web y reintentar
+    # Si la respuesta indica insuficiencia, intentar expansión web
     if answer_text and _answer_indicates_insufficient(answer_text):
         if not used_web_search:
             used_web_search = _try_expand_corpus(message)
@@ -396,7 +537,7 @@ def _handle_question(message: str, lang_code: str) -> dict:
             except Exception as e:
                 logger.error(f"RAG falló tras expansión web: {e}")
 
-    # Si hay baja confianza, intentar expansión web una vez
+    # Si hay baja confianza, intentar expansión web
     if answer_text and confidence < 0.15 and not used_web_search:
         used_web_search = _try_expand_corpus(message)
         if used_web_search and rag_pipeline is not None and rag_pipeline.is_available:
@@ -412,15 +553,11 @@ def _handle_question(message: str, lang_code: str) -> dict:
     if answer_text is None:
         results = retriever.retrieve(message, top_k=5)
         sources = results
-        if lang_code == "es":
-            answer_text = _build_answer_from_results(results, "es")
-        else:
-            answer_text = _build_answer_from_results(results, "en")
+        answer_text = _build_answer_from_results(results, lang_code)
 
     # Construir bibliografía
     bibliography = diagnosis_engine._build_bibliography(sources) if sources else []
 
-    # Agregar disclaimer
     disclaimer = chat_settings.DISCLAIMER_ES if lang_code == "es" else chat_settings.DISCLAIMER_EN
 
     latency_ms = round((time.time() - t_start) * 1000, 1)
@@ -445,26 +582,11 @@ def _handle_question(message: str, lang_code: str) -> dict:
 def submit_form(req: FormSubmitRequest):
     """
     Procesa el formulario rellenado por el paciente y genera diagnóstico.
-
-    Flujo:
-        1. Construir macro-query con síntomas originales + formulario
-        2. Recuperar documentos con el motor híbrido
-        3. Generar diagnósticos diferenciales con probabilidades
-        4. Intentar generar respuesta conversacional con RAG
-        5. Adjuntar bibliografía
-
-    Returns:
-        {
-            "type": "diagnosis",
-            "message": str,           # Respuesta conversacional del asistente
-            "diagnoses": list,        # Diagnósticos con probabilidades
-            "bibliography": list,     # Referencias usadas
-            "disclaimer": str,        # Aviso médico
-        }
+    LLM-driven cuando está disponible.
     """
     t_start = time.time()
 
-    # Paso 1: Construir macro-query enriquecida
+    # Construir macro-query enriquecida
     query_parts = [req.original_query]
 
     if req.intensity:
@@ -481,23 +603,49 @@ def submit_form(req: FormSubmitRequest):
     macro_query = " ".join(query_parts)
     logger.info(f"Macro-query para diagnóstico: {macro_query}")
 
-    # Paso 2: Recuperar documentos
+    # Recuperar documentos
     results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
     if _should_expand(results):
-        used_web_search = _try_expand_corpus(macro_query)
-        if used_web_search:
-            results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
+        _try_expand_corpus(macro_query)
+        results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
 
-    # Paso 3: Generar diagnósticos
+    # Detectar idioma
     requested_lang = req.lang if req.lang in {"es", "en"} else None
     lang_code = "es" if requested_lang == "es" else "en" if requested_lang == "en" else None
     lang_final = lang_code or ("es" if _detect_spanish(req.original_query) else "en")
-    diagnosis_result = diagnosis_engine.generate_diagnosis(macro_query, results, lang=lang_final)
+
+    # Recopilar todos los datos del formulario (incluyendo campos dinámicos)
+    form_data = req.model_dump()
+
+    # ============================================================
+    # INTENTO 1: Diagnóstico LLM-driven
+    # ============================================================
+    diagnosis_result = None
+    if diagnosis_engine and hasattr(diagnosis_engine, 'generate_llm_diagnosis'):
+        try:
+            diagnosis_result = diagnosis_engine.generate_llm_diagnosis(
+                query=macro_query,
+                form_data=form_data,
+                retrieval_results=results,
+                lang=lang_final,
+            )
+            if diagnosis_result:
+                logger.info("Diagnóstico generado por LLM exitosamente.")
+        except Exception as e:
+            logger.error(f"LLM diagnosis failed: {e}")
+
+    # ============================================================
+    # INTENTO 2: Fallback a rule-based
+    # ============================================================
+    if not diagnosis_result:
+        diagnosis_result = diagnosis_engine.generate_diagnosis(macro_query, results, lang=lang_final)
+        logger.info("Diagnóstico generado por reglas (fallback).")
+
     diagnoses = diagnosis_result.get("diagnoses", [])
     bibliography = diagnosis_result.get("bibliography", [])
     summary = diagnosis_result.get("summary", "")
 
-    # Paso 4: Intentar RAG para respuesta conversacional más natural
+    # Intentar RAG para respuesta conversacional más natural
     answer_text = None
     if rag_pipeline is not None and rag_pipeline.is_available:
         try:
@@ -515,7 +663,6 @@ def submit_form(req: FormSubmitRequest):
         except Exception as e:
             logger.error(f"RAG falló para diagnóstico: {e}")
 
-    # Si RAG no está disponible, usar el summary del DiagnosisEngine
     if answer_text is None:
         answer_text = summary
     elif summary:
@@ -524,8 +671,7 @@ def submit_form(req: FormSubmitRequest):
         else:
             answer_text = f"{answer_text}\n\nAnalysis summary:\n{summary}"
 
-    # Detectar idioma
-    is_spanish = True if (lang_final == "es") else False if (lang_final == "en") else _detect_spanish(req.original_query)
+    is_spanish = lang_final == "es"
     disclaimer = chat_settings.DISCLAIMER_ES if is_spanish else chat_settings.DISCLAIMER_EN
 
     latency_ms = round((time.time() - t_start) * 1000, 1)
@@ -544,12 +690,12 @@ def submit_form(req: FormSubmitRequest):
 
 
 # ---------------------------------------------------------------------------
-# Legacy endpoints (mantenidos por compatibilidad)
+# Legacy endpoints
 # ---------------------------------------------------------------------------
 
 @app.post("/api/query")
 def process_query(req: QueryRequest):
-    """Retrieval híbrido directo (legacy — sin clasificación de intención)."""
+    """Retrieval híbrido directo (legacy)."""
     if not req.query:
         raise HTTPException(status_code=400, detail="Consulta vacía")
 
@@ -579,40 +725,6 @@ def process_query(req: QueryRequest):
         "latency_ms": round((time.time() - t_start) * 1000, 1),
         "used_web_search": used_web_search,
     }
-
-
-def _should_expand(results: list) -> bool:
-    """Retorna True si la base local es insuficiente para responder."""
-    if results is None:
-        return True
-    if len(results) < MIN_RESULTS_FOR_ANSWER:
-        return True
-    top_score = results[0].get("score", 0.0) if results else 0.0
-    return top_score < 0.15
-
-
-def _try_expand_corpus(query: str) -> bool:
-    """Ejecuta expansion web y reindexa incrementalmente si es posible."""
-    global doc_store, retriever
-
-    if indexer is None or indexer.encoder is None:
-        logger.warning("Expansion web omitida: encoder no disponible.")
-        return False
-
-    new_docs = expand_corpus_from_query(query, max_new_docs=WEB_EXPANSION_TARGET_DOCS)
-    if not new_docs:
-        return False
-
-    try:
-        indexer.add_documents(new_docs)
-        # Recargar store para incluir nuevos docs
-        doc_store = DocumentStore(idx_settings.PROCESSED_DATA_DIR)
-        if retriever is not None:
-            retriever._doc_store = doc_store
-        return True
-    except Exception as e:
-        logger.error(f"Expansion web fallo al reindexar: {e}")
-        return False
 
 
 @app.post("/api/rag_query")
@@ -653,8 +765,40 @@ def rag_query(req: RAGQueryRequest):
 # Utilidades internas
 # ---------------------------------------------------------------------------
 
+def _should_expand(results: list) -> bool:
+    """Retorna True si la base local es insuficiente para responder."""
+    if results is None:
+        return True
+    if len(results) < MIN_RESULTS_FOR_ANSWER:
+        return True
+    top_score = results[0].get("score", 0.0) if results else 0.0
+    return top_score < 0.15
+
+
+def _try_expand_corpus(query: str) -> bool:
+    """Ejecuta expansión web y reindexa incrementalmente."""
+    global doc_store, retriever
+
+    if indexer is None or indexer.encoder is None:
+        logger.warning("Expansión web omitida: encoder no disponible.")
+        return False
+
+    new_docs = expand_corpus_from_query(query, max_new_docs=WEB_EXPANSION_TARGET_DOCS)
+    if not new_docs:
+        return False
+
+    try:
+        indexer.add_documents(new_docs)
+        doc_store = DocumentStore(idx_settings.PROCESSED_DATA_DIR)
+        if retriever is not None:
+            retriever._doc_store = doc_store
+        return True
+    except Exception as e:
+        logger.error(f"Expansión web falló al reindexar: {e}")
+        return False
+
+
 def _detect_spanish(text: str) -> bool:
-    """Detecta si un texto está en español usando marcadores lingüísticos."""
     spanish_markers = {
         "el", "la", "los", "las", "de", "en", "que", "por", "con",
         "una", "síntomas", "tratamiento", "paciente", "enfermedad",
@@ -667,11 +811,10 @@ def _detect_spanish(text: str) -> bool:
 
 
 def _build_answer_from_results(results: list, lang: str) -> str:
-    """Construye una respuesta conversacional a partir de resultados de retrieval."""
     if not results:
         if lang == "es":
             return "No encontré información relevante sobre tu consulta en mi base de datos. ¿Podrías reformular tu pregunta?"
-        return "I couldn't find relevant information about your query in my database. Could you rephrase your question?"
+        return "I couldn't find relevant information about your query in my database. Could you rephrase?"
 
     if lang == "es":
         lines = ["Según la información disponible en mi base de datos:\n"]
@@ -692,10 +835,8 @@ def _build_answer_from_results(results: list, lang: str) -> str:
 
 
 def _answer_indicates_insufficient(answer: str) -> bool:
-    """Detecta si el texto indica falta de información en las fuentes."""
     if not answer:
         return False
-
     text = answer.lower()
     patterns = [
         "no está disponible",
@@ -720,8 +861,7 @@ if FRONTEND_BUILD_DIR.exists():
 
     @app.get("/")
     def serve_frontend():
-        """Sirve el frontend de React en la raíz (producción)."""
         index_file = FRONTEND_BUILD_DIR / "index.html"
         if index_file.exists():
             return FileResponse(str(index_file))
-        return {"message": "NeuroMedIR API — Frontend no compilado. Ejecute: cd frontend && npm run build"}
+        return {"message": "NeuroMedIR API — Frontend no compilado."}

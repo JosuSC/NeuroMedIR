@@ -1,8 +1,27 @@
+"""
+form_generator.py — Generación de formularios dinámicos para NeuroMedIR.
+
+Dos modos de generación:
+    1. LLM-driven (preferido): El LLM genera preguntas como un médico real,
+       específicas para los síntomas del paciente.
+    2. Rule-based (fallback): Preguntas predefinidas basadas en keywords.
+
+El modo LLM produce formularios mucho más relevantes porque:
+    - Adapta las preguntas al cuadro clínico específico
+    - Genera preguntas de diagnóstico diferencial que un médico real haría
+    - No se limita a los síntomas predefinidos en código
+"""
+
 import re
+import json
 import string
+import logging
+from typing import List, Optional
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+logger = logging.getLogger(__name__)
 
 
 _FORM_TEXT = {
@@ -10,8 +29,7 @@ _FORM_TEXT = {
         "title": "Evaluación Pre-diagnóstica",
         "description": (
             "Por favor revise y complete todos los campos a continuación para ayudarnos a "
-            "entender mejor su caso y ofrecerle una búsqueda más precisa. Tendrá oportunidad "
-            "de revisarlo antes de enviarlo."
+            "entender mejor su caso y ofrecerle una búsqueda más precisa."
         ),
         "intensity_label": "Del 1 al 10, ¿Qué intensidad tiene su molestia principal?",
         "duration_label": "¿Hace cuánto tiempo comenzó con estos problemas?",
@@ -46,14 +64,14 @@ _FORM_TEXT = {
         "title": "Pre-diagnostic Assessment",
         "description": (
             "Please review and complete all fields below to help us understand your case and "
-            "provide a more accurate analysis. You will be able to review it before submitting."
+            "provide a more accurate analysis."
         ),
         "intensity_label": "From 1 to 10, how intense is your main symptom?",
         "duration_label": "How long have you had these symptoms?",
         "duration_options": ["Less than 24 hours", "A few days", "Weeks", "Months", "Years"],
-        "dynamic_label": "Based on similar cases, do you also experience any of the following conditions or symptoms?",
+        "dynamic_label": "Based on similar cases, do you also experience any of the following?",
         "dynamic_hint": "Select all that apply.",
-        "additional_label": "Any other detail, pre-existing condition, or medication you are taking?",
+        "additional_label": "Any other detail, pre-existing condition, or medication?",
         "additional_placeholder": "E.g., I have diabetes, I take Losartan...",
         "onset_label": "How did the main symptom start?",
         "onset_options": ["Sudden", "Gradual", "Not sure"],
@@ -91,41 +109,30 @@ def _append_field(fields: list, used_ids: set, field: dict) -> None:
     fields.append(field)
     used_ids.add(field_id)
 
+
 def sanitize_text(text: str) -> str:
-    """Elimina signos de puntuación básicos."""
     return text.translate(str.maketrans('', '', string.punctuation))
 
 
 def fix_mojibake(text: str) -> str:
-    """Intenta corregir texto mojibake típico (ej. espaÃ±ol -> español)."""
     if not text:
         return ""
-
-    # Heurística: solo intentar recodificar cuando hay patrones sospechosos.
     if "Ã" in text or "Â" in text:
         try:
-            repaired = text.encode("latin1").decode("utf-8")
-            return repaired
+            return text.encode("latin1").decode("utf-8")
         except (UnicodeEncodeError, UnicodeDecodeError):
             return text
     return text
 
 
 def normalize_candidate_term(term: str) -> str:
-    """Limpia términos candidatos para evitar basura visual en el formulario."""
     if not term:
         return ""
-
-    # Si ya hay caracteres de reemplazo (U+FFFD), ese texto está corrupto.
-    # Lo descartamos para no mostrar opciones rotas como "espa�ol".
     if "�" in term:
         return ""
-
     term = fix_mojibake(term)
     term = sanitize_text(term)
     term = re.sub(r"\s+", " ", term).strip().lower()
-
-    # Quitar tokens muy cortos o claramente rotos.
     if len(term) < 4:
         return ""
     if re.fullmatch(r"[a-z]{1,2}", term):
@@ -134,75 +141,305 @@ def normalize_candidate_term(term: str) -> str:
         return ""
     if "ntomas" in term and not term.startswith("s"):
         return ""
-
     return term
 
-def extract_form_symptoms_prf(query: str, retrieved_docs: list[str], top_n: int = 10) -> list[str]:
+
+def extract_form_symptoms_prf(query: str, retrieved_docs: list, top_n: int = 10) -> list:
     """
-    Algoritmo: Pseudo-Relevance Feedback (PRF) usando TF-IDF.
-    Analiza la colección local de N mejores documentos devueltos por el motor
-    para extraer términos (enfermedades/síntomas probabilísticos) que no están 
-    en la query original.
+    Pseudo-Relevance Feedback (PRF) usando TF-IDF.
+    Extrae términos médicos de los documentos recuperados.
     """
     if not retrieved_docs:
         return []
-        
-    # 1. Pipeline de extracción: Solo nos interesan las palabras más representativas.
-    # Excluimos stop_words genéricas. Extraemos bi-gramas y unigramas.
-    # Usamos español e inglés ya que la base puede ser multilingüe.
-    stop_words = ["el", "la", "los", "las", "un", "una", "de", "del", "al", "en", "para",
-                  "por", "con", "sin", "su", "sus", "como", "esta", "esto", "este", "es", "son",
-                  "paciente", "estudio", "caso", "the", "and", "of", "to", "in", "for", "with", "on", "is", "was"]
-                  
+
+    stop_words = [
+        "el", "la", "los", "las", "un", "una", "de", "del", "al", "en", "para",
+        "por", "con", "sin", "su", "sus", "como", "esta", "esto", "este", "es", "son",
+        "paciente", "estudio", "caso", "the", "and", "of", "to", "in", "for", "with",
+        "on", "is", "was",
+    ]
+
     vectorizer = TfidfVectorizer(
         stop_words=stop_words,
         ngram_range=(1, 2),
-        max_features=200, 
-        lowercase=True
+        max_features=200,
+        lowercase=True,
     )
-    
-    # 2. Computar matriz TF-IDF sobre el espacio vectorial top-K
+
     try:
         tfidf_matrix = vectorizer.fit_transform(retrieved_docs)
     except ValueError:
-        # Fallback de seguridad si los documentos están vacíos o corruptos
         return []
-        
-    # 3. Sumarizar importancia global de cada característica (Término)
+
     sum_tfidf = np.asarray(tfidf_matrix.sum(axis=0)).flatten()
     feature_names = vectorizer.get_feature_names_out()
-    
-    # 4. Excluir términos redundantes o que ya dijo el paciente
+
     query_terms = set(sanitize_text(query.lower()).split())
     word_scores = []
-    
+
     for word, score in zip(feature_names, sum_tfidf):
         word_clean = normalize_candidate_term(word)
-
-        # Filtros heurísticos: Evitar términos muy cortos (basura)
         if not word_clean:
             continue
-            
-        # Si ninguna palabra del síntoma coincide trivialmente con lo que originó la búsqueda:
         if not any(q_term in word_clean for q_term in query_terms):
             word_scores.append((word_clean, score))
-            
-    # 5. Ordenar decrecientemente por relevancia PRF total
+
     word_scores.sort(key=lambda x: x[1], reverse=True)
-    
-    # 6. Retornar los top N limpios
     top_terms = [word for word, score in word_scores[:top_n]]
     return list(dict.fromkeys(top_terms))
 
+
+# =========================================================================
+# LLM-DRIVEN FORM GENERATION (primary method)
+# =========================================================================
+
+def generate_llm_form_schema(
+    query: str,
+    detected_symptoms: list,
+    llm_client,
+    lang: str = "es",
+) -> Optional[dict]:
+    """
+    Genera el esquema del formulario usando el LLM.
+
+    El LLM actúa como un médico que decide qué preguntas hacerle al paciente
+    en función de sus síntomas específicos. Esto produce formularios mucho más
+    relevantes y adaptados que el enfoque rule-based.
+
+    Args:
+        query: Mensaje del paciente.
+        detected_symptoms: Síntomas detectados por el intent classifier.
+        llm_client: Cliente LLM con método chat().
+        lang: Código de idioma.
+
+    Returns:
+        Esquema del formulario como dict, o None si falla.
+    """
+    if llm_client is None or not llm_client.is_available:
+        return None
+
+    is_spanish = lang == "es"
+
+    if is_spanish:
+        system_prompt = (
+            "Eres un médico especialista. Un paciente te describe sus síntomas. "
+            "Tu tarea es generar las preguntas específicas que le harías para "
+            "llegar a un diagnóstico diferencial preciso. "
+            "Las preguntas deben ser CLARAS, FÁCILES de responder para cualquier persona "
+            "de cualquier edad, y orientadas a distinguir entre posibles condiciones. "
+            "DEBES responder SOLO con un objeto JSON válido, sin texto adicional.\n\n"
+            "El JSON debe tener esta estructura exacta:\n"
+            '{\n'
+            '  "fields": [\n'
+            '    {\n'
+            '      "id": "identificador_unico",\n'
+            '      "type": "select|multiselect_checkbox|slider|textarea",\n'
+            '      "label": "Pregunta para el paciente",\n'
+            '      "options": ["Opción 1", "Opción 2"],\n'
+            '      "min": 1,\n'
+            '      "max": 10,\n'
+            '      "required": true,\n'
+            '      "hint": "Texto de ayuda opcional"\n'
+            '    }\n'
+            '  ]\n'
+            '}\n\n'
+            'Reglas:\n'
+            '- "select": pregunta con opciones excluyentes (radio buttons)\n'
+            '- "multiselect_checkbox": pregunta con opciones múltiples (checkboxes)\n'
+            '- "slider": escala numérica (requiere min y max)\n'
+            '- "textarea": texto libre\n'
+            '- Genera entre 4 y 8 preguntas relevantes\n'
+            '- NO generes preguntas sobre intensidad ni duración (se agregan automáticamente)\n'
+            '- Cada "id" debe ser único, en snake_case, sin espacios\n'
+            '- Los "label" deben ser preguntas claras en español\n'
+            '- Las "options" deben ser comprensibles para cualquier persona\n'
+            '- Incluye siempre "No estoy seguro" como opción en preguntas de selección\n'
+        )
+
+        user_message = (
+            f"El paciente dice: \"{query}\"\n\n"
+            f"Síntomas detectados: {', '.join(detected_symptoms) if detected_symptoms else 'No se detectaron síntomas específicos'}\n\n"
+            "Genera las preguntas que le harías a este paciente como médico. "
+            "Responde SOLO con el JSON."
+        )
+    else:
+        system_prompt = (
+            "You are a specialist doctor. A patient describes their symptoms. "
+            "Your task is to generate the specific questions you would ask them to "
+            "arrive at a precise differential diagnosis. "
+            "Questions must be CLEAR, EASY to answer for any person of any age, "
+            "and oriented toward distinguishing between possible conditions. "
+            "You MUST respond ONLY with a valid JSON object, no additional text.\n\n"
+            "The JSON must have this exact structure:\n"
+            '{\n'
+            '  "fields": [\n'
+            '    {\n'
+            '      "id": "unique_identifier",\n'
+            '      "type": "select|multiselect_checkbox|slider|textarea",\n'
+            '      "label": "Question for the patient",\n'
+            '      "options": ["Option 1", "Option 2"],\n'
+            '      "min": 1,\n'
+            '      "max": 10,\n'
+            '      "required": true,\n'
+            '      "hint": "Optional help text"\n'
+            '    }\n'
+            '  ]\n'
+            '}\n\n'
+            'Rules:\n'
+            '- "select": exclusive options (radio buttons)\n'
+            '- "multiselect_checkbox": multiple options (checkboxes)\n'
+            '- "slider": numeric scale (requires min and max)\n'
+            '- "textarea": free text\n'
+            '- Generate between 4 and 8 relevant questions\n'
+            '- Do NOT generate questions about intensity or duration (added automatically)\n'
+            '- Each "id" must be unique, in snake_case, no spaces\n'
+            '- "label" must be clear questions in English\n'
+            '- "options" must be understandable for any person\n'
+            '- Always include "Not sure" as an option in selection questions\n'
+        )
+
+        user_message = (
+            f"The patient says: \"{query}\"\n\n"
+            f"Detected symptoms: {', '.join(detected_symptoms) if detected_symptoms else 'No specific symptoms detected'}\n\n"
+            "Generate the questions you would ask this patient as a doctor. "
+            "Respond ONLY with the JSON."
+        )
+
+    try:
+        response = llm_client.chat(
+            system_prompt=system_prompt,
+            user_message=user_message,
+            max_new_tokens=2048,
+            json_mode=True,
+        )
+
+        if not response:
+            logger.warning("LLM form generation: empty response.")
+            return None
+
+        # Parsear JSON
+        schema_data = json.loads(response)
+
+        if "fields" not in schema_data or not isinstance(schema_data["fields"], list):
+            logger.warning("LLM form generation: invalid schema structure.")
+            return None
+
+        # Validar y limpiar cada campo
+        valid_fields = []
+        used_ids = set()
+        for field in schema_data["fields"]:
+            if not isinstance(field, dict):
+                continue
+            field_id = field.get("id", "")
+            field_type = field.get("type", "")
+            field_label = field.get("label", "")
+
+            if not field_id or not field_type or not field_label:
+                continue
+            if field_id in used_ids:
+                continue
+            if field_type not in ("select", "multiselect_checkbox", "slider", "textarea"):
+                continue
+
+            clean_field = {
+                "id": field_id,
+                "type": field_type,
+                "label": field_label,
+                "required": bool(field.get("required", False)),
+            }
+
+            if field_type in ("select", "multiselect_checkbox"):
+                options = field.get("options", [])
+                if isinstance(options, list) and len(options) > 0:
+                    clean_field["options"] = [str(o) for o in options]
+                else:
+                    continue
+
+            if field_type == "slider":
+                clean_field["min"] = int(field.get("min", 1))
+                clean_field["max"] = int(field.get("max", 10))
+
+            if field.get("hint"):
+                clean_field["hint"] = str(field["hint"])
+
+            if field.get("placeholder"):
+                clean_field["placeholder"] = str(field["placeholder"])
+
+            valid_fields.append(clean_field)
+            used_ids.add(field_id)
+
+        if not valid_fields:
+            logger.warning("LLM form generation: no valid fields after parsing.")
+            return None
+
+        # Construir esquema final con campos estándar + campos LLM
+        lang_key = _normalize_lang(lang)
+        text = _FORM_TEXT[lang_key]
+
+        final_fields = []
+        final_used_ids = set()
+
+        # Campos estándar obligatorios
+        _append_field(final_fields, final_used_ids, {
+            "id": "intensity",
+            "type": "slider",
+            "label": text["intensity_label"],
+            "min": 1,
+            "max": 10,
+            "required": True,
+        })
+
+        _append_field(final_fields, final_used_ids, {
+            "id": "duration",
+            "type": "select",
+            "label": text["duration_label"],
+            "options": text["duration_options"],
+            "required": True,
+        })
+
+        # Campos generados por el LLM
+        for field in valid_fields:
+            if field["id"] not in ("intensity", "duration", "additional_notes", "dynamic_symptoms"):
+                _append_field(final_fields, final_used_ids, field)
+
+        # Campo final de notas
+        _append_field(final_fields, final_used_ids, {
+            "id": "additional_notes",
+            "type": "textarea",
+            "label": text["additional_label"],
+            "placeholder": text["additional_placeholder"],
+            "required": False,
+        })
+
+        return {
+            "title": text["title"],
+            "description": text["description"],
+            "original_query": query,
+            "fields": final_fields,
+        }
+
+    except json.JSONDecodeError as e:
+        logger.error(f"LLM form generation: JSON parse error: {e}")
+        return None
+    except Exception as e:
+        logger.error(f"LLM form generation failed: {e}")
+        return None
+
+
+# =========================================================================
+# RULE-BASED FORM GENERATION (fallback when LLM is unavailable)
+# =========================================================================
+
 def generate_dynamic_form_schema(
     query: str,
-    extracted_symptoms: list[str],
-    detected_symptoms: list[str] | None = None,
+    extracted_symptoms: list,
+    detected_symptoms: list = None,
     lang: str = "es",
 ) -> dict:
     """
-    Genera el esquema JSON necesario para renderizar un formulario profesional y validado
-    en la interfaz de frontend. Todos los campos están marcados con reglas de negocio.
+    Genera el esquema del formulario usando reglas (fallback).
+
+    Se usa cuando el LLM no está disponible.
     """
     lang = _normalize_lang(lang)
     text = _FORM_TEXT[lang]
@@ -210,8 +447,7 @@ def generate_dynamic_form_schema(
     detected_symptoms = detected_symptoms or []
     combined_text = " ".join(extracted_symptoms + detected_symptoms).lower()
 
-    # Campos estándar médicos requeridos
-    fields: list[dict] = []
+    fields: list = []
     used_ids: set = set()
 
     _append_field(fields, used_ids, {
@@ -240,8 +476,7 @@ def generate_dynamic_form_schema(
             "required": False,
         })
 
-    # Reglas de preguntas dinámicas basadas en síntomas
-    def has_any(*keywords: str) -> bool:
+    def has_any(*keywords):
         return any(k in combined_text for k in keywords)
 
     if has_any("fiebre", "fever"):
@@ -332,10 +567,8 @@ def generate_dynamic_form_schema(
         "original_query": query,
         "fields": fields,
     }
-    
-    # Si logramos extraer conocimiento dinámico del motor de SRI
+
     if extracted_symptoms:
-        # Capitalizamos la primera letra de cada término para que se vea más natural en la UI
         formatted_options = [fix_mojibake(sym).capitalize() for sym in extracted_symptoms]
         _append_field(schema["fields"], used_ids, {
             "id": "dynamic_symptoms",
@@ -345,8 +578,7 @@ def generate_dynamic_form_schema(
             "required": False,
             "hint": text["dynamic_hint"],
         })
-        
-    # Campo final estándar para requerimientos adicionales (anamnesis)
+
     _append_field(schema["fields"], used_ids, {
         "id": "additional_notes",
         "type": "textarea",
@@ -354,5 +586,5 @@ def generate_dynamic_form_schema(
         "placeholder": text["additional_placeholder"],
         "required": False,
     })
-    
+
     return schema

@@ -2,8 +2,9 @@
 
 import logging
 import os
+import json
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 import requests
 from dotenv import load_dotenv
@@ -20,8 +21,8 @@ class BaseLLMClient(ABC):
     Abstract base class for LLM clients.
 
     Defines the interface that all LLM backends must implement.
-    This allows swapping between Transformers, Ollama, llama.cpp, etc.
-    without modifying the RAG pipeline.
+    This allows swapping between Gemini, OpenRouter, Ollama, etc.
+    without modifying the RAG pipeline or chat flow.
     """
 
     @property
@@ -39,7 +40,7 @@ class BaseLLMClient(ABC):
     @abstractmethod
     def generate(self, prompt: str, max_new_tokens: int = None) -> Optional[str]:
         """
-        Generates text from a prompt.
+        Generates text from a single prompt (legacy RAG compatibility).
 
         Args:
             prompt: The input text prompt.
@@ -51,10 +52,31 @@ class BaseLLMClient(ABC):
         ...
 
     @abstractmethod
+    def chat(
+        self,
+        system_prompt: str,
+        user_message: str,
+        max_new_tokens: int = None,
+        json_mode: bool = False,
+    ) -> Optional[str]:
+        """
+        Chat-style generation with separate system and user messages.
+
+        Args:
+            system_prompt: Instructions for the AI (role, rules, tone).
+            user_message: The user's message.
+            max_new_tokens: Maximum tokens to generate.
+            json_mode: If True, request JSON-formatted output.
+
+        Returns:
+            Generated text string, or None if generation fails.
+        """
+        ...
+
+    @abstractmethod
     def count_tokens(self, text: str) -> int:
         """
         Counts the number of tokens in a text string.
-
         Used for context window management and truncation decisions.
         Returns an estimate if exact tokenization is unavailable.
         """
@@ -73,15 +95,6 @@ class GeminiLLMClient(BaseLLMClient):
         top_k: Optional[int] = None,
         timeout_seconds: Optional[int] = None,
     ):
-        """
-        Args:
-            model_name: Gemini model identifier.
-            api_key: Gemini API key. Falls back to environment variables.
-            temperature: Sampling temperature.
-            top_p: Nucleus sampling value.
-            top_k: Top-K sampling value.
-            timeout_seconds: HTTP timeout for each request.
-        """
         self._model_name = model_name or rag_settings.RAG_LLM_MODEL
         self._api_key = (
             api_key
@@ -107,7 +120,7 @@ class GeminiLLMClient(BaseLLMClient):
             )
 
     # -------------------------------------------------------------------
-    # Public API (implements BaseLLMClient)
+    # Public API
     # -------------------------------------------------------------------
 
     @property
@@ -117,15 +130,10 @@ class GeminiLLMClient(BaseLLMClient):
 
     @property
     def model_name(self) -> str:
-        """Returns the configured Gemini model name."""
         return self._model_name
 
-    def generate(
-        self,
-        prompt: str,
-        max_new_tokens: Optional[int] = None,
-    ) -> Optional[str]:
-        """Generates text using the Gemini API."""
+    def generate(self, prompt: str, max_new_tokens: Optional[int] = None) -> Optional[str]:
+        """Legacy single-prompt generation (backward compatible with RAG pipeline)."""
         if not self._api_key:
             logger.warning("LLM: Gemini API key not configured — cannot generate.")
             return None
@@ -168,19 +176,81 @@ class GeminiLLMClient(BaseLLMClient):
                 return None
 
             data = response.json()
-            generated_text = self._extract_text(data)
-            if not generated_text:
-                logger.warning("Gemini: empty response payload.")
-                return None
-
-            return generated_text.strip()
+            return self._extract_text(data)
 
         except Exception as e:
             logger.error("LLM: Generation failed: %s", e)
             return None
 
+    def chat(
+        self,
+        system_prompt: str,
+        user_message: str,
+        max_new_tokens: Optional[int] = None,
+        json_mode: bool = False,
+    ) -> Optional[str]:
+        """
+        Chat-style generation with system instruction support.
+
+        Uses Gemini's systemInstruction field for proper role separation,
+        which produces significantly better results than stuffing everything
+        into the user message.
+        """
+        if not self._api_key:
+            logger.warning("LLM: Gemini API key not configured — cannot chat.")
+            return None
+
+        if not user_message or not user_message.strip():
+            logger.warning("LLM: Empty user message — skipping chat.")
+            return None
+
+        max_tokens = max_new_tokens or rag_settings.RAG_MAX_NEW_TOKENS
+
+        try:
+            payload: Dict[str, Any] = {
+                "systemInstruction": {
+                    "parts": [{"text": system_prompt}]
+                },
+                "contents": [
+                    {
+                        "role": "user",
+                        "parts": [{"text": user_message}],
+                    }
+                ],
+                "generationConfig": {
+                    "temperature": self._temperature,
+                    "topP": self._top_p,
+                    "topK": self._top_k,
+                    "maxOutputTokens": max_tokens,
+                },
+            }
+
+            if json_mode:
+                payload["generationConfig"]["responseMimeType"] = "application/json"
+
+            response = requests.post(
+                self._endpoint,
+                params={"key": self._api_key},
+                json=payload,
+                timeout=self._timeout_seconds,
+            )
+
+            if not response.ok:
+                logger.error(
+                    "Gemini chat request failed (%s): %s",
+                    response.status_code,
+                    response.text[:1000],
+                )
+                return None
+
+            data = response.json()
+            return self._extract_text(data)
+
+        except Exception as e:
+            logger.error("LLM: Chat generation failed: %s", e)
+            return None
+
     def count_tokens(self, text: str) -> int:
-        """Returns a rough token estimate for Gemini prompts."""
         if not text:
             return 0
         return max(1, len(text) // rag_settings.RAG_CHARS_PER_TOKEN)
@@ -244,6 +314,7 @@ class OpenRouterLLMClient(BaseLLMClient):
         return self._model_name
 
     def generate(self, prompt: str, max_new_tokens: Optional[int] = None) -> Optional[str]:
+        """Legacy single-prompt generation for backward compatibility."""
         if not self._api_key:
             logger.warning("LLM: OpenRouter API key not configured — cannot generate.")
             return None
@@ -284,15 +355,69 @@ class OpenRouterLLMClient(BaseLLMClient):
                 return None
 
             data = response.json()
-            generated_text = self._extract_text(data)
-            if not generated_text:
-                logger.warning("OpenRouter: empty response payload.")
-                return None
-
-            return generated_text.strip()
+            return self._extract_text(data)
 
         except Exception as e:
             logger.error("LLM: Generation failed: %s", e)
+            return None
+
+    def chat(
+        self,
+        system_prompt: str,
+        user_message: str,
+        max_new_tokens: Optional[int] = None,
+        json_mode: bool = False,
+    ) -> Optional[str]:
+        """Chat-style generation with system message support (OpenAI-compatible)."""
+        if not self._api_key:
+            logger.warning("LLM: OpenRouter API key not configured — cannot chat.")
+            return None
+
+        if not user_message or not user_message.strip():
+            return None
+
+        max_tokens = max_new_tokens or rag_settings.RAG_MAX_NEW_TOKENS
+
+        try:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message},
+            ]
+
+            payload: Dict[str, Any] = {
+                "model": self._model_name,
+                "messages": messages,
+                "temperature": self._temperature,
+                "top_p": self._top_p,
+                "max_tokens": max_tokens,
+            }
+
+            if json_mode:
+                payload["response_format"] = {"type": "json_object"}
+
+            response = requests.post(
+                f"{self._base_url}/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {self._api_key}",
+                    "Content-Type": "application/json",
+                },
+                json=payload,
+                timeout=self._timeout_seconds,
+            )
+
+            if not response.ok:
+                logger.error(
+                    "OpenRouter chat request failed (%s): %s",
+                    response.status_code,
+                    response.text[:1000],
+                )
+                return None
+
+            data = response.json()
+            return self._extract_text(data)
+
+        except Exception as e:
+            logger.error("LLM: Chat generation failed: %s", e)
             return None
 
     def count_tokens(self, text: str) -> int:
@@ -338,13 +463,32 @@ class FallbackLLMClient(BaseLLMClient):
         for client in self._clients:
             if not client.is_available:
                 continue
-
             text = client.generate(prompt, max_new_tokens=max_new_tokens)
             if text:
                 return text
-
             logger.warning("LLM: %s returned no content, trying next.", client.model_name)
+        return None
 
+    def chat(
+        self,
+        system_prompt: str,
+        user_message: str,
+        max_new_tokens: Optional[int] = None,
+        json_mode: bool = False,
+    ) -> Optional[str]:
+        """Tries chat() on each client in order until one succeeds."""
+        for client in self._clients:
+            if not client.is_available:
+                continue
+            text = client.chat(
+                system_prompt,
+                user_message,
+                max_new_tokens=max_new_tokens,
+                json_mode=json_mode,
+            )
+            if text:
+                return text
+            logger.warning("LLM: %s chat returned no content, trying next.", client.model_name)
         return None
 
     def count_tokens(self, text: str) -> int:
@@ -354,5 +498,5 @@ class FallbackLLMClient(BaseLLMClient):
         return max(1, len(text) // rag_settings.RAG_CHARS_PER_TOKEN)
 
 
+# Backward compatibility alias
 TransformersLLMClient = GeminiLLMClient
-

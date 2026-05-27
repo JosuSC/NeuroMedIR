@@ -6,19 +6,6 @@ Orchestrates the full Retrieval-Augmented Generation flow:
     2. Construct:  Build prompt with numbered context + medical system prompt
     3. Generate:   Gemini LLM produces grounded answer
     4. Parse:      Extract citations, verify sources, compute confidence
-
-Algorithmic highlights:
-    - Context truncation: Priority-queue based (max-heap by score).
-      Higher-scored documents are kept intact; lower-scored ones are
-      truncated first. O(n log n) for building the priority queue.
-    - Citation parsing: Regex-based extraction with O(m) complexity
-      where m = answer length.
-    - Confidence scoring: Jaccard-like overlap between cited sources
-      and provided sources, normalized to [0, 1].
-
-Reference:
-    Lewis et al. (2020) — "Retrieval-Augmented Generation for
-    Knowledge-Intensive NLP Tasks"
 """
 
 import re
@@ -35,83 +22,77 @@ logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Medical System Prompts (bilingual)
+# Medical System Prompts — Mejorados para respuestas expertas y conversacionales
 # ---------------------------------------------------------------------------
 
 SYSTEM_PROMPT_ES = (
-    "Eres un asistente médico bilingüe del sistema NeuroMedIR. "
+    "Eres NeuroMedIR, un asistente médico virtual profesional y empático. "
+    "Respondes como un médico experimentado que se preocupa por su paciente. "
+    "Explicas con DETALLE y CLARIDAD, usando lenguaje accesible pero preciso. "
+    "Si la pregunta es sobre síntomas, explica cada síntoma con detalle: qué es, "
+    "por qué ocurre, cuándo preocuparse y cuándo no. "
+    "Si la pregunta es sobre una enfermedad, cubre: definición, causas, síntomas, "
+    "diagnóstico, tratamiento, prevención y pronóstico. "
+    "Si la pregunta es sobre contagio, explica las vías de transmisión con claridad. "
     "Responde basándote EXCLUSIVAMENTE en las fuentes proporcionadas. "
-    "No saludes ni te presentes; responde directo a la pregunta. "
     "Cita usando [Fuente 1], [Fuente 2], etc. "
-    "Si las fuentes no bastan, indícalo. "
+    "Si las fuentes no bastan para responder completamente, indícalo y ofrece lo que sí puedes decir. "
     "NO inventes información médica. "
     "Incluye un disclaimer: esta información no sustituye consulta profesional. "
-    "Responde en el mismo idioma de la consulta."
+    "Responde en español."
 )
 
 SYSTEM_PROMPT_EN = (
-    "You are a bilingual medical assistant from the NeuroMedIR system. "
+    "You are NeuroMedIR, a professional and empathetic virtual medical assistant. "
+    "You respond like an experienced doctor who cares about their patient. "
+    "You explain in DETAIL and with CLARITY, using accessible yet precise language. "
+    "If the question is about symptoms, explain each symptom in detail: what it is, "
+    "why it occurs, when to worry and when not to. "
+    "If the question is about a disease, cover: definition, causes, symptoms, "
+    "diagnosis, treatment, prevention, and prognosis. "
+    "If the question is about transmission, explain the routes clearly. "
     "Answer based EXCLUSIVELY on the provided sources. "
-    "Do not greet or introduce yourself; answer the question directly. "
     "Cite using [Source 1], [Source 2], etc. "
-    "If sources are insufficient, state it clearly. "
+    "If sources are insufficient to answer completely, state it and offer what you can say. "
     "DO NOT invent medical information. "
     "Include a disclaimer: this information does not replace professional consultation. "
-    "Answer in the same language as the query."
+    "Answer in English."
 )
 
 
 class RAGPipeline:
     """
     Retrieval-Augmented Generation pipeline for medical queries.
-
-    Combines hybrid retrieval with local LLM generation to produce
-    grounded, cited, and verified medical responses.
-
-    Usage:
-        pipeline = RAGPipeline(retriever=retriever, llm_client=llm)
-        result = pipeline.query("síntomas de diabetes tipo 2")
-        # result = {"answer": "...", "sources": [...], "confidence": 0.85, ...}
     """
 
-    def __init__(
-        self,
-        retriever: Retriever,
-        llm_client: BaseLLMClient,
-    ):
-        """
-        Args:
-            retriever: Pre-loaded Retriever for document retrieval.
-            llm_client: Pre-configured LLM client for text generation.
-        """
+    def __init__(self, retriever: Retriever, llm_client: BaseLLMClient):
         self._retriever = retriever
         self._llm = llm_client
 
     @property
     def is_available(self) -> bool:
-        """Returns True if both retriever and LLM are available."""
         return self._llm.is_available
 
+    @property
+    def llm(self) -> BaseLLMClient:
+        """Exponer el LLM client para uso desde api.py en otros modos de chat."""
+        return self._llm
+
     # -------------------------------------------------------------------
-    # Language Detection (O(n) — simple marker word counting)
+    # Language Detection
     # -------------------------------------------------------------------
 
     _ES_MARKERS = frozenset({
         "el", "la", "los", "las", "de", "en", "que", "por", "con",
         "una", "síntomas", "tratamiento", "paciente", "enfermedad",
         "diabetes", "presión", "dolor", "cabeza", "medicamento",
+        "tengo", "siento", "me duele", "fiebre",
     })
 
     def _detect_language(self, text: str) -> str:
-        """
-        Detects query language using set intersection.
-
-        Complexity: O(n) where n = number of words in text.
-        Uses frozenset for O(1) membership testing.
-        """
         words = set(text.lower().split())
         overlap = len(words & self._ES_MARKERS)
-        return "es" if overlap >= 2 else "en"
+        return "es" if overlap >= 1 else "en"
 
     # -------------------------------------------------------------------
     # Context Construction with Priority-Based Truncation
@@ -120,37 +101,14 @@ class RAGPipeline:
     def _build_context(
         self, sources: List[Dict], max_chars: int
     ) -> Tuple[str, List[Dict]]:
-        """
-        Builds numbered context from retrieved sources with intelligent
-        truncation.
-
-        Algorithm:
-            1. Build a max-heap keyed by retrieval score → O(n log n)
-            2. Pop documents from highest to lowest score
-            3. Add full text while budget remains
-            4. Truncate or skip lower-scored documents when budget exhausted
-
-        This ensures the most relevant documents are preserved intact,
-        while less relevant ones are the first to be truncated or dropped.
-
-        Args:
-            sources: Enriched results from Retriever (sorted by score desc).
-            max_chars: Maximum character budget for context.
-
-        Returns:
-            (context_string, included_sources)
-        """
         if not sources:
             return "", []
 
-        # Build max-heap: (-score, index, source) for descending order
-        # Using negative score because heapq is a min-heap by default
         heap = []
         for idx, src in enumerate(sources):
             score = src.get("score", 0.0)
             heapq.heappush(heap, (-score, idx, src))
 
-        # Allocate budget proportionally — higher score = more budget
         context_parts: Dict[int, str] = {}
         included: List[Dict] = []
         remaining = max_chars
@@ -166,19 +124,15 @@ class RAGPipeline:
             entry_len = len(entry)
 
             if entry_len <= remaining:
-                # Full entry fits
                 context_parts[orig_idx] = entry
                 included.append(src)
                 remaining -= entry_len
             elif remaining > 150:
-                # Partial fit — truncate entry
                 truncated = entry[:remaining - 20] + "...\n"
                 context_parts[orig_idx] = truncated
                 included.append(src)
                 remaining = 0
-            # else: skip — not enough room for useful content
 
-        # Reassemble in original order (by source number) for coherent numbering
         sorted_parts = [context_parts[idx] for idx in sorted(context_parts)]
         context = "\n".join(sorted_parts)
 
@@ -189,12 +143,6 @@ class RAGPipeline:
     # -------------------------------------------------------------------
 
     def _build_prompt(self, query: str, context: str, lang: str) -> str:
-        """
-        Constructs the full prompt for the LLM.
-
-        Format: instruction + context + query
-        Gemini is called with a single user prompt payload.
-        """
         system = SYSTEM_PROMPT_ES if lang == "es" else SYSTEM_PROMPT_EN
 
         if lang == "es":
@@ -203,8 +151,10 @@ class RAGPipeline:
                 "Idioma de respuesta: Español.\n\n"
                 f"Fuentes médicas recuperadas:\n{context}\n\n"
                 f"Consulta del paciente: {query}\n\n"
-                f"Responde basándote en las fuentes. "
-                f"Cita con [Fuente X]. Incluye disclaimer médico."
+                f"Responde basándote en las fuentes. Cita con [Fuente X]. "
+                f"Si las fuentes son insuficientes para responder completamente, "
+                f"indícalo y ofrece la información parcial que sí puedes proporcionar. "
+                f"Incluye disclaimer médico."
             )
         else:
             prompt = (
@@ -212,8 +162,10 @@ class RAGPipeline:
                 "Response language: English.\n\n"
                 f"Retrieved medical sources:\n{context}\n\n"
                 f"Patient query: {query}\n\n"
-                f"Answer based on the sources. "
-                f"Cite with [Source X]. Include a medical disclaimer."
+                f"Answer based on the sources. Cite with [Source X]. "
+                f"If sources are insufficient to answer completely, "
+                f"state it and offer the partial information you can provide. "
+                f"Include a medical disclaimer."
             )
 
         return prompt
@@ -225,15 +177,12 @@ class RAGPipeline:
     def _needs_continuation(self, answer: str) -> bool:
         if not answer:
             return False
-
         text = answer.strip()
         min_chars = rag_settings.RAG_MIN_NEW_TOKENS * rag_settings.RAG_CHARS_PER_TOKEN
         if len(text) < min_chars:
             return True
-
         if text.endswith(("...", "…")):
             return True
-
         terminal_chars = (".", "!", "?", "]", ")", "\"", "”", "’")
         return text[-1] not in terminal_chars
 
@@ -252,7 +201,6 @@ class RAGPipeline:
                 "Do not repeat previous content.\n\n"
                 f"Current answer:\n{answer}\n\nContinuation:"
             )
-
         return self._llm.generate(
             prompt,
             max_new_tokens=rag_settings.RAG_CONTINUATION_MAX_TOKENS,
@@ -261,29 +209,22 @@ class RAGPipeline:
     def _ensure_complete_answer(self, answer: str, lang: str) -> str:
         if not self._needs_continuation(answer):
             return answer
-
         merged = answer
         for _ in range(rag_settings.RAG_CONTINUATION_MAX_ATTEMPTS):
             if not self._needs_continuation(merged):
                 break
-
             continuation = self._continue_answer(merged, lang)
             if not continuation:
                 break
-
             merged = f"{merged.rstrip()} {continuation.lstrip()}"
-
-            # Stop if the model repeats without adding meaningful content.
             if len(merged) <= len(answer) + 5:
                 break
-
         return merged
 
     # -------------------------------------------------------------------
     # Citation Parsing and Confidence Scoring
     # -------------------------------------------------------------------
 
-    # Pre-compiled regex for O(m) citation extraction
     _CITATION_PATTERN = re.compile(
         r'\[(?:Fuente|Source)\s*(\d+)\]', re.IGNORECASE
     )
@@ -291,33 +232,13 @@ class RAGPipeline:
     def _parse_answer(
         self, answer: str, included_sources: List[Dict]
     ) -> Dict:
-        """
-        Extracts citations from the LLM answer and computes confidence.
-
-        Algorithm:
-            1. Regex scan for [Fuente X] / [Source X] patterns → O(m)
-            2. Validate each citation against provided sources → O(k)
-            3. Compute confidence as Jaccard-like overlap:
-               confidence = |cited ∩ provided| / |provided|
-
-        Args:
-            answer: Generated answer text.
-            included_sources: Sources included in the context.
-
-        Returns:
-            {"citations": list[int], "confidence": float}
-        """
-        # Extract all citation numbers
         raw_citations = self._CITATION_PATTERN.findall(answer)
-
-        # Validate and deduplicate
         valid_citations = set()
         for cite_str in raw_citations:
             cite_num = int(cite_str)
             if 1 <= cite_num <= len(included_sources):
                 valid_citations.add(cite_num)
 
-        # Confidence: ratio of unique cited sources to total provided
         total_provided = len(included_sources)
         confidence = len(valid_citations) / total_provided if total_provided > 0 else 0.0
 
@@ -336,29 +257,11 @@ class RAGPipeline:
         top_k: Optional[int] = None,
         lang: Optional[str] = None,
     ) -> Dict:
-        """
-        Full RAG pipeline: retrieve → construct → generate → parse.
-
-        Args:
-            query: User's medical query.
-            top_k: Number of documents to retrieve (default from config).
-
-        Returns:
-            {
-                "answer": str,           # Generated answer with citations
-                "sources": list[dict],   # Source documents used
-                "confidence": float,     # 0.0–1.0 confidence score
-                "latency_ms": float,     # Total pipeline latency
-                "model": str,            # LLM model identifier
-                "retrieval_count": int,  # Number of docs retrieved
-            }
-        """
+        """Full RAG pipeline: retrieve → construct → generate → parse."""
         t_start = time.perf_counter()
         top_k = top_k or rag_settings.RAG_TOP_K
 
-        # =============================================================
         # STAGE 1: RETRIEVE
-        # =============================================================
         try:
             results = self._retriever.retrieve(query, top_k=top_k)
         except Exception as e:
@@ -374,17 +277,14 @@ class RAGPipeline:
                 t_start,
             )
 
-        # Filter by minimum score threshold
         filtered = [
             r for r in results
             if r.get("score", 0) >= rag_settings.RAG_MIN_SCORE_THRESHOLD
         ]
         if not filtered:
-            filtered = results  # Fall back to all if none pass threshold
+            filtered = results
 
-        # =============================================================
         # STAGE 2: CONSTRUCT PROMPT
-        # =============================================================
         lang = lang if lang in {"es", "en"} else self._detect_language(query)
         max_context_chars = (
             rag_settings.RAG_MAX_CONTEXT_TOKENS * rag_settings.RAG_CHARS_PER_TOKEN
@@ -397,22 +297,40 @@ class RAGPipeline:
             f"{len(included_sources)} sources, lang={lang}"
         )
 
-        # =============================================================
-        # STAGE 3: GENERATE
-        # =============================================================
-        answer = self._llm.generate(prompt)
+        # STAGE 3: GENERATE — Intentar chat() primero (mejor calidad), fallback a generate()
+        answer = None
+
+        # Intentar chat con system prompt separado (mejor calidad)
+        system = SYSTEM_PROMPT_ES if lang == "es" else SYSTEM_PROMPT_EN
+        if lang == "es":
+            user_msg = (
+                f"Fuentes médicas recuperadas:\n{context}\n\n"
+                f"Consulta del paciente: {query}\n\n"
+                f"Responde basándote en las fuentes. Cita con [Fuente X]. "
+                f"Incluye disclaimer médico."
+            )
+        else:
+            user_msg = (
+                f"Retrieved medical sources:\n{context}\n\n"
+                f"Patient query: {query}\n\n"
+                f"Answer based on the sources. Cite with [Source X]. "
+                f"Include a medical disclaimer."
+            )
+
+        answer = self._llm.chat(system, user_msg, max_new_tokens=rag_settings.RAG_MAX_NEW_TOKENS)
 
         if answer:
             answer = self._ensure_complete_answer(answer, lang)
 
         if answer is None:
-            # LLM failed — return retrieval-only fallback
+            # Fallback al generate() legacy
+            answer = self._llm.generate(prompt)
+
+        if answer is None:
             logger.warning("RAG: LLM generation failed. Returning retrieval-only results.")
             answer = self._build_fallback_answer(included_sources, lang)
 
-        # =============================================================
         # STAGE 4: PARSE
-        # =============================================================
         parsed = self._parse_answer(answer, included_sources)
 
         latency_ms = round((time.perf_counter() - t_start) * 1000, 1)
@@ -441,7 +359,6 @@ class RAGPipeline:
     def _build_fallback_answer(
         self, sources: List[Dict], lang: str
     ) -> str:
-        """Builds a fallback answer from retrieval results when LLM fails."""
         lines = []
         for idx, src in enumerate(sources, 1):
             title = src.get("title", "Sin título")
@@ -464,7 +381,6 @@ class RAGPipeline:
         return answer
 
     def _error_response(self, message: str, t_start: float) -> Dict:
-        """Builds an error response dict."""
         return {
             "answer": message,
             "sources": [],
@@ -473,4 +389,3 @@ class RAGPipeline:
             "model": self._llm.model_name if self._llm else "none",
             "retrieval_count": 0,
         }
-

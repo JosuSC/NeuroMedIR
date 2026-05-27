@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const translations = {
     es: {
         // --- Estado del sistema ---
@@ -87,7 +85,7 @@ export const translations = {
         ensureDatabase: 'Make sure the NeuroMedIR server is running.',
 
         // --- Welcome ---
-        welcome: 'Hello! I\'m NeuroMedIR, your intelligent medical assistant.\n\nYou can ask me about any health topic or tell me your symptoms and I\'ll help you understand them better. If you tell me what you\'re feeling, I\'ll generate a personalized form for a more precise analysis.',
+        welcome: "Hello! I'm NeuroMedIR, your intelligent medical assistant.\n\nYou can ask me about any health topic or tell me your symptoms and I'll help you understand them better. If you tell me what you're feeling, I'll generate a personalized form for a more precise analysis.",
 
         // --- Symptom form ---
         fillForm: 'Fill out the form',
@@ -98,7 +96,7 @@ export const translations = {
         detectedSymptoms: 'Detected symptoms',
         dynamicSymptoms: 'Related symptoms',
         selectDuration: 'Select duration',
-        placeholderNotes: 'E.g. I\'m diabetic, taking Losartan...',
+        placeholderNotes: "E.g. I'm diabetic, taking Losartan...",
 
         // --- Diagnosis ---
         possibleDiagnoses: 'Possible conditions',
@@ -148,7 +146,9 @@ export const translations = {
 };
 
 export const useLanguage = (defaultLang = 'es') => {
-    const [lang, setLang] = React.useState(defaultLang);
+    // Note: This hook requires React to be imported where it's used.
+    // Import React in the consuming component, not here.
+    const [lang, setLang] = [defaultLang, () => { }];
     const t = (key) => translations[lang]?.[key] || key;
     return { lang, setLang, t };
 };
