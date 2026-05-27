@@ -1,11 +1,5 @@
 {
-  "id": 693,
-  "title": "Problemas del metabolismo: MedlinePlus en espaÃ±ol",
-  "content": "Problemas del metabolismo Adolescentes, Obesidad ver Obesidad en niÃ±os Amiloide ver Amiloidosis Amiloidosis AminoÃ¡cidos, Trastornos metabÃ³licos de los ver Trastornos del metabolismo de los aminoÃ¡cidos AzÃºcar baja en la sangre ver Hipoglucemia AzÃºcar en la sangre ver Glucosa en la sangre Bajar peso, CirugÃ­a ver CirugÃ­as para la obesidad Carbohidratos, Trastornos metabÃ³licos de los ver Trastornos del metabolismo de los carbohidratos CelÃ­aca, Enfermedad ver Enfermedad celÃ­aca Cerebral genÃ©tico, Trastorno ver Trastornos cerebrales genÃ©ticos CirugÃ­as para la obesidad Complicaciones de la diabetes DeshidrataciÃ³n Diabetes Diabetes insÃ­pida Diabetes mellitus no insulino-Dependiente ver Diabetes Diabetes tipo II ver Diabetes Enfermedad celÃ­aca Enfermedad de Gaucher Enfermedad de Wilson FCU ver Fenilcetonuria Fenilcetonuria Galactosemia ver Trastornos cerebrales genÃ©ticos Gaucher, Enfermedad de ver Enfermedad de Gaucher Glucosa en la sangre Gordura ver Obesidad Grasas, Trastornos metabÃ³licos de las ver Trastornos del metabolismo de los lÃ­pidos Hemocromatosis Hidratos de carbono, Trastornos metabÃ³licos de los ver Trastornos del metabolismo de los carbohidratos Hiperglucemia Hipoglucemia Ãndice de masa corporal ver Peso corporal Insulina, SÃ­ndrome de resistencia a la ver SÃ­ndrome metabÃ³lico Intolerancia a la lactosa Lactosa, Intolerancia a la ver Intolerancia a la lactosa Leucodistrofias LÃ­pidos, Trastornos metabÃ³licos de los ver Trastornos del metabolismo de los lÃ­pidos MetabÃ³lico X, SÃ­ndrome ver SÃ­ndrome metabÃ³lico Metabolismo ver Trastornos metabÃ³licos MetabolopatÃ­a congÃ©nita ver Trastornos metabÃ³licos Mitocondriales, Trastornos ver Trastornos mitocondriales Obesidad Obesidad, Chicos ver Obesidad en niÃ±os Obesidad en niÃ±os Peso ver Peso corporal Peso corporal Raquitismo Resistencia a la insulina, SÃ­ndrome ver SÃ­ndrome metabÃ³lico Sed ver DeshidrataciÃ³n SÃ­ndrome metabÃ³lico Sobrepeso ver Obesidad Trastornos cerebrales genÃ©ticos Trastornos del metabolismo de los aminoÃ¡cidos Trastornos del metabolismo de los carbohidratos Trastornos del metabolismo de los lÃ­pidos Trastornos metabÃ³licos Trastornos mitocondriales Wilson, Enfermedad de ver Enfermedad de Wilson X MetabÃ³lico, SÃ­ndrome ver SÃ­ndrome metabÃ³lico",
-  "source": "MedlinePlus ES",
-  "url": "https://medlineplus.gov/spanish/metabolicproblems.html",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-04-24T06:39:28.788295+00:00",
-  "reason": "duplicate_url"
+  "url": "https://medlineplus.gov/spanish/opioidoverdose.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

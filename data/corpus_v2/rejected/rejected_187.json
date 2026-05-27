@@ -1,11 +1,11 @@
 {
-  "id": 692,
-  "title": "heart disease - NIH Health Information Search Results",
-  "content": "",
-  "source": "NIH",
-  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=heart disease&commit=",
-  "category": "health_guideline",
+  "id": 606,
+  "title": "Bile duct cancer - NHS",
+  "content": "Bile duct cancer (cholangiocarcinoma) Find out about bile duct cancer, including what the symptoms are, what causes it, how it's diagnosed and treated, and where to get further support. What is bile duct cancer? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/bile-duct-cancer",
+  "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-24T06:35:30.785915+00:00",
-  "reason": "missing_or_empty_content"
+  "fetched_at": "2026-05-26T18:55:48.082209+00:00",
+  "reason": "content_too_short"
 }

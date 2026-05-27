@@ -1,11 +1,11 @@
 {
-  "id": 692,
-  "title": "fitness - NIH Health Information Search Results",
-  "content": "",
-  "source": "NIH",
-  "url": "https://search.nih.gov/search?utf8=✓&affiliate=hip&query=fitness&commit=",
-  "category": "health_guideline",
+  "id": 859,
+  "title": "COVID-19 - NHS",
+  "content": "COVID-19 Get NHS advice about COVID-19, including its symptoms and what to do, how to avoid catching and spreading it, treatments, vaccinations and long-term effects. Symptoms and what to do How to avoid catching and spreading Treatments Related information about COVID-19 Long COVID COVID-19 vaccination COVID-19 rapid lateral flow test Advice in other parts of the UK Scotland – NHS Inform: COVID-19 www.nhsinform.scot Wales – Welsh Government: COVID-19 www.gov.wales Northern Ireland – nidirect: COVID-19 www.nidirect.gov.uk",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/covid-19",
+  "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-24T06:36:50.992377+00:00",
-  "reason": "missing_or_empty_content"
+  "fetched_at": "2026-05-26T19:14:01.720909+00:00",
+  "reason": "content_too_short"
 }

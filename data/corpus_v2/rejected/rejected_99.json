@@ -1,11 +1,11 @@
 {
-  "id": 683,
-  "title": "Skin, Hair and Nails: MedlinePlus",
-  "content": "Skin, Hair and Nails See all Skin, Hair and Nails topics Select One: Hair Nails Skin The Hair Hair Loss Hair Problems Head Lice The Nails Fungal Infections Nail Diseases Psoriasis The Skin Acne Athlete's Foot Birthmarks Blisters Bruises Burns Cellulitis Chickenpox Corns and Calluses Dandruff, Cradle Cap, and Other Scalp Conditions Eczema Fifth Disease Fungal Infections Hives Impetigo Insect Bites and Stings Itching Kawasaki Disease Leishmaniasis Melanoma Moles Mosquito Bites Pemphigus Piercing and Tattoos Poison Ivy, Oak, and Sumac Pressure Sores Psoriasis Rashes Rosacea Rubella Scabies Scars Scleroderma Shingles Skin Aging Skin Cancer Skin Conditions Skin Pigmentation Disorders Sun Exposure Tanning Tick Bites Tinea Infections Vitiligo Warts Wounds and Injuries",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/skinhairandnails.html",
-  "category": "health_topic",
+  "id": 110,
+  "title": "The NIH Almanac | National Institutes of Health (NIH)",
+  "content": "Mission and Goals Organization The NIH Director The NIH Almanac About the NIH Almanac NIH Organization Leadership Photo Galleries Timelines Nobel Laureates Lasker Awards Historical Budget Information NIH...Turning Discovery Into Health® Impact of NIH Research Science, Health, and Public Trust Visitor Information Get Involved at NIH Jobs at NIH Contact Us The NIH Almanac About the NIH Almanac NIH Organization Leadership Photo Galleries Timelines Nobel Laureates Lasker Awards Historical Budget Information This page last reviewed on March 6, 2025",
+  "source": "NIH",
+  "url": "https://www.nih.gov/about-nih/nih-almanac",
+  "category": "health_guideline",
   "language": "en",
-  "fetched_at": "2026-04-24T06:31:17.237632+00:00",
-  "reason": "duplicate_url"
+  "fetched_at": "2026-05-26T17:52:29.421952+00:00",
+  "reason": "content_too_short"
 }

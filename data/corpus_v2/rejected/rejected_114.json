@@ -1,11 +1,11 @@
 {
-  "id": 683,
-  "title": "Eyes and Vision: MedlinePlus",
-  "content": "Eyes and Vision See all Eyes and Vision topics Select One: Eye The Eye Amblyopia Cataract Color Blindness Corneal Disorders Diabetic Eye Problems Eye Cancer Eye Care Eye Diseases Eye Infections Eye Injuries Eye Movement Disorders Eyelid Disorders Eyewear Glaucoma Laser Eye Surgery Macular Degeneration Optic Nerve Disorders Pink Eye Refractive Errors Retinal Detachment Retinal Disorders Tears Vision Impairment and Blindness",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/eyesandvision.html",
-  "category": "health_topic",
+  "id": 137,
+  "title": "National Institutes of Health (NIH) |",
+  "content": "Women’s Health Research Image DiscoverWHR is a central resource for NIH-supported grants and research on health topics that directly affect women or present differently in women. Mental Health Awareness Image Get tips and resources to take care of your mental health. Adding weekly GLP-1 to cognitive behavioral therapy further reduces heavy drinking Image Clinical trial suggests semaglutide may help patients with alcohol use disorder and obesity. NIH at a Glance Image The National Institutes of Health (NIH), a part of the U.S. Department of Health and Human Services, is the nation’s medical research agency — making important discoveries that improve health and save lives. Take the Virtual Tour The NIH Director Funding for Research Labs at NIH Impact of NIH Research Jobs at NIH Featured Resources & Initiatives Image Explore NIH’s groundbreaking initiatives and programs that are advancing biomedical research, accelerating scientific discovery, and improving health for all Americans. Clinical Trials Training at NIH RECOVER NIH HEAL Initiative Accelerating Medicines Partnership Medical Research Initiatives",
+  "source": "NIH",
+  "url": "http://www.nih.gov/",
+  "category": "health_guideline",
   "language": "en",
-  "fetched_at": "2026-04-24T06:31:53.831770+00:00",
-  "reason": "content_too_short"
+  "fetched_at": "2026-05-26T17:57:06.624010+00:00",
+  "reason": "duplicate_content"
 }

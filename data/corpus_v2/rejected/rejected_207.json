@@ -1,4 +1,11 @@
 {
-  "url": "https://www.nih.gov/news-releases/feed.xml",
-  "reason": "non_html_content_type"
+  "id": 758,
+  "title": "Fabricated or induced illness - NHS",
+  "content": "Fabricated or induced illness Find out about fabricated or induced illness (FII), which is a rare form of child abuse where a parent or carer exaggerates or deliberately causes symptoms of illness in the child. Overview - Fabricated or induced illness Signs - Fabricated or induced illness Causes - Fabricated or induced illness What happens - Fabricated or induced illness",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/mental-health/conditions/fabricated-or-induced-illness",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-26T19:07:09.623130+00:00",
+  "reason": "content_too_short"
 }

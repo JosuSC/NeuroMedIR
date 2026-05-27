@@ -1,11 +1,11 @@
 {
-  "id": 683,
-  "title": "Population Groups: MedlinePlus",
-  "content": "Population Groups Adolescent Health see Teen Health Agent Orange see Veterans and Military Health Aging see Older Adult Health Children's Health Gulf War Syndrome see Veterans and Military Health Health Disparities Health Equity see Health Disparities Men's Health Military Health see Veterans and Military Health Older Adult Health Pediatrics see Children's Health Persian Gulf War see Veterans and Military Health Teen Health Veterans and Military Family Health Veterans and Military Health Veterans Health see Veterans and Military Health Women's Health",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/populationgroups.html",
-  "category": "health_topic",
+  "id": 103,
+  "title": "Checking your browser - reCAPTCHA",
+  "content": "",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30746646",
+  "category": "research_article",
   "language": "en",
-  "fetched_at": "2026-04-24T06:30:44.266792+00:00",
-  "reason": "content_too_short"
+  "fetched_at": "2026-05-26T17:50:37.193780+00:00",
+  "reason": "missing_or_empty_content"
 }

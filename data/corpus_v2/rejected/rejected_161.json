@@ -1,11 +1,11 @@
 {
-  "id": 688,
-  "title": "Medicine's magicians - PubMed",
-  "content": "Cite Display options Display options Format Abstract PubMed PMID No abstract available PubMed Disclaimer Publication types Editorial Actions Search in PubMed Search in MeSH Add to Search Introductory Journal Article Actions Search in PubMed Search in MeSH Add to Search MeSH terms Forecasting Actions Search in PubMed Search in MeSH Add to Search Humans Actions Search in PubMed Search in MeSH Add to Search Magic* Actions Search in PubMed Search in MeSH Add to Search Medical Laboratory Science / trends* Actions Search in PubMed Search in MeSH Add to Search Minnesota Actions Search in PubMed Search in MeSH Add to Search Neurology / trends* Actions Search in PubMed Search in MeSH Add to Search Physician-Patient Relations* Actions Search in PubMed Search in MeSH Add to Search LinkOut - more resources Medical MedlinePlus Health Information",
-  "source": "PubMed",
-  "url": "https://pubmed.ncbi.nlm.nih.gov/20572559",
-  "category": "research_article",
+  "id": 256,
+  "title": "Schizophrenia - NHS",
+  "content": "Schizophrenia Read about schizophrenia, a long-term mental health condition where you may see, hear or believe things that are not real. Overview - Schizophrenia Symptoms - Schizophrenia Causes - Schizophrenia Diagnosis - Schizophrenia Treatment - Schizophrenia Living with - Schizophrenia",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/mental-health/conditions/schizophrenia",
+  "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-24T06:34:02.473667+00:00",
-  "reason": "duplicate_url"
+  "fetched_at": "2026-05-26T18:12:12.763511+00:00",
+  "reason": "content_too_short"
 }

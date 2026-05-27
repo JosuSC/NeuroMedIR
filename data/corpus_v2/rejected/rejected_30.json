@@ -1,11 +1,4 @@
 {
-  "id": 683,
-  "title": "Temas de salud: U: MedlinePlus en espaÃ±ol",
-  "content": "Temas de salud: U Ãlcera duodenal ver Ãlcera pÃ©ptica Ãlcera gÃ¡strica ver Ãlcera pÃ©ptica Ãlcera pÃ©ptica Ãlcera por decÃºbito ver Ãlcera por presiÃ³n Ãlcera por presiÃ³n Ultrasonido ver DiagnÃ³stico por imÃ¡genes ; Pruebas prenatales Universidad, Salud ver Salud en la universidad UÃ±as encarnadas ver Enfermedades de las uÃ±as UÃ±as, Enfermedades de las ver Enfermedades de las uÃ±as UrÃ©ter, Trastornos del ver Trastornos del urÃ©ter Ureteral, CÃ¡ncer ver Trastornos del urÃ©ter Uretra, Trastornos de la ver Trastornos de la uretra Uretral, CÃ¡ncer ver Trastornos de la uretra Uretritis no gonocÃ³cica ver Infecciones de transmisiÃ³n sexual Urticaria Usher, SÃ­ndrome ver SÃ­ndrome de Usher Uso indebido de medicamentos recetados Uso seguro de opioides Ãtero, CÃ¡ncer de ver CÃ¡ncer de Ãºtero Ãtero, Enfermedades del ver Enfermedades del Ãºtero Ãtero, Fibroides ver Fibroides uterinos",
-  "source": "MedlinePlus ES",
-  "url": "https://medlineplus.gov/spanish/healthtopics_u.html",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-04-24T06:28:12.605896+00:00",
-  "reason": "duplicate_url"
+  "url": "https://medlineplus.gov/about/using/usingcontent",
+  "reason": "fetch_failed"
 }

@@ -1,5 +1,4 @@
 {
-  "url": "https://medlineplus.gov/spanish/pepticulcer.html",
-  "reason": "language_over_target",
-  "language": "es"
+  "url": "https://www.paho.org/es/temas/enfermedades-transmisibles",
+  "reason": "fetch_failed"
 }

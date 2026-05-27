@@ -1,5 +1,4 @@
 {
-  "url": "http://books.scielo.org/",
-  "reason": "language_over_target",
-  "language": "es"
+  "url": "https://scielo.org/about",
+  "reason": "fetch_failed"
 }

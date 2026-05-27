@@ -1,11 +1,11 @@
 {
-  "id": 688,
-  "title": "Checking your browser - reCAPTCHA",
-  "content": "",
-  "source": "PubMed",
-  "url": "https://pubmed.ncbi.nlm.nih.gov/34949404",
-  "category": "research_article",
+  "id": 270,
+  "title": "Non-Hodgkin lymphoma - NHS",
+  "content": "Non-Hodgkin lymphoma Non-Hodgkin lymphoma is cancer that affects the white blood cells that help you fight infection (lymphocytes). What is non-Hodgkin lymphoma? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/non-hodgkin-lymphoma",
+  "category": "health_topic",
   "language": "en",
-  "fetched_at": "2026-04-24T06:34:08.496060+00:00",
-  "reason": "missing_or_empty_content"
+  "fetched_at": "2026-05-26T18:13:17.932542+00:00",
+  "reason": "content_too_short"
 }

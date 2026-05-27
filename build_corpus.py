@@ -1,6 +1,7 @@
 import json
 import logging
 import argparse
+import shutil
 from pathlib import Path
 
 from crawler.config import DEFAULT_DOMAINS, default_crawl_config
@@ -31,6 +32,7 @@ def main():
     parser.add_argument("--target-en", type=int, default=1200)
     parser.add_argument("--target-es", type=int, default=800)
     parser.add_argument("--output-dir", type=str, default="data/corpus_v2")
+    parser.add_argument("--wipe-processed", action="store_true", help="Borrar los JSON procesados antes de ejecutar el crawler")
     args = parser.parse_args()
 
     # Arranco desde una configuración base y luego sobreescribo lo que venga por CLI
@@ -43,6 +45,13 @@ def main():
     config.language_targets = {"en": args.target_en, "es": args.target_es}
     config.output_dir = Path(args.output_dir)
     config.output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Opción: borrar los JSON procesados antes de ejecutar (útil para reprocesar desde cero)
+    if args.wipe_processed:
+        processed_dir = config.output_dir / "processed"
+        if processed_dir.exists() and processed_dir.is_dir():
+            shutil.rmtree(processed_dir)
+            print(f"Directorio 'processed' eliminado: {processed_dir}")
 
     crawler = CorpusCrawler(config=config, domains=DEFAULT_DOMAINS)
     metrics = crawler.run()
