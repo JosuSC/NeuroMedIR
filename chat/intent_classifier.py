@@ -204,12 +204,10 @@ class IntentClassifier:
         if score_despedida >= chat_settings.UMBRAL_SALUDO:
             intent = IntentType.DESPEDIDA
             confidence = score_despedida
-        elif score_sintomas >= chat_settings.UMBRAL_SINTOMA:
-            intent = IntentType.SINTOMAS
-            confidence = score_sintomas
-        elif score_pregunta >= 0.2:
+        elif score_sintomas >= chat_settings.UMBRAL_SINTOMA or score_pregunta >= 0.2:
+            # Síntomas y preguntas médicas se tratan igual: van al RAG
             intent = IntentType.PREGUNTA
-            confidence = score_pregunta
+            confidence = max(score_sintomas, score_pregunta)
         elif score_no_medico >= 0.3:
             intent = IntentType.NO_MEDICO
             confidence = score_no_medico
@@ -217,13 +215,10 @@ class IntentClassifier:
             intent = IntentType.SALUDO
             confidence = score_saludo
         else:
-            # Si no hay señal clara
             if len(text) > 15:
-                # Mensaje largo sin señales → tratar como pregunta médica
                 intent = IntentType.PREGUNTA
                 confidence = 0.3
             else:
-                # Mensaje corto sin señales → saludo genérico
                 intent = IntentType.SALUDO
                 confidence = 0.4
 

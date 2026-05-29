@@ -41,11 +41,7 @@ from indexing.configs import settings as idx_settings
 from chat.intent_classifier import IntentClassifier, IntentType
 from chat.diagnosis_engine import DiagnosisEngine
 from chat.configs import settings as chat_settings
-from form.form_generator import (
-    extract_form_symptoms_prf,
-    generate_dynamic_form_schema,
-    generate_llm_form_schema,
-)
+
 from dynamic_expansion import expand_corpus_from_query
 
 logger = logging.getLogger(__name__)
@@ -88,17 +84,7 @@ class ChatRequest(BaseModel):
     lang: Optional[str] = None
 
 
-class FormSubmitRequest(BaseModel):
-    """Request para envío de formulario de síntomas."""
-    model_config = ConfigDict(extra="allow")
 
-    original_query: str
-    intensity: str = "5"
-    duration: str = ""
-    dynamic_symptoms: List[str] = []
-    additional_notes: str = ""
-    extra_fields: List[str] = []
-    lang: Optional[str] = None
 
 
 class QueryRequest(BaseModel):
@@ -246,10 +232,10 @@ def chat_endpoint(req: ChatRequest):
         return _handle_non_medical_llm(req.message, lang_code)
 
     # ============================================================
-    # SÍNTOMAS → Formulario dinámico (LLM o rule-based)
+    # SÍNTOMAS → Se trata como pregunta médica (RAG + retrieval)
     # ============================================================
     if intent == IntentType.SINTOMAS:
-        return _handle_symptoms(req.message, detected_symptoms, lang_code)
+        return _handle_question(req.message, lang_code)
 
     # ============================================================
     # PREGUNTA → RAG conversacional + bibliografía
@@ -406,93 +392,7 @@ def _handle_non_medical_llm(message: str, lang_code: str) -> dict:
     }
 
 
-def _handle_symptoms(message: str, detected_symptoms: list, lang_code: str) -> dict:
-    """
-    Maneja mensajes con síntomas: genera formulario dinámico.
-    Intenta LLM-driven primero, fallback a rule-based.
-    """
-    t_start = time.time()
-    is_spanish = lang_code == "es"
 
-    # Recuperar documentos para PRF
-    results = retriever.retrieve(message, top_k=10)
-
-    if _should_expand(results):
-        _try_expand_corpus(message)
-        results = retriever.retrieve(message, top_k=10)
-
-    # Extraer términos médicos adicionales de los documentos
-    docs_text = []
-    for res in results:
-        content = res.get("content", "")
-        title = res.get("title", "")
-        docs_text.append(f"{title} {content}")
-
-    extracted_terms = extract_form_symptoms_prf(message, docs_text, top_n=10)
-
-    # Combinar síntomas detectados del mensaje con los extraídos por PRF
-    combined_symptoms = list(detected_symptoms)
-    for term in extracted_terms:
-        term_lower = term.lower()
-        if not any(term_lower in s.lower() for s in combined_symptoms):
-            combined_symptoms.append(term)
-
-    # ============================================================
-    # INTENTO 1: Formulario LLM-driven (preguntas de un médico real)
-    # ============================================================
-    form_schema = None
-    if llm_client and llm_client.is_available:
-        try:
-            form_schema = generate_llm_form_schema(
-                query=message,
-                detected_symptoms=detected_symptoms,
-                llm_client=llm_client,
-                lang=lang_code,
-            )
-            if form_schema:
-                logger.info("Formulario generado por LLM exitosamente.")
-        except Exception as e:
-            logger.error(f"LLM form generation failed: {e}")
-
-    # ============================================================
-    # INTENTO 2: Fallback a rule-based
-    # ============================================================
-    if not form_schema:
-        form_schema = generate_dynamic_form_schema(
-            message,
-            combined_symptoms,
-            detected_symptoms=detected_symptoms,
-            lang=lang_code,
-        )
-        logger.info("Formulario generado por reglas (fallback).")
-
-    # Agregar síntomas detectados del mensaje al esquema
-    if detected_symptoms:
-        form_schema["detected_symptoms"] = detected_symptoms
-
-    latency_ms = round((time.time() - t_start) * 1000, 1)
-    logger.info(f"Formulario generado en {latency_ms}ms para: '{message[:50]}...'")
-
-    if is_spanish:
-        intro_msg = (
-            "Entiendo que tienes algunos síntomas. Para poder ayudarte mejor, "
-            "por favor completa el siguiente formulario con más detalles sobre tu caso. "
-            "Esto me permitirá darte una respuesta más precisa."
-        )
-    else:
-        intro_msg = (
-            "I understand you're experiencing some symptoms. To help you better, "
-            "please fill out the following form with more details about your case. "
-            "This will allow me to give you a more precise response."
-        )
-
-    return {
-        "type": "symptoms",
-        "message": intro_msg,
-        "form_schema": form_schema,
-        "diagnoses": None,
-        "bibliography": None,
-    }
 
 
 def _handle_question(message: str, lang_code: str) -> dict:
@@ -575,148 +475,6 @@ def _handle_question(message: str, lang_code: str) -> dict:
     }
 
 
-# ---------------------------------------------------------------------------
-# ENDPOINT: Envío de formulario de síntomas
-# ---------------------------------------------------------------------------
-
-@app.post("/api/chat/submit_form")
-def submit_form(req: FormSubmitRequest):
-    """
-    Procesa el formulario rellenado por el paciente y genera diagnóstico.
-    LLM-driven cuando está disponible.
-    """
-    t_start = time.time()
-
-    # Paso 1: Construir macro-query semántica limpia
-    # Solo usamos síntomas + notas adicionales para el retrieval
-    # Los metadatos (intensidad, duración) se pasan al LLM pero NO al retriever
-    query_parts = [req.original_query]
-
-    # Agregar síntomas adicionales seleccionados en el formulario
-    if req.dynamic_symptoms:
-        # Filtrar síntomas que no sean ruido (fuentes, etc.)
-        clean_symptoms = [
-            s for s in req.dynamic_symptoms
-            if len(s) > 3 and not any(
-                noise in s.lower()
-                for noise in ["medline", "nhs", "pubmed", "scielo", "español", "english"]
-            )
-        ]
-        if clean_symptoms:
-            query_parts.append(" ".join(clean_symptoms))
-
-    # Agregar notas adicionales si existen y son sustanciales
-    if req.additional_notes and len(req.additional_notes.strip()) > 5:
-        query_parts.append(req.additional_notes)
-
-    # Query para retrieval: solo síntomas, sin metadatos numéricos
-    retrieval_query = " ".join(query_parts)
-
-    # Contexto clínico completo para el LLM (incluye intensidad, duración, etc.)
-    form_context = {
-        "original_query": req.original_query,
-        "intensity": req.intensity,
-        "duration": req.duration,
-        "dynamic_symptoms": req.dynamic_symptoms,
-        "additional_notes": req.additional_notes,
-    }
-
-    logger.info(f"Retrieval query: {retrieval_query}")
-    macro_query = retrieval_query  # mantener compatibilidad con el resto del código
-
-    # Detectar idioma PRIMERO
-    requested_lang = req.lang if req.lang in {"es", "en"} else None
-    lang_code = "es" if requested_lang == "es" else "en" if requested_lang == "en" else None
-    lang_final = lang_code or ("es" if _detect_spanish(req.original_query) else "en")
-
-    # Recuperar documentos
-    results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
-    results = _filter_by_language(results, lang_final)
-    if _should_expand(results):
-        _try_expand_corpus(macro_query)
-        results = retriever.retrieve(macro_query, top_k=chat_settings.DIAGNOSIS_TOP_K)
-        results = _filter_by_language(results, lang_final)
-
-    # Recopilar todos los datos del formulario
-    form_data = req.model_dump()
-
-    # ============================================================
-    # INTENTO 1: Diagnóstico LLM-driven
-    # ============================================================
-    diagnosis_result = None
-    if diagnosis_engine and hasattr(diagnosis_engine, 'generate_llm_diagnosis'):
-        try:
-            diagnosis_result = diagnosis_engine.generate_llm_diagnosis(
-                query=macro_query,
-                form_data=form_data,
-                retrieval_results=results,
-                lang=lang_final,
-            )
-            if diagnosis_result:
-                logger.info("Diagnóstico generado por LLM exitosamente.")
-        except Exception as e:
-            logger.error(f"LLM diagnosis failed: {e}")
-
-    # ============================================================
-    # INTENTO 2: Fallback a rule-based
-    # ============================================================
-    if not diagnosis_result:
-        diagnosis_result = diagnosis_engine.generate_diagnosis(macro_query, results, lang=lang_final)
-        logger.info("Diagnóstico generado por reglas (fallback).")
-
-    diagnoses = diagnosis_result.get("diagnoses", [])
-    bibliography = diagnosis_result.get("bibliography", [])
-    summary = diagnosis_result.get("summary", "")
-
-    # Intentar RAG para respuesta conversacional más natural
-    answer_text = None
-    if rag_pipeline is not None and rag_pipeline.is_available:
-        try:
-            diag_prompt = (
-                f"Diagnóstico diferencial para: {macro_query}"
-                if lang_final == "es"
-                else f"Differential diagnosis for: {macro_query}"
-            )
-            # Construir prompt enriquecido con contexto clínico completo
-            enriched_query = (
-                f"Diagnóstico diferencial para paciente con: {req.original_query}. "
-                f"Intensidad: {req.intensity}/10. "
-                f"Duración: {req.duration}. "
-                + (f"Síntomas adicionales: {', '.join(req.dynamic_symptoms)}. " if req.dynamic_symptoms else "")
-                + (f"Notas: {req.additional_notes}." if req.additional_notes else "")
-            )
-            rag_result = rag_pipeline.query(
-                enriched_query,
-                top_k=chat_settings.DIAGNOSIS_TOP_K,
-            )
-            answer_text = rag_result.get("answer")
-        except Exception as e:
-            logger.error(f"RAG falló para diagnóstico: {e}")
-
-    if answer_text is None:
-        answer_text = summary
-    elif summary:
-        if lang_final == "es":
-            answer_text = f"{answer_text}\n\nResumen del análisis:\n{summary}"
-        else:
-            answer_text = f"{answer_text}\n\nAnalysis summary:\n{summary}"
-
-    is_spanish = lang_final == "es"
-    disclaimer = chat_settings.DISCLAIMER_ES if is_spanish else chat_settings.DISCLAIMER_EN
-
-    latency_ms = round((time.time() - t_start) * 1000, 1)
-    logger.info(
-        f"Diagnóstico completado en {latency_ms}ms — "
-        f"{len(diagnoses)} condiciones, {len(bibliography)} referencias"
-    )
-
-    return {
-        "type": "diagnosis",
-        "message": answer_text,
-        "diagnoses": diagnoses,
-        "bibliography": bibliography,
-        "disclaimer": disclaimer,
-    }
 
 
 # ---------------------------------------------------------------------------
