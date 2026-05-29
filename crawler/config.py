@@ -17,14 +17,14 @@ class DomainConfig:
 @dataclass
 class CrawlConfig:
     max_depth: int = 3
-    max_pages: int = 20000
+    max_pages: int = 30000
     request_timeout_seconds: int = 15
     delay_seconds: float = 1.0
     user_agent: str = "NeuroMedIR-CorpusBuilder/2.0"
     max_retries: int = 3
     backoff_base_seconds: float = 1.8
     min_content_chars: int = 600
-    min_valid_documents: int = 4500
+    min_valid_documents: int = 3800
     language_targets: Dict[str, int] = field(default_factory=lambda: {"en": 1200, "es": 2500})
     output_dir: Path = Path("data") / "corpus_v2"
     save_raw_html: bool = False
