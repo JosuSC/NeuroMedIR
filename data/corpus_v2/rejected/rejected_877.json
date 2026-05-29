@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/pulmonaryfibrosis.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1713,
+  "title": "MedlinePlus en español: Cómo usar MedlinePlus",
+  "content": "Cómo usar MedlinePlus Encuentre más información sobre las políticas y pautas de MedlinePlus, y obtenga orientación y sugerencias para usar nuestro servicio. Vinculación y uso de contenido de MedlinePlus Pautas para enlaces Sugerencias para búsquedas Cómo citar las páginas de MedlinePlus Información para bibliotecarios y promotores Reproductores de video y atajos de teclado Información relacionada Qué hay de nuevo Acerca de MedlinePlus",
+  "source": "MedlinePlus ES",
+  "url": "https://medlineplus.gov/spanish/acercade/uso",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T06:36:35.305356+00:00",
+  "reason": "content_too_short"
 }

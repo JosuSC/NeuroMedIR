@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/sepsis",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/jornadasrespiratorio/index.php",
+  "reason": "language_over_target",
+  "language": "es"
 }

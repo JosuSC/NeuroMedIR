@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/spanish/medicaldevicesafety.html",
-  "reason": "language_over_target",
-  "language": "es"
+  "id": 911,
+  "title": "Buscador AECC | Asociación Española Contra el Cáncer",
+  "content": "Pasar al contenido principal Dona Hazte socio Escribe a continuación lo que necesitas: Continuar Click para conocer más Buscador AECC Search Search Resultados no encontrados",
+  "source": "AECC",
+  "url": "https://www.aecc.es/es/buscador-avanzado/global",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T05:39:12.947907+00:00",
+  "reason": "content_too_short"
 }

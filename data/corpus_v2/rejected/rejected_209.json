@@ -1,11 +1,5 @@
 {
-  "id": 796,
-  "title": "Testicular cancer - NHS",
-  "content": "Testicular cancer Testicular cancer is cancer that's found in the testicles. What is testicular cancer? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/testicular-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T19:09:39.343649+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/thoracicoutletsyndrome.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

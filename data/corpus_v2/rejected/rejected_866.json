@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/seasonalaffectivedisorder.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1566,
+  "title": "Breast cancer in women - NHS",
+  "content": "Breast cancer in women Breast cancer is cancer that's found in the breasts. It's the most common type of cancer in women in the UK. Anyone can get breast cancer. What is breast cancer in women? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/breast-cancer-in-women",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:29:46.914243+00:00",
+  "reason": "content_too_short"
 }

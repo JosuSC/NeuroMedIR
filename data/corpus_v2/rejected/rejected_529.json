@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/diversidad-cultural-salud",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/autor-experto/dra-ana-marqueno-ellacuria",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,0 +1,11 @@
+{
+  "id": 1713,
+  "title": "Dona para la Lucha contra el Cáncer",
+  "content": "{{ 'INICIO' | translate }} / {{ 'COMO_COLABORAR' | translate }} / {{ 'HAZ_DONACION' | translate }} {{campaign.tituloCampaign}} {{campaign.descripcion}} Selecciona el la periodicidad de tu donación {{ 'PUNTUAL' | translate }} {{ 'PERIODICA' | translate }} Selecciona el la periodicidad de tu donación {{'MENSUAL' | translate }} {{'TRIMESTRAL' | translate }} {{'ANUAL' | translate }} Selecciona el importe a donar {{formatCurrency(boton.importe, 0)}} {{'OTRA_CANTIDAD' | translate}} Otra cantidad € {{botonExplicacion.texto}} {{ 'BENEFICIO_DESGRAVA' | translate }} {{formatCurrency(desgravacion)}} {{ 'CUOTA' | translate }} {{tipoPeriodicidad}} {{campaign.textoBotonAporta}} {{getTab('K14').descripcion}} {{getTab('K14').descripcionLarga}} {{testimonio.titulo}} {{testimonio.cargo}} {{testimonio.descripcion}} {{getTab('K17').descripcionHeader}} {{getTab('K17').descripcion}} {{ 'CALCULA_DESGRAVACION' | translate }} {{info.titulo}} {{info.descripcion}} {{getTab('K17').descripcionLarga}} {{getTab('K19').descripcionHeader}} {{getTab('K19').descripcionLarga}} {{act.titulo}} {{act.descripcion}} {{getTab('K19').descripcion}} {{getTab('K06').descripcion}} {{getTab('K06').descripcionLarga}} {{faq.pregunta}} {{faq.respuesta}} {{getTab('K18').descripcion}} {{getTab('K18').descripcionLarga}} {{dudas.titulo}} {{dudas.descripcion}}",
+  "source": "AECC",
+  "url": "https://www.aecc.es/colabora/dona",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T09:41:41.804730+00:00",
+  "reason": "duplicate_content"
+}

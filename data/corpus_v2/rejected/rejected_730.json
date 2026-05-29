@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/calidad-aire",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/index.php?seccion=biblioteca&subSeccion=detalleDocumento&idD=1461",
+  "reason": "language_over_target",
+  "language": "es"
 }

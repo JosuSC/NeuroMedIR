@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/cuidados-paliativos",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/infecciosas",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/peripheralnervedisorders.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1396,
+  "title": "Chronic myeloid leukaemia - NHS",
+  "content": "Chronic myeloid leukaemia Chronic myeloid leukaemia (CML) is a rare type of cancer that affects the bone marrow and white blood cells. What is chronic myeloid leukaemia? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/chronic-myeloid-leukaemia",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:21:31.333880+00:00",
+  "reason": "content_too_short"
 }

@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/badbreath.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1544,
+  "title": "Access your NHS account - NHS",
+  "content": "Access your NHS account Log in to view your health information and manage your healthcare online. Access NHS App services using the NHS App or by logging in through the NHS website. You can create an account if you do not have one. You must be aged 13 or over and registered at a GP surgery in England. Continue You can: request repeat prescriptions check your test results view messages from the NHS book and manage appointments Get the NHS App You can also download the NHS App on your smartphone or tablet.",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/nhs-services/gps/view-your-gp-health-record",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:28:43.670516+00:00",
+  "reason": "content_too_short"
 }

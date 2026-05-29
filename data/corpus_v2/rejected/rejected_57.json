@@ -1,11 +1,5 @@
 {
-  "id": 86,
-  "title": "Medical Encyclopedia: J: MedlinePlus",
-  "content": "Medical Encyclopedia: J Jack-in-the-pulpit poisoning Jaundice Jaundice and breastfeeding Jaundice causes Jejunostomy feeding tube Jellyfish stings Jerusalem cherry poisoning Jet lag prevention Jewelry cleaner poisoning Jimsonweed poisoning Jock itch Joint fluid culture Joint fluid Gram stain Joint pain Joint swelling Joint x-ray Juvenile angiofibroma Juvenile idiopathic arthritis",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/ency/encyclopedia_J.htm",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T17:43:46.042650+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/metabolicdisorders.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

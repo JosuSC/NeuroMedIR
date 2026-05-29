@@ -1,11 +1,5 @@
 {
-  "id": 914,
-  "title": "Terapias complementarias y alternativas: MedlinePlus en español",
-  "content": "Terapias complementarias y alternativas Acupuntura Cáncer, Terapia alternativa ver Terapia alternativa para el cáncer Dieta, Suplementos ver Suplementos en la dieta Dolor, manejo sin medicamentos ver Manejo del dolor sin medicamentos Homeopatía ver Medicina complementaria e integral Manejo del dolor sin medicamentos Medicina complementaria ver Medicina complementaria e integral Medicina complementaria e integral Medicina herbaria Oligoelementos ver Suplementos en la dieta Quiropráctica Suplementos en la dieta Terapia alternativa para el cáncer",
-  "source": "MedlinePlus ES",
-  "url": "https://medlineplus.gov/spanish/complementaryandalternativetherapies.html",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-05-26T19:17:29.871544+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/cough.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

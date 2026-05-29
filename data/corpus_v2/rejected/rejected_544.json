@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/node/93183",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/transmision-sexual",
+  "reason": "language_over_target",
+  "language": "es"
 }

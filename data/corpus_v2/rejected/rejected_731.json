@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/innovacion-acceso-medicamentos-tecnologias-sanitarias",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/formacion",
+  "reason": "language_over_target",
+  "language": "es"
 }

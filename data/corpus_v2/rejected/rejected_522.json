@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/medicamentos-tecnologias-sanitarias",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/pruebas-diagnosticas",
+  "reason": "language_over_target",
+  "language": "es"
 }

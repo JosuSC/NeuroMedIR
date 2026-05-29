@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/equidad-salud",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/raras",
+  "reason": "language_over_target",
+  "language": "es"
 }

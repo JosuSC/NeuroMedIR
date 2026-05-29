@@ -1,11 +1,5 @@
 {
-  "id": 951,
-  "title": "Enciclopedia médica: Y: MedlinePlus",
-  "content": "Omita y vaya al Contenido Los sitios web oficiales usan .gov Un sitio web .gov pertenece a una organización oficial del Gobierno de Estados Unidos. Los sitios web seguros .gov usan HTTPS Un candado ( Lock Locked padlock icon ) o https:// significa que usted se conectó de forma segura a un sitio web .gov. Comparta información sensible sólo en sitios web oficiales y seguros. Usted está aquí: Página Principal → Enciclopedia médica → Enciclopedia médica: Y Dirección de esta página: //medlineplus.gov/spanish/ency/encyclopedia_Y.htm.htm Enciclopedia médica: Y Yodo en la dieta Yoga para la salud",
-  "source": "MedlinePlus ES",
-  "url": "https://medlineplus.gov/spanish/ency/encyclopedia_Y.htm",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-05-26T19:19:42.834922+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/ureteraldisorders.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

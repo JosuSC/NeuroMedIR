@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/iniciativa-eliminacion",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=congresos&subSeccion=historico",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/node/69017",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=formacion&subSeccion=proyectos",
+  "reason": "language_over_target",
+  "language": "es"
 }

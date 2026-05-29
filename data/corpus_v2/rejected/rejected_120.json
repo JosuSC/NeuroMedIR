@@ -1,4 +1,5 @@
 {
-  "url": "https://go.nih.gov/VPiakIJ",
-  "reason": "fetch_failed"
+  "url": "https://medlineplus.gov/spanish/suddencardiacarrest.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

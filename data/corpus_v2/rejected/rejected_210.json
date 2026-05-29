@@ -1,11 +1,5 @@
 {
-  "id": 800,
-  "title": "Non-melanoma skin cancer - NHS",
-  "content": "Non-melanoma skin cancer Find out about non-melanoma skin cancer, including what the symptoms are, what causes it, and how it's diagnosed and treated. What is non-melanoma skin cancer? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/non-melanoma-skin-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T19:09:57.556041+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/klinefeltersyndrome.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

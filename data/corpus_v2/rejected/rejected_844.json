@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/poisoning.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1412,
+  "title": "Menopause and perimenopause - NHS",
+  "content": "Menopause and perimenopause Menopause and perimenopause are a natural part of life. This happens when your periods change and eventually stop due to lower hormone levels. It usually affects women between 45 and 55 but it can happen earlier. It affects anyone who has periods. What are menopause and perimenopause? Symptoms Treatment Things you can do Support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/menopause-and-perimenopause",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:22:16.704497+00:00",
+  "reason": "content_too_short"
 }

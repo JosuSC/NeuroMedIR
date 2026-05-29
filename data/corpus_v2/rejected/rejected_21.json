@@ -1,11 +1,11 @@
 {
-  "id": 2260,
-  "title": "MedlinePlus: Viewers & Players",
-  "content": "Viewers & Players You may need to download the following viewers and players to your computer in order to access NLM content in various formats. Note that not all viewer and players will work on all mobile devices. Viewer or Player How It Works Example Formats Apple QuickTime Media Player Play video and audio files on Apple operating systems. mov Apple iTunes Download NLM podcasts and applications. mp3 mp4 mov Adobe Reader Read and print Portable Document Format (PDF) from your Web browser. pdf Windows Media Player Play video and audio files on PC operating systems. mp3 wav wmz",
-  "source": "MedlinePlus (Dinámico)",
-  "url": "https://medlineplus.gov/plugins.html",
+  "id": 94,
+  "title": "Terapias complementarias y alternativas: MedlinePlus en español",
+  "content": "Terapias complementarias y alternativas Acupuntura Cáncer, Terapia alternativa ver Terapia alternativa para el cáncer Dieta, Suplementos ver Suplementos en la dieta Dolor, manejo sin medicamentos ver Manejo del dolor sin medicamentos Homeopatía ver Medicina complementaria e integral Manejo del dolor sin medicamentos Medicina complementaria ver Medicina complementaria e integral Medicina complementaria e integral Medicina herbaria Oligoelementos ver Suplementos en la dieta Quiropráctica Suplementos en la dieta Terapia alternativa para el cáncer",
+  "source": "MedlinePlus ES",
+  "url": "https://medlineplus.gov/spanish/complementaryandalternativetherapies.html",
   "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-27T15:51:07.744150+00:00",
-  "reason": "duplicate_url"
+  "language": "es",
+  "fetched_at": "2026-05-29T04:50:24.853917+00:00",
+  "reason": "content_too_short"
 }

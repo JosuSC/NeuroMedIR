@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/spanish/emergencymedicalservices.html",
-  "reason": "language_over_target",
-  "language": "es"
+  "id": 911,
+  "title": "Peso corporal saludable | AECC",
+  "content": "Pasar al contenido principal Dona Hazte socio Escribe a continuación lo que necesitas: Continuar Click para conocer más Home Todo sobre el cáncer Prevención del cáncer Peso corporal saludable Peso corporal saludable ¿Por qué el sobrepeso y la obesidad aumentan el riesgo de cáncer? La importancia de mantener un peso saludable",
+  "source": "AECC",
+  "url": "https://www.aecc.es/todo-sobre-cancer/prevencion-cancer/peso-corporal-saludable",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T05:37:34.232014+00:00",
+  "reason": "content_too_short"
 }

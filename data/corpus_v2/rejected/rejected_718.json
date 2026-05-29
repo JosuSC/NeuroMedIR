@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/erupciones-volcanicas",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/congresonacional",
+  "reason": "language_over_target",
+  "language": "es"
 }

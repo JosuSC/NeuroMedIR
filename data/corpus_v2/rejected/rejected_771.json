@@ -1,4 +1,11 @@
 {
-  "url": "https://medlineplus.gov/prenatalcare.html",
-  "reason": "fetch_failed"
+  "id": 992,
+  "title": "Checking your browser - reCAPTCHA",
+  "content": "",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/23566775",
+  "category": "research_article",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:00:59.015920+00:00",
+  "reason": "missing_or_empty_content"
 }

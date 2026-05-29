@@ -1,11 +1,5 @@
 {
-  "id": 122,
-  "title": "NIH Calendar of Events",
-  "content": "",
-  "source": "NIH",
-  "url": "https://calendar.nih.gov/",
-  "category": "health_guideline",
-  "language": "en",
-  "fetched_at": "2026-05-26T17:55:07.180517+00:00",
-  "reason": "missing_or_empty_content"
+  "url": "https://medlineplus.gov/spanish/bellspalsy.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

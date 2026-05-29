@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/enfermedad-chagas",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=gruposTrabajo&subSeccion=gtFormulario",
+  "reason": "language_over_target",
+  "language": "es"
 }

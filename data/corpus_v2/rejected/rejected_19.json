@@ -1,11 +1,11 @@
 {
-  "id": 2260,
-  "title": "MedlinePlus: Healthy Recipes",
-  "content": "Healthy Recipes Staying healthy can be a challenge, but simple lifestyle changes – like eating healthy meals and being physically active – can help a lot. Research shows that these changes can help you maintain a healthy body weight and reduce the risk of chronic disease. These recipes show you how to prepare tasty, healthy meals that help you develop a healthy eating pattern. A healthy eating pattern includes a variety of fruits and vegetables, fat-free or low fat dairy, various protein foods, and oils. It also means limiting saturated fats, trans fats , added sugars, and salt . Try these recipes as part of a healthy lifestyle . Breakfast Lunch Dinner Desserts Breads Dairy Free Dips, Salsas, and Sauces Drinks Gluten Sensitive Low-fat Low Sodium Salads Side Dishes Snacks Soups Vegetarian",
-  "source": "MedlinePlus (Dinámico)",
-  "url": "https://medlineplus.gov/recipes",
+  "id": 58,
+  "title": "Temas de salud: X,Y,Z: MedlinePlus en español",
+  "content": "Temas de salud: XYZ X Expand Section X Frágil ver Síndrome X frágil X Metabólico, Síndrome ver Síndrome metabólico Xerostomía ver Boca seca Y Expand Section Yaba ver Metanfetamina Yersinia ver Enfermedades transmitidas por alimentos Z Expand Section Zancudos, Picaduras de ver Picadura de mosquitos Zapatos ver Salud del pie Zika, Virus ver Virus del Zika Zollinger-Ellison, Síndrome ver Enfermedades del páncreas Zollinger-Ellison, Síndrome de ver Cáncer de páncreas Zumaque ver Hiedra, roble y zumaque venenosos",
+  "source": "MedlinePlus ES",
+  "url": "https://medlineplus.gov/spanish/healthtopics_xyz.html",
   "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-27T15:51:02.365289+00:00",
-  "reason": "duplicate_url"
+  "language": "es",
+  "fetched_at": "2026-05-29T04:48:56.341345+00:00",
+  "reason": "content_too_short"
 }

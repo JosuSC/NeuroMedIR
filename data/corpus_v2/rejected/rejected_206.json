@@ -1,11 +1,5 @@
 {
-  "id": 758,
-  "title": "Prostate cancer - NHS",
-  "content": "Prostate cancer Prostate cancer affects the prostate gland under the bladder and usually happens to men over 50 years old. There are different treatments and it can often be cured if diagnosed early. What is prostate cancer? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/prostate-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T19:07:06.425517+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/hivandinfections.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

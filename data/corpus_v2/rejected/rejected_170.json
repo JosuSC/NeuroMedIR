@@ -1,11 +1,5 @@
 {
-  "id": 334,
-  "title": "Nasal and sinus cancer - NHS",
-  "content": "Nasal and sinus cancer Nasal and sinus cancer is a rare cancer that starts in the space behind your nose (nasal cavity) or in your sinuses. What is nasal and sinus cancer? Symptoms Causes Tests and next steps Treatments Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/nasal-and-sinus-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:20:38.233878+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/cardiacrehabilitation.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

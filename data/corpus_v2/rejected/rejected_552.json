@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/eventos",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/otorrinolaringologicas",
+  "reason": "language_over_target",
+  "language": "es"
 }

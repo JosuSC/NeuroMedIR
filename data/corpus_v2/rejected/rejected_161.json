@@ -1,11 +1,5 @@
 {
-  "id": 256,
-  "title": "Schizophrenia - NHS",
-  "content": "Schizophrenia Read about schizophrenia, a long-term mental health condition where you may see, hear or believe things that are not real. Overview - Schizophrenia Symptoms - Schizophrenia Causes - Schizophrenia Diagnosis - Schizophrenia Treatment - Schizophrenia Living with - Schizophrenia",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/mental-health/conditions/schizophrenia",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:12:12.763511+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/cpr.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

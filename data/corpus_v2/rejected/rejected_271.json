@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/spanish/safeopioiduse.html",
-  "reason": "language_over_target",
-  "language": "es"
+  "id": 911,
+  "title": "TermsOfUse | Manual MSD versión para público general",
+  "content": "honeypot link Términos y condiciones de uso Última modificación del contenido oct 2023",
+  "source": "MSD Manuals ES",
+  "url": "https://www.msdmanuals.com/es/hogar/content/termsofuse",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T05:31:57.314824+00:00",
+  "reason": "content_too_short"
 }

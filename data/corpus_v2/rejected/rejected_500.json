@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/gobernanza/conferencia-sanitaria-panamericana",
-  "reason": "fetch_failed"
+  "url": "https://www.medicosypacientes.com/seccion/entrevistas",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/gout.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1691,
+  "title": "Self-harm - NHS",
+  "content": "Self-harm Self-harm is when somebody intentionally damages or injures their body. Support is available for anyone who self-harms or thinks about self-harm, as well as their friends and family. Where to get help for self-harm Why people self-harm Ways to help avoid self-harm How to tell someone about self-harm Assessment and treatments How to help someone else Related information Help for suicidal thoughts Raising low self-esteem Low mood, sadness and depression Feeling lonely",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/mental-health/feelings-symptoms-behaviours/behaviours/self-harm",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:35:30.612548+00:00",
+  "reason": "content_too_short"
 }

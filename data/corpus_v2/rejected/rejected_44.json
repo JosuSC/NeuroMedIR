@@ -1,4 +1,5 @@
 {
-  "url": "https://medlineplus.gov/healthtopics_i.html",
-  "reason": "fetch_failed"
+  "url": "https://medlineplus.gov/spanish/arteriovenousmalformations.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

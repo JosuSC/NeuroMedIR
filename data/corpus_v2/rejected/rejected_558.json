@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/cureall-americas",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/cardiovasculares",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/alianzas",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/dermatologicas/onicomicosis-hongos-unas-pies",
+  "reason": "language_over_target",
+  "language": "es"
 }

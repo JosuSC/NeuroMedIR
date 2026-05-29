@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/prevencion-violencia",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/?seccion=lector&subSeccion=noticia&idN=2979",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,11 +1,5 @@
 {
-  "id": 174,
-  "title": "Commentary - MSD Manual Consumer Version",
-  "content": "Commentary Refine By Show by Type: Show All Commentary Show for Date Range: Keyword: Apply Clear filters normal condensed NEXT >",
-  "source": "MSD Manuals",
-  "url": "https://www.msdmanuals.com/home/pages-with-widgets/news-list",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:03:28.332475+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/athletesfoot.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

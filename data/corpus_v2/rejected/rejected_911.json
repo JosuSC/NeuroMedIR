@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/druginfo/drug_Ta.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1713,
+  "title": "Investigación genómica: MedlinePlus Genetics",
+  "content": "Investigación genómica ¿Qué son los polimorfismos de nucleótido único (SNP)? ¿Qué son los estudios de asociación de genoma completo? ¿Qué es la farmacogenómica? ¿Qué son la edición del genoma y CRISPR-Cas9? La información disponible en este sitio no debe utilizarse como sustituto de atención médica o de la asesoría de un profesional médico. Hable con un profesional de la salud si tiene preguntas sobre su salud.",
+  "source": "MedlinePlus ES",
+  "url": "https://medlineplus.gov/spanish/genetica/entender/investigaciongenomica",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T06:37:33.784429+00:00",
+  "reason": "content_too_short"
 }

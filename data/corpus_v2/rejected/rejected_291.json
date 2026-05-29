@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/spanish/genetictesting.html",
-  "reason": "language_over_target",
-  "language": "es"
+  "id": 911,
+  "title": "Comentario - Manual MSD versión para público general",
+  "content": "Comentario Refinar por Mostrar por tipo: Mostrar todo Comentario Mostrar por intervalo de fechas Palabra clave: Solicitar Eliminar filtros Normal Comprimido SIGUIENTE >",
+  "source": "MSD Manuals ES",
+  "url": "https://www.msdmanuals.com/es/hogar/pages-with-widgets/noticias-y-comentarios",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T05:32:48.871250+00:00",
+  "reason": "content_too_short"
 }

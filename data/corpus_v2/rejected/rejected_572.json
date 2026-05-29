@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/regulacion-medicamentos-otras-tecnologias-sanitarias",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/autor-experto/dra-natalia-garcia-montaner",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/violencia-contra-ninas-ninos",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=formacion&subSeccion=cursos",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/promocion-salud",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/infecciosas/bacteria-multirresistente-a-antibioticos",
+  "reason": "language_over_target",
+  "language": "es"
 }

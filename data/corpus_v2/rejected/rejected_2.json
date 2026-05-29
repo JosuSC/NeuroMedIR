@@ -1,11 +1,11 @@
 {
-  "id": 2259,
-  "title": "MedlinePlus - Información de Salud de la Biblioteca Nacional de Medicina",
-  "content": "Bienvenido a MedlinePlus en español MedlinePlus es un servicio informativo en línea de salud para pacientes, familiares y amigos. Es producida por la Biblioteca Nacional de Medicina de Estados Unidos (NLM, por sus siglas en inglés), la biblioteca médica más grande del mundo y parte de los Institutos Nacionales de la Salud de EE. UU. (NIH). Conozca más sobre MedlinePlus TEMA PRINCIPAL Dormir bien El sueño es un proceso natural que le ayuda a su cuerpo a reponer energía, facilitar el aprendizaje, la memoria y mantenerse saludable. Usted puede tomar medidas para mejorar sus hábitos de sueño. Más información Temas de salud Infórmese sobre temas de salud, bienestar, enfermedades y trastornos Medicinas y suplementos Conozca sobre medicamentos de receta, venta libre y suplementos Genética Una introducción a temas fundamentales sobre la genética humana Pruebas médicas Conozca por qué se realizan ciertas pruebas y qué significan los resultados Enciclopedia médica Artículos e imágenes sobre enfermedades, síntomas, exámenes, tratamientos Recetas saludables Estas ricas y rápidas recetas son parte de un estilo de vida saludable Documentos de lectura fácil Información de salud para participantes del Programa de Investigación All of Us Revista MedlinePlus de NIH",
-  "source": "MedlinePlus (Dinámico)",
-  "url": "https://medlineplus.gov/spanish?term=hace+tiempo+estoy+padeciendo+de+una+vena+que+se+e+inflama+en+la+pared+de+la+nalga+de+recha+y+de+vez+en+cuando+sangra+y+me+duele+que+puede+ser+%3F+intensidad+5+duracion+a%C3%B1os+%C2%BFc%C3%B3mo+comenz%C3%B3+el+s%C3%ADntoma+principal%3F%3A+de+forma+s%C3%BAbita+me+dio+por+primera+vez+hace+dos+annos+cuando+tuve+mucha+diarre+y+normalmente+paso+mucho+tiempo+sentatado+en+el+banno+y+soy+programdaro+tambien+hago+poco+ejercicio+",
+  "id": 12,
+  "title": "Temas de salud: K: MedlinePlus en español",
+  "content": "Temas de salud: K Kala-azar ver Leishmaniasis Kawasaki, Enfermedad ver Enfermedad de Kawasaki Klippel-Trenaunay, Síndrome de ver Problemas circulatorios Kuru ver Enfermedades del cerebro",
+  "source": "MedlinePlus ES",
+  "url": "https://medlineplus.gov/spanish/healthtopics_k.html",
   "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-27T15:49:53.356239+00:00",
-  "reason": "duplicate_content"
+  "language": "es",
+  "fetched_at": "2026-05-29T04:45:46.811221+00:00",
+  "reason": "content_too_short"
 }

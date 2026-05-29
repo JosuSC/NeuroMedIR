@@ -1,11 +1,5 @@
 {
-  "id": 168,
-  "title": "Quizzes - MSD Manual Professional Edition",
-  "content": "honeypot link Quizzes (0)",
-  "source": "MSD Manuals",
-  "url": "https://www.msdmanuals.com/professional/pages-with-widgets/quizzes",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:01:56.383753+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/childbirth.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

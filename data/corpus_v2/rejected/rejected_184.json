@@ -1,11 +1,5 @@
 {
-  "id": 532,
-  "title": "Agoraphobia - NHS",
-  "content": "Agoraphobia Read about agoraphobia, a fear of being in situations where escape might be difficult or that help wouldn't be available if things go wrong. Overview - Agoraphobia Symptoms - Agoraphobia Causes - Agoraphobia Diagnosis - Agoraphobia Treatment - Agoraphobia",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/mental-health/conditions/agoraphobia",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:47:12.777403+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/fragilexsyndrome.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

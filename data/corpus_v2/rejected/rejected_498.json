@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/diabetes",
-  "reason": "fetch_failed"
+  "url": "https://www.medicosypacientes.com/articulo/la-declaracion-de-lisboa-y-los-derechos-del-paciente-un-texto-vivo-que-espana-ayuda-a-renovar-en-la-asociacion-medica-mundial",
+  "reason": "language_over_target",
+  "language": "es"
 }

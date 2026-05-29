@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/inocuidad-alimentos",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/euskadi/index.php",
+  "reason": "language_over_target",
+  "language": "es"
 }

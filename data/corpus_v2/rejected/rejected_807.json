@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/abdominalpain.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1008,
+  "title": "Emergencies and Injuries - MSD Manual Consumer Version",
+  "content": "Emergencies Cardiac Arrest Choking Drowning First Aid Priorities Injuries Altitude Illness Bee Stings Bites, Animal Bites, Human Bites, Snake Burns Electrical Injuries Eye, Blunt Injury to Eye, Chemical Burns of Frostbite Heatstroke Hypothermia Lightning Injuries Shock Sprains and Strains Wounds",
+  "source": "MSD Manuals",
+  "url": "https://www.msdmanuals.com/home/first-aid",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:03:38.251510+00:00",
+  "reason": "content_too_short"
 }

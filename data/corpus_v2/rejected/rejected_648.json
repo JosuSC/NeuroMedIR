@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/rabia",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/index.php/es/pacientes?seccion=investigacion&subSeccion=agenciaInvestigacion",
+  "reason": "language_over_target",
+  "language": "es"
 }

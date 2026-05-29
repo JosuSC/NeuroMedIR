@@ -1,11 +1,5 @@
 {
-  "id": 323,
-  "title": "Oesophageal cancer - NHS",
-  "content": "Oesophageal cancer Find out about oesophageal cancer, including what the symptoms are, what causes it and how it's diagnosed and treated. What is oesophageal cancer? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/oesophageal-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:17:42.834454+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/healthtopics_r.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

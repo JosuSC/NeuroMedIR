@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/lasereyesurgery.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 994,
+  "title": "Checking your browser - reCAPTCHA",
+  "content": "",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/30746646",
+  "category": "research_article",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:01:29.427701+00:00",
+  "reason": "missing_or_empty_content"
 }

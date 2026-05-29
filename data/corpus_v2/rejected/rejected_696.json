@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/residuos-solidos",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=sociedad&subSeccion=detalleActividad&idN=638",
+  "reason": "language_over_target",
+  "language": "es"
 }

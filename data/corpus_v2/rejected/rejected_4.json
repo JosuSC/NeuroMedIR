@@ -1,11 +1,11 @@
 {
-  "id": 2259,
-  "title": "Search Results | CDC",
-  "content": "Skip directly to site content Skip directly to search An official website of the United States government Here's how you know Official websites use .gov A .gov website belongs to an official government organization in the United States. Secure .gov websites use HTTPS A lock ( ) or https:// means you've safely connected to the .gov website. Share sensitive information only on official, secure websites.",
-  "source": "CDC (Dinámico)",
-  "url": "https://www.cdc.gov/search?query=hace+tiempo+estoy+padeciendo+de+una+vena+que+se+e+inflama+en+la+pared+de+la+nalga+de+recha+y+de+vez+en+cuando+sangra+y+me+duele+que+puede+ser+%3F+intensidad+5+duracion+a%C3%B1os+%C2%BFc%C3%B3mo+comenz%C3%B3+el+s%C3%ADntoma+principal%3F%3A+de+forma+s%C3%BAbita+me+dio+por+primera+vez+hace+dos+annos+cuando+tuve+mucha+diarre+y+normalmente+paso+mucho+tiempo+sentatado+en+el+banno+y+soy+programdaro+tambien+hago+poco+ejercicio+",
-  "category": "health_guideline",
-  "language": "en",
-  "fetched_at": "2026-05-27T15:50:07.899150+00:00",
-  "reason": "duplicate_content"
+  "id": 22,
+  "title": "Temas de salud: W: MedlinePlus en español",
+  "content": "Temas de salud: W Warfarina ver Anticoagulantes y antiplaquetarios Wegener ver Granulomatosis con poliangeítis Wilms, Tumor de ver Tumor de Wilms Wilson, Enfermedad de ver Enfermedad de Wilson",
+  "source": "MedlinePlus ES",
+  "url": "https://medlineplus.gov/spanish/healthtopics_w.html",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T04:46:13.399983+00:00",
+  "reason": "content_too_short"
 }

@@ -1,11 +1,11 @@
 {
-  "id": 2007,
-  "title": "Help Me Understand Genetics: MedlinePlus Genetics",
-  "content": "Help Me Understand Genetics An introduction to fundamental topics related to human genetics, including illustrations and basic explanations of genetics concepts. Cells and DNA How Genes Work Variants and Health Inheriting Genetic Conditions Genetics and Human Traits Genetic Consultation Genetic Testing Direct-to-Consumer Genetic Testing Gene Therapy and Other Medical Advances Genomic Research Precision Medicine",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/genetics/understanding",
-  "category": "health_topic",
+  "id": 990,
+  "title": "Checking your browser - reCAPTCHA",
+  "content": "",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/39758696",
+  "category": "research_article",
   "language": "en",
-  "fetched_at": "2026-05-26T20:53:19.351861+00:00",
-  "reason": "content_too_short"
+  "fetched_at": "2026-05-29T06:00:45.081083+00:00",
+  "reason": "missing_or_empty_content"
 }

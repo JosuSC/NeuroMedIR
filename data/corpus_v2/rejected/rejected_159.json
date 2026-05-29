@@ -1,11 +1,5 @@
 {
-  "id": 243,
-  "title": "Archive App | CDC",
-  "content": "",
-  "source": "CDC",
-  "url": "https://archive.cdc.gov/",
-  "category": "health_guideline",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:11:19.004354+00:00",
-  "reason": "missing_or_empty_content"
+  "url": "https://medlineplus.gov/spanish/rickets.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

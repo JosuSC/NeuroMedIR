@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/gestion-conocimiento-acceso-informacion-salud",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/index.php/es/pacientes?seccion=formacion&subSeccion=ayudas",
+  "reason": "language_over_target",
+  "language": "es"
 }

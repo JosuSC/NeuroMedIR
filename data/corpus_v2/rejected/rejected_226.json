@@ -1,11 +1,5 @@
 {
-  "id": 955,
-  "title": "Enciclopedia médica: Z: MedlinePlus",
-  "content": "Omita y vaya al Contenido Los sitios web oficiales usan .gov Un sitio web .gov pertenece a una organización oficial del Gobierno de Estados Unidos. Los sitios web seguros .gov usan HTTPS Un candado ( Lock Locked padlock icon ) o https:// significa que usted se conectó de forma segura a un sitio web .gov. Comparta información sensible sólo en sitios web oficiales y seguros. Usted está aquí: Página Principal → Enciclopedia médica → Enciclopedia médica: Z Dirección de esta página: //medlineplus.gov/spanish/ency/encyclopedia_Z.htm.htm Enciclopedia médica: Z Zinc en la dieta Zóster",
-  "source": "MedlinePlus ES",
-  "url": "https://medlineplus.gov/spanish/ency/encyclopedia_Z.htm",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-05-26T19:19:57.945430+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/healthtopics_t.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

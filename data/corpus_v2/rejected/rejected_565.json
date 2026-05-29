@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/folletos",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/reportajes-enfermedades",
+  "reason": "language_over_target",
+  "language": "es"
 }

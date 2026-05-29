@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/curso-vida-saludable",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/ginecologicas/que-es-el-sindrome-de-shock-toxico",
+  "reason": "language_over_target",
+  "language": "es"
 }

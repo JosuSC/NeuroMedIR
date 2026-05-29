@@ -1,11 +1,5 @@
 {
-  "id": 103,
-  "title": "Checking your browser - reCAPTCHA",
-  "content": "",
-  "source": "PubMed",
-  "url": "https://pubmed.ncbi.nlm.nih.gov/21023349",
-  "category": "research_article",
-  "language": "en",
-  "fetched_at": "2026-05-26T17:51:02.533108+00:00",
-  "reason": "missing_or_empty_content"
+  "url": "https://medlineplus.gov/spanish/oxygentherapy.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

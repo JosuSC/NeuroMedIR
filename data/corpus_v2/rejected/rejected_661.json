@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/brucelosis",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/?seccion=formularios&subSeccion=portaltyr",
+  "reason": "language_over_target",
+  "language": "es"
 }

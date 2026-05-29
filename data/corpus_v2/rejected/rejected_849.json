@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/anatomy.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1464,
+  "title": "Bladder cancer - NHS",
+  "content": "Bladder cancer Bladder cancer is cancer that's found anywhere in your bladder. It's more common if you're over the age of 60. What is bladder cancer? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/bladder-cancer",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:24:44.472025+00:00",
+  "reason": "content_too_short"
 }

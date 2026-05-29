@@ -1,11 +1,5 @@
 {
-  "id": 160,
-  "title": "Research in Context | NIH News in Health",
-  "content": "May 2026 Print this issue Featured Website Research in Context Send us your comments (link sends e-mail) Find in-depth stories about NIH’s cutting-edge biomedical research. Learn about the current state of research for many fields and where they may be heading. Research in Context stories appear quarterly in NIH Research Matters . Read the latest story on treating addiction Visit the website: go.nih.gov/RiC",
-  "source": "NIH",
-  "url": "https://newsinhealth.nih.gov/2026/05/research-context",
-  "category": "health_guideline",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:00:15.026906+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/jointdisorders.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

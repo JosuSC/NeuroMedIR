@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/demencia",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=congresos",
+  "reason": "language_over_target",
+  "language": "es"
 }

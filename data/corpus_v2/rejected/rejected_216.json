@@ -1,11 +1,5 @@
 {
-  "id": 858,
-  "title": "Borderline personality disorder - NHS",
-  "content": "Borderline personality disorder Read about borderline personality disorder. Personality disorders can cause a range of distressing symptoms and patterns of abnormal behaviour. Overview - Borderline personality disorder Symptoms - Borderline personality disorder Causes - Borderline personality disorder Diagnosis - Borderline personality disorder Treatment - Borderline personality disorder",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/mental-health/conditions/borderline-personality-disorder",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T19:13:54.450782+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/autonomicnervoussystemdisorders.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

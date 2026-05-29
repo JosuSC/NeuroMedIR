@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/sarampion",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/index.php/es/index.php?seccion=politicas&subSeccion=politicaPrivacidad",
+  "reason": "language_over_target",
+  "language": "es"
 }

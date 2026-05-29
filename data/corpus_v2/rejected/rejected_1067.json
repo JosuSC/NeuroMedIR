@@ -1,11 +1,5 @@
 {
-  "id": 2203,
-  "title": "Consulta genÃ©tica: MedlinePlus Genetics",
-  "content": "Consulta genÃ©tica Â¿QuÃ© es una consulta genÃ©tica? Â¿Por quÃ© alguien podrÃ­a tener una consulta genÃ©tica? Â¿QuÃ© ocurre durante una consulta genÃ©tica? Â¿CÃ³mo puedo encontrar un especialista en genÃ©tica en mi Ã¡rea? Â¿QuÃ© es el pronÃ³stico de una enfermedad genÃ©tica? Â¿CÃ³mo se diagnostican las enfermedades genÃ©ticas? Â¿CÃ³mo se tratan o manejan los trastornos genÃ©ticos? La informaciÃ³n disponible en este sitio no debe utilizarse como sustituto de atenciÃ³n mÃ©dica o de la asesorÃ­a de un profesional mÃ©dico. Hable con un profesional de la salud si tiene preguntas sobre su salud.",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/spanish/genetica/entender/consulta",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-04-24T08:20:18.531730+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/pruebas-de-laboratorio/prueba-de-tuberculosis",
+  "reason": "language_over_target",
+  "language": "es"
 }

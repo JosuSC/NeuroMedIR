@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/earinfections.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1004,
+  "title": "Videos - MSD Manual Consumer Version",
+  "content": "honeypot link Videos (0)",
+  "source": "MSD Manuals",
+  "url": "https://www.msdmanuals.com/home/pages-with-widgets/videos",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:03:05.371400+00:00",
+  "reason": "content_too_short"
 }

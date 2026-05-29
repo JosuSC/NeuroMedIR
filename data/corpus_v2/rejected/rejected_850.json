@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/autismspectrumdisorder.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1464,
+  "title": "Irritable bowel syndrome (IBS) - NHS",
+  "content": "Irritable bowel syndrome (IBS) IBS (irritable bowel syndrome) is a common condition that affects the digestive system. It can cause stomach cramps, bloating and diarrhoea. It’s usually a lifelong condition but lifestyle changes and medicine can help. What is IBS Symptoms Diagnosis Diet, lifestyle and medicine Further help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/irritable-bowel-syndrome-ibs",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:24:47.025286+00:00",
+  "reason": "content_too_short"
 }

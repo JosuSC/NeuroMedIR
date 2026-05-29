@@ -1,4 +1,5 @@
 {
-  "url": "https://www.nih.gov/news-releases/feed.xml",
-  "reason": "non_html_content_type"
+  "url": "https://medlineplus.gov/spanish/pemphigus.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

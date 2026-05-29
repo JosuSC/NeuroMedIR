@@ -1,4 +1,5 @@
 {
-  "url": "https://newsinhealth.nih.gov/rss",
-  "reason": "non_html_content_type"
+  "url": "https://medlineplus.gov/spanish/mumps.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

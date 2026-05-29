@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/data",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=gruposTrabajo&subSeccion=gtListadoWeb",
+  "reason": "language_over_target",
+  "language": "es"
 }

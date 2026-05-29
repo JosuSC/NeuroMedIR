@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/anesthesia.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1000,
+  "title": "Procedures & Exams - MSD Manual Professional Edition",
+  "content": "honeypot link Procedures & Exams (0)",
+  "source": "MSD Manuals",
+  "url": "https://www.msdmanuals.com/professional/pages-with-widgets/procedures-and-exams",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:02:14.120695+00:00",
+  "reason": "content_too_short"
 }

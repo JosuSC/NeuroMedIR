@@ -1,4 +1,5 @@
 {
-  "url": "https://medlineplus.gov/ency/encyclopedia_M.htm",
-  "reason": "fetch_failed"
+  "url": "https://medlineplus.gov/spanish/infectioncontrol.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

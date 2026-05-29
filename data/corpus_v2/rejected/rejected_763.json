@@ -1,4 +1,11 @@
 {
-  "url": "https://scielo.org/about",
-  "reason": "fetch_failed"
+  "id": 988,
+  "title": "Checking your browser - reCAPTCHA",
+  "content": "",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/42173842",
+  "category": "research_article",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:00:29.869621+00:00",
+  "reason": "missing_or_empty_content"
 }

@@ -1,11 +1,5 @@
 {
-  "id": 857,
-  "title": "Type 1 diabetes - NHS",
-  "content": "Type 1 diabetes Type 1 diabetes is a condition where your body cannot make a hormone called insulin. This causes the level of glucose (sugar) in your blood to get too high. What is type 1 diabetes? Symptoms Treatment Living with type 1 diabetes Complications Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/type-1-diabetes",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T19:13:47.307906+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/cushingssyndrome.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

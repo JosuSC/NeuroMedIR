@@ -1,11 +1,5 @@
 {
-  "id": 638,
-  "title": "What is stomach cancer? - NHS",
-  "content": "What is stomach cancer? - Stomach cancer Credit: NHS.UK Stomach cancer is cancer that’s found anywhere in the stomach. The stomach is part of the digestive system. It helps you digest food. How serious stomach cancer is depends on how big the cancer is, if it has spread, and your general health. Stomach cancer is not very common in the UK. Important: Get your symptoms checked It’s important to get any symptoms of stomach cancer checked as soon as possible. Page last reviewed: 14 February 2023 Next review due: 14 February 2026",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/stomach-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:58:40.427970+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/rashes.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

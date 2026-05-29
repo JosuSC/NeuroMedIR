@@ -1,4 +1,5 @@
 {
-  "url": "https://go.nih.gov/YdabSYN",
-  "reason": "fetch_failed"
+  "url": "https://medlineplus.gov/spanish/covid19testing.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/acidos-grasos-trans",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/dermatologicas/la-psoriasis-y-su-relacion-con-el-sindrome-metabolico",
+  "reason": "language_over_target",
+  "language": "es"
 }

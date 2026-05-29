@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/gobernanza/subcomite-programa-presupuesto-administracion",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/raras/mutacion-genetica-sindrome-vexas",
+  "reason": "language_over_target",
+  "language": "es"
 }

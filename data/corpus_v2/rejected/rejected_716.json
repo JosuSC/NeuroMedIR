@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/violencia-contra-mujer",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/index.php?seccion=biblioteca&subSeccion=detalleDocumento&idD=1342",
+  "reason": "language_over_target",
+  "language": "es"
 }

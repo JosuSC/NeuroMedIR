@@ -1,11 +1,5 @@
 {
-  "id": 454,
-  "title": "Gallbladder cancer - NHS",
-  "content": "Gallbladder cancer Find out about gallbladder cancer, including the symptoms, causes, tests, treatments, and where to get support. What is gallbladder cancer? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/gallbladder-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:35:53.758510+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/ushersyndrome.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

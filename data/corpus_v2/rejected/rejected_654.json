@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/boletines",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/?seccion=sociedad&subSeccion=detalleNoticia&idN=3037",
+  "reason": "language_over_target",
+  "language": "es"
 }

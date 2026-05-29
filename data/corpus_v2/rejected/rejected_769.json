@@ -1,11 +1,4 @@
 {
-  "id": 2037,
-  "title": "MedlinePlus: Using MedlinePlus",
-  "content": "Using MedlinePlus Find out more about policies and guidelines for MedlinePlus, and get guidance and tips for using this resource. Linking to and Using Content from MedlinePlus Guidelines for Links Search Tips Citing MedlinePlus Information for Trainers and Librarians Video Player Keyboard Shortcuts Related Information What's New About MedlinePlus Information for Developers MedlinePlus Connect",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/about/using",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T20:57:09.010129+00:00",
-  "reason": "content_too_short"
+  "url": "https://pubmed.ncbi.nlm.nih.gov/myncbi/collections/bibliography",
+  "reason": "fetch_failed"
 }

@@ -1,11 +1,5 @@
 {
-  "id": 468,
-  "title": "Soft tissue sarcoma - NHS",
-  "content": "Soft tissue sarcoma Soft tissue sarcoma is a rare type of cancer that starts in soft tissue, such as muscle and fat. What is soft tissue sarcoma? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/soft-tissue-sarcoma",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:39:36.704360+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/collegehealth.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/salud-mental-apoyo-psicosocial-emergencias-smaps",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=gruposTrabajo&subSeccion=gtReglamento",
+  "reason": "language_over_target",
+  "language": "es"
 }

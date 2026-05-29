@@ -1,11 +1,5 @@
 {
-  "id": 341,
-  "title": "Myelodysplastic syndrome (MDS) - NHS",
-  "content": "Myelodysplastic syndrome (MDS) Myelodysplastic syndrome (MDS), also called myelodysplasia, is a type of blood cancer. It's rare and mostly affects people over 70 years old. What is myelodysplastic syndrome (MDS)? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/myelodysplastic-syndrome-mds",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:22:04.387938+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/rosacea.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

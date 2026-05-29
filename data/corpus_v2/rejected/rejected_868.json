@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/spleendiseases.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1608,
+  "title": "Non-Hodgkin lymphoma - NHS",
+  "content": "Non-Hodgkin lymphoma Non-Hodgkin lymphoma is cancer that affects the white blood cells that help you fight infection (lymphocytes). What is non-Hodgkin lymphoma? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/non-hodgkin-lymphoma",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:31:41.668600+00:00",
+  "reason": "content_too_short"
 }

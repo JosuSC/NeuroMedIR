@@ -1,11 +1,5 @@
 {
-  "id": 1767,
-  "title": "Sala de prensa de los CDC | CDC",
-  "content": "Sala de prensa de los CDC English (US) Los CDC ofrecen una actualización sobre el brote de hantavirus vinculado al crucero M/V Hondius Los CDC elaboraron directrices de salud para los pasajeros de los Estados Unidos afectados Informarse más 12 de may del 2026 Noticias Recientes",
-  "source": "CDC ES",
-  "url": "https://www.cdc.gov/media/es/index.html",
-  "category": "health_guideline",
-  "language": "es",
-  "fetched_at": "2026-05-26T20:17:44.676932+00:00",
-  "reason": "content_too_short"
+  "url": "https://www.medicosypacientes.com/articulo/pdta-de-la-comision-de-sanidad-del-senado-la-singularidad-de-la-profesion-medica-esta-fuera-de-duda-y-como-tal-debe-estar-recogida-en-el-estatuto",
+  "reason": "language_over_target",
+  "language": "es"
 }

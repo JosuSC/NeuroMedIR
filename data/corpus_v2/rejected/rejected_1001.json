@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/lab-tests/how-to-prepare-your-child-for-a-lab-test",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1713,
+  "title": "Cómo funcionan los genes: MedlinePlus Genetics",
+  "content": "Cómo funcionan los genes ¿Qué son las proteínas y qué es lo que hacen? ¿Cómo los genes dirigen la producción de proteínas? ¿Pueden activarse y desactivarse los genes? ¿Qué es la epigenética? ¿Cómo se dividen las células? ¿Cómo los genes controlan el crecimiento y la división de las células? ¿Cómo los genetistas indican la ubicación de un gen? La información disponible en este sitio no debe utilizarse como sustituto de atención médica o de la asesoría de un profesional médico. Hable con un profesional de la salud si tiene preguntas sobre su salud.",
+  "source": "MedlinePlus ES",
+  "url": "https://medlineplus.gov/spanish/genetica/entender/comofuncionangenes",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T06:39:54.870306+00:00",
+  "reason": "content_too_short"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/terremotos",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/ginecologicas/contractura-capsular-pecho",
+  "reason": "language_over_target",
+  "language": "es"
 }

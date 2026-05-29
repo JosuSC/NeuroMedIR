@@ -1,4 +1,5 @@
 {
-  "url": "https://newsinhealth.nih.gov/sites/newsinhealth/files/2026-05/NIHNiHMay2026.pdf",
-  "reason": "non_html_content_type"
+  "url": "https://medlineplus.gov/spanish/potassium.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

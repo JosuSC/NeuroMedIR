@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/enfermedades-desatendidas-tropicales-transmitidas-por-vectores",
-  "reason": "fetch_failed"
+  "url": "https://www.medicosypacientes.com/articulo/el-curso-de-competencias-digitales-continua-su-avance-con-mas-de-50-sesiones-presenciales-en-los-colegios",
+  "reason": "language_over_target",
+  "language": "es"
 }

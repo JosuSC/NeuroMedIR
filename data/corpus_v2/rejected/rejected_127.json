@@ -1,11 +1,5 @@
 {
-  "id": 165,
-  "title": "Contact Us - MSD Manual Professional Edition",
-  "content": "ABOUT US Overview of the MSD Manuals History of the MSD Manuals Global Medical Knowledge The Manuals Staff Editorial Board and Reviewers Authors Content Providers Mobile Apps Permissions Partnerships Connect with us on social media! Frequently Asked Questions (FAQs) Contact Us Contact the MSD Manuals Staff Content last modified Mar 2023",
-  "source": "MSD Manuals",
-  "url": "https://www.msdmanuals.com/professional/content/contact-us",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:01:02.127199+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/healthoccupations.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/leptospirosis",
-  "reason": "fetch_failed"
+  "url": "https://www.medicosypacientes.com/articulo/el-brote-actual-de-hantavirus-y-la-necesaria-prudencia",
+  "reason": "language_over_target",
+  "language": "es"
 }

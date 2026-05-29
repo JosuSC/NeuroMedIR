@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/historias/historias-regionales",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/ginecologicas",
+  "reason": "language_over_target",
+  "language": "es"
 }

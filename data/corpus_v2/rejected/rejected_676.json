@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/sistemas-informacion-para-salud",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=formacion&subSeccion=contacto",
+  "reason": "language_over_target",
+  "language": "es"
 }

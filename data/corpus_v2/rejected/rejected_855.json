@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/urethraldisorders.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1487,
+  "title": "Bowel cancer - NHS",
+  "content": "Bowel cancer Bowel cancer is cancer found anywhere in the large bowel, which includes the colon and rectum. It's one of the most common types of cancer in the UK. What is bowel cancer? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/bowel-cancer",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:25:57.642268+00:00",
+  "reason": "content_too_short"
 }

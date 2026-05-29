@@ -1,5 +1,11 @@
 {
-  "url": "https://scielo.org/es/listar-por-tema/linguistics-letters-and-arts",
-  "reason": "language_over_target",
-  "language": "es"
+  "id": 989,
+  "title": "Checking your browser - reCAPTCHA",
+  "content": "",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/42184419",
+  "category": "research_article",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:00:40.316033+00:00",
+  "reason": "missing_or_empty_content"
 }

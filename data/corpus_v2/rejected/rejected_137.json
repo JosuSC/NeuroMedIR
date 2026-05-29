@@ -1,11 +1,5 @@
 {
-  "id": 172,
-  "title": "Clinical Calculators - MSD Manual Professional Edition",
-  "content": "honeypot link Clinical Calculators (0)",
-  "source": "MSD Manuals",
-  "url": "https://www.msdmanuals.com/professional/pages-with-widgets/clinical-calculators",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:02:41.190510+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/prediabetes.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

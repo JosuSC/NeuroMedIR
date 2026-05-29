@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/impuestos-saludables",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/endocrinas/causas-cambios-hormonas-tiroideas-o-tsh",
+  "reason": "language_over_target",
+  "language": "es"
 }

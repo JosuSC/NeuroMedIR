@@ -1,11 +1,5 @@
 {
-  "id": 165,
-  "title": "Global Medical Knowledge - MSD Manual Professional Edition",
-  "content": "ABOUT US Overview of the MSD Manuals History of the MSD Manuals Global Medical Knowledge The Manuals Staff Editorial Board and Reviewers Authors Content Providers Mobile Apps Permissions Partnerships Connect with us on social media! Frequently Asked Questions (FAQs) Contact Us Global Medical Knowledge Content last modified Aug 2025",
-  "source": "MSD Manuals",
-  "url": "https://www.msdmanuals.com/professional/resourcespages/global-medical-knowledge",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:00:58.892017+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/paralysis.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

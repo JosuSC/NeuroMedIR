@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/funciones-esenciales-salud-publica",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/autor-experto/dra-montserrat-marin-moreno",
+  "reason": "language_over_target",
+  "language": "es"
 }

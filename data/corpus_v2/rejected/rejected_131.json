@@ -1,11 +1,5 @@
 {
-  "id": 168,
-  "title": "Partnerships | MSD Manual Professional Edition",
-  "content": "honeypot link Partnerships Content last modified May 2025",
-  "source": "MSD Manuals",
-  "url": "https://www.msdmanuals.com/professional/content/partnerships",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:01:40.473316+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/pancreatitis.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

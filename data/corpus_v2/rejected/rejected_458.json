@@ -1,11 +1,5 @@
 {
-  "id": 1767,
-  "title": "Cuestionarios - Manual MSD versión para público general",
-  "content": "honeypot link Cuestionarios (0)",
-  "source": "MSD Manuals ES",
-  "url": "https://www.msdmanuals.com/es/hogar/pages-with-widgets/cuestionarios",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-05-26T20:16:07.906858+00:00",
-  "reason": "content_too_short"
+  "url": "https://www.aecc.es/es/todo-sobre-cancer/tipos-cancer/cancer-laringe",
+  "reason": "language_over_target",
+  "language": "es"
 }

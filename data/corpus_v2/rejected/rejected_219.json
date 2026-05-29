@@ -1,11 +1,5 @@
 {
-  "id": 876,
-  "title": "Overview of kidney cancer - NHS",
-  "content": "Kidney cancer Find out about kidney cancer, including the symptoms, causes, tests, treatments, and where to get support. What is kidney cancer? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/kidney-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T19:15:11.281972+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/glutensensitivity.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

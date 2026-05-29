@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/leishmaniasis",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/autor-experto/dra-cristina-jaraba",
+  "reason": "language_over_target",
+  "language": "es"
 }

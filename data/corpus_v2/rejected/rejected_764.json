@@ -1,5 +1,11 @@
 {
-  "url": "https://www.scielo.org/es/listar-por-tema",
-  "reason": "language_over_target",
-  "language": "es"
+  "id": 988,
+  "title": "Checking your browser - reCAPTCHA",
+  "content": "",
+  "source": "PubMed",
+  "url": "https://pubmed.ncbi.nlm.nih.gov/42161599",
+  "category": "research_article",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:00:32.404910+00:00",
+  "reason": "missing_or_empty_content"
 }

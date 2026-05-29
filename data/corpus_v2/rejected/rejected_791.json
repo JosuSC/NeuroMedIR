@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/cardiacrehabilitation.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1000,
+  "title": "Resources - MSD Manual Professional Edition",
+  "content": "Resources 3D Models Audio Figures Images Tables Videos Other Useful Resources Abbreviations Case Studies Clinical Calculators Quizzes Unit of Measure Conversions Normal Laboratory Values Symptoms",
+  "source": "MSD Manuals",
+  "url": "https://www.msdmanuals.com/professional/resource",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:02:17.791574+00:00",
+  "reason": "content_too_short"
 }

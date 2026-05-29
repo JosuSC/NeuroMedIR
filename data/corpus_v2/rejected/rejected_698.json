@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/evaluacion-tecnologias-salud",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/jornadasactualizacionbarcelona/index.php",
+  "reason": "language_over_target",
+  "language": "es"
 }

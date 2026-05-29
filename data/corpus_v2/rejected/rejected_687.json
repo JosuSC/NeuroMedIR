@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/taxonomy/term/13",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/index.php/es/pacientes?seccion=sociedad&subSeccion=detalleNoticia&idN=3051",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,11 +1,5 @@
 {
-  "id": 179,
-  "title": "Quizzes - MSD Manual Consumer Version",
-  "content": "honeypot link Quizzes (0)",
-  "source": "MSD Manuals",
-  "url": "https://www.msdmanuals.com/home/pages-with-widgets/quizzes",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:06:05.525493+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/psoriasis.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

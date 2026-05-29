@@ -1,11 +1,5 @@
 {
-  "id": 738,
-  "title": "NHS App - NHS",
-  "content": "NHS App Use the NHS App to manage your healthcare using a phone, tablet or computer. Setting up the NHS App How to download and register Help with using the NHS App Learn to use the app and get technical support About the NHS App Find out more about recent changes, privacy, accessibility and more Log in through the NHS website You can log in to use all services through the NHS website. You do not need to download anything. Log in to use NHS App services Get the app To use the NHS App, you must be aged 13 or over and registered with a GP surgery in England.",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/nhs-app",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T19:05:23.752713+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/sexualhealth.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

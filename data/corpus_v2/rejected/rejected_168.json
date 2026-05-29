@@ -1,11 +1,5 @@
 {
-  "id": 328,
-  "title": "Myeloma - NHS",
-  "content": "Myeloma Multiple myeloma is a type of blood cancer that affects your bones and different parts of your body. What is myeloma? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/myeloma",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:18:50.085841+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/xrays.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

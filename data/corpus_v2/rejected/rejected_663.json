@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/oficina-investigaciones-inv",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=sociedad&subSeccion=proyectosInstitucionales",
+  "reason": "language_over_target",
+  "language": "es"
 }

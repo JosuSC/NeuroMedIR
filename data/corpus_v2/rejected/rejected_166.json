@@ -1,11 +1,5 @@
 {
-  "id": 322,
-  "title": "Binge eating disorder - NHS",
-  "content": "Binge eating disorder Read about binge eating disorder, which is when a person feels compelled to overeat on a regular basis. Find out about the symptoms, treatments and possible causes. Overview - Binge eating disorder Treatment - Binge eating disorder",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/mental-health/conditions/binge-eating",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:17:31.573069+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/noise.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

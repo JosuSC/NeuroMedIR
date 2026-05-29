@@ -1,4 +1,5 @@
 {
-  "url": "https://medlineplus.gov/medlineplus-connect",
-  "reason": "fetch_failed"
+  "url": "https://medlineplus.gov/spanish/drugsafety.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

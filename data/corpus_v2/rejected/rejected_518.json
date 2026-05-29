@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/comunicacion-riesgos-brotes",
-  "reason": "fetch_failed"
+  "url": "https://www.medicosypacientes.com/seccion/video",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/spanish/plateletdisorders.html",
-  "reason": "language_over_target",
-  "language": "es"
+  "id": 911,
+  "title": "Freedom of Information Act | FOIA | CDC",
+  "content": "Freedom of Information Act CDC FOIA Update If you have questions about the FOIA process, please email FOIARequest@hhs.gov. Submit all FOIA requests to: FOIA Submit a FOIA Request / FOIA Request Status Learn More About Freedom of Information Act (FOIA) This page provides information about the CDC FOIA Office program and how to access CDC records. Sept. 16, 2024 FOIA Resources Collection of links and information relevant to FOIA Requests, including resources, references, etc. Sept. 16, 2024 Frequently Asked Questions This page features common FOIA questions and answers. Sept. 10, 2024",
+  "source": "CDC ES",
+  "url": "https://www.cdc.gov/foia",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-29T05:33:32.409158+00:00",
+  "reason": "content_too_short"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/fiebre-amarilla",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/?seccion=biblioteca&subSeccion=catalogoComunicaciones",
+  "reason": "language_over_target",
+  "language": "es"
 }

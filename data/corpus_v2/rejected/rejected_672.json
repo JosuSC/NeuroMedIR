@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/rotavirus",
-  "reason": "fetch_failed"
+  "url": "https://www.semergen.es/registro",
+  "reason": "language_over_target",
+  "language": "es"
 }

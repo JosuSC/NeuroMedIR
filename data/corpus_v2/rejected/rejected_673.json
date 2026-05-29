@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/proteccion-promocion-derechos-humanos-salud-mental",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/index.php?seccion=sociedad&subSeccion=detalleNoticia&idN=2910",
+  "reason": "language_over_target",
+  "language": "es"
 }

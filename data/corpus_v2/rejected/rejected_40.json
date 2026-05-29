@@ -1,11 +1,5 @@
 {
-  "id": 55,
-  "title": "Kidneys and Urinary System: MedlinePlus",
-  "content": "Kidneys and Urinary System See all Kidneys and Urinary System topics Select One: Bladder Kidney The Bladder Bladder Cancer Bladder Diseases Interstitial Cystitis Kidney Stones Ostomy Overactive Bladder Urinalysis Urinary Incontinence Urinary Tract Infections Urine and Urination The Kidneys Chronic Kidney Disease Diabetes Insipidus Diabetic Kidney Problems Dialysis Kidney Cancer Kidney Cysts Kidney Diseases Kidney Failure Kidney Stones Kidney Tests Kidney Transplantation Urinary Tract Infections Urine and Urination Wilms Tumor",
-  "source": "MedlinePlus",
-  "url": "https://medlineplus.gov/kidneysandurinarysystem.html",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T17:38:07.225791+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/womenshealth.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

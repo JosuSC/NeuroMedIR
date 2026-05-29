@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/agua-saneamiento-e-higiene-wash",
-  "reason": "fetch_failed"
+  "url": "https://semergen.es/jornadasresidentesandalucia",
+  "reason": "language_over_target",
+  "language": "es"
 }

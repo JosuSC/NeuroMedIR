@@ -1,11 +1,5 @@
 {
-  "id": 335,
-  "title": "Thyroid cancer - NHS",
-  "content": "Thyroid cancer Thyroid cancer is cancer that's found in the thyroid gland. It's quite rare in the UK. What is thyroid cancer? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/thyroid-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:20:56.177052+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/kidneytransplantation.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

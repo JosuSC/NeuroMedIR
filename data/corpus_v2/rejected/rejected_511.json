@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/drogas-sustancias-psicoactivas",
-  "reason": "fetch_failed"
+  "url": "https://www.medicosypacientes.com/articulo/la-omc-presenta-en-madrid-su-manual-de-buenas-practicas-para-el-uso-de-la-ia-en-medicina",
+  "reason": "language_over_target",
+  "language": "es"
 }

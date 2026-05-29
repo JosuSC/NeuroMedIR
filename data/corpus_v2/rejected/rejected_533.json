@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/sistema-gestion-asuntos-integridad-conflictos-sgaic",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/accidentes-y-lesiones",
+  "reason": "language_over_target",
+  "language": "es"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/depresion",
-  "reason": "fetch_failed"
+  "url": "https://www.medicosypacientes.com/articulo/la-omc-propone-reforzar-la-homologacion-de-titulos-medicos-para-equiparar-a-espana-con-europa-y-garantizar-la-calidad-asistencial",
+  "reason": "language_over_target",
+  "language": "es"
 }

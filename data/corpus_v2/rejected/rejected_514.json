@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/accion-intersectorial-salud-todas-politicas",
-  "reason": "fetch_failed"
+  "url": "https://www.medicosypacientes.com/articulo/pablo-estrella-amm-la-medicina-global-solo-cuenta-con-un-11-de-mujeres-en-puestos-de-liderazgo",
+  "reason": "language_over_target",
+  "language": "es"
 }

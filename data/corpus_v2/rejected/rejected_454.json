@@ -1,11 +1,5 @@
 {
-  "id": 1767,
-  "title": "Partnerships | Manual MSD versión para público general",
-  "content": "honeypot link Licencias & Comerciales Última modificación del contenido oct 2023",
-  "source": "MSD Manuals ES",
-  "url": "https://www.msdmanuals.com/es/hogar/content/partnerships",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-05-26T20:15:50.085930+00:00",
-  "reason": "content_too_short"
+  "url": "https://www.aecc.es/es/todo-sobre-cancer/tipos-cancer/sarcoma-tejidos-blandos",
+  "reason": "language_over_target",
+  "language": "es"
 }

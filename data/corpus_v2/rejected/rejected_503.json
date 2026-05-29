@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/temas/educacion-farmaceutica",
-  "reason": "fetch_failed"
+  "url": "https://www.medicosypacientes.com/articulo/el-programa-formativo-en-competencias-digitales-para-medicos-avanza-con-cerca-de-20-webinars-en-mayo",
+  "reason": "language_over_target",
+  "language": "es"
 }

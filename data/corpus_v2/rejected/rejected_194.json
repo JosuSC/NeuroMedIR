@@ -1,11 +1,5 @@
 {
-  "id": 660,
-  "title": "Munchausen syndrome - NHS",
-  "content": "Munchausen syndrome Munchausen syndrome is a disorder where someone pretends to be ill or induces symptoms of illness in themselves. Overview - Munchausen syndrome Signs and symptoms - Munchausen syndrome",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/mental-health/conditions/munchausen-syndrome",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T19:00:11.179204+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/healthtopics_s.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

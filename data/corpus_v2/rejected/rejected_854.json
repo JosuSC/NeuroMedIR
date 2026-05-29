@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/electromagneticfields.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1480,
+  "title": "Depression - NHS",
+  "content": "Depression Depression is a low mood that can last a long time or keep returning, affecting your everyday life. Top tasks in Depression Get urgent help now for mental health Types of depression Read about the different types of depression, such as depression in adults, psychotic depression and depression after giving birth. Coping with depression Read about how to cope with depression yourself, or how to help someone else. Improving low mood Read about self-help techniques that could help you improve your low mood. Related information Bereavement Raising low self-esteem",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/mental-health/conditions/depression",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:25:37.259097+00:00",
+  "reason": "content_too_short"
 }

@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/mercury.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1557,
+  "title": "Vulval cancer - NHS",
+  "content": "Vulval cancer Find out about vulval cancer, including common symptoms and treatments. What is vulval cancer? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/vulval-cancer",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:29:19.534359+00:00",
+  "reason": "content_too_short"
 }

@@ -1,11 +1,5 @@
 {
-  "id": 169,
-  "title": "Health Topics | MSD Manual Professional Edition",
-  "content": "Medical Topics Comprehensive medical information for health care professionals—browse the topics below. Search Index A B C D E F G H I J K L M N O P Q R S T U V W X Y Z Sections Allergy and Immunology Cardiology Clinical Pharmacology Critical Care Medicine Dentistry Dermatology Endocrinology Gastroenterology Geriatrics Gynecology and Obstetrics Hematology Hepatology Infectious Disease Injuries; Poisoning Nephrology Neurology Nutrition Oncology Ophthalmology Otolaryngology Pediatrics Psychiatry Pulmonology Rheumatology and Orthopedics Special Subjects Urology",
-  "source": "MSD Manuals",
-  "url": "https://www.msdmanuals.com/professional/health-topics",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:02:05.843423+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/pulmonaryrehabilitation.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

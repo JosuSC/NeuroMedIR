@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/spanish/wilmstumor.html",
-  "reason": "language_over_target",
-  "language": "es"
+  "id": 911,
+  "title": "Evita la exposición del sol | AECC",
+  "content": "Pasar al contenido principal Dona Hazte socio Escribe a continuación lo que necesitas: Continuar Click para conocer más Home Todo sobre el cáncer Prevención del cáncer Exposición solar Exposición solar Los efectos del sol en la piel Conoce tu piel Protección frente al sol Índice UVI, ¿qué es? Bronceado artificial Sol y vitamina D",
+  "source": "AECC",
+  "url": "https://www.aecc.es/es/todo-sobre-cancer/prevencion/evita-exposicion-sol",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T05:41:07.121634+00:00",
+  "reason": "content_too_short"
 }

@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/recursos-para-periodistas",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/fertilidad-e-infertilidad",
+  "reason": "language_over_target",
+  "language": "es"
 }

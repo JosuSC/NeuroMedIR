@@ -1,11 +1,5 @@
 {
-  "id": 1767,
-  "title": "Recursos - Manual MSD versión para público general",
-  "content": "Recursos Modelos 3D Audio Ilustraciones Images Tablas Videos Otros recursos Abreviaturas Primeros Auxilios Infografía Comprensión de términos médicos Cuestionarios Pruebas de laboratorio habituales Pesos y medidas Pruebas de laboratorio",
-  "source": "MSD Manuals ES",
-  "url": "https://www.msdmanuals.com/es/hogar/recurso",
-  "category": "health_topic",
-  "language": "es",
-  "fetched_at": "2026-05-26T20:15:30.632378+00:00",
-  "reason": "content_too_short"
+  "url": "https://www.aecc.es/es/todo-sobre-cancer/tipos-cancer/cancer-rinon",
+  "reason": "language_over_target",
+  "language": "es"
 }

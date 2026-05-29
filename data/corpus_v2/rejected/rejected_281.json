@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/spanish/mumps.html",
-  "reason": "language_over_target",
-  "language": "es"
+  "id": 911,
+  "title": "Acerca de los Manuales MSD - Manual MSD versión para público general",
+  "content": "ABOUT US Acerca de los Manuales MSD Historia de los Manuales MSD Conocimiento médico global El equipo de los Manuales Junta Editorial y revisores Autores Proveedores de contenido Aplicaciones móviles Permisos Licencias & Comerciales ¡Conéctese con nosotros en las redes sociales! Preguntas frecuentes (PF) Comuníquese con nosotros Acerca de los Manuales MSD Última modificación del contenido sept 2023",
+  "source": "MSD Manuals ES",
+  "url": "https://www.msdmanuals.com/es/hogar/resourcespages/acerca-de-los-manuales-msd",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T05:32:23.625730+00:00",
+  "reason": "content_too_short"
 }

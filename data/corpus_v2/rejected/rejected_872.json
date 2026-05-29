@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/acutebronchitis.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1657,
+  "title": "Anal cancer - NHS",
+  "content": "Anal cancer Find out about anal cancer, including common symptoms and treatments. What is anal cancer? Symptoms Causes Tests and next steps Treatment Help and support",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/conditions/anal-cancer",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:33:59.562697+00:00",
+  "reason": "content_too_short"
 }

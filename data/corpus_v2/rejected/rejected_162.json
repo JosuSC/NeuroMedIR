@@ -1,11 +1,5 @@
 {
-  "id": 263,
-  "title": "Penile cancer - NHS",
-  "content": "Penile cancer Penile cancer affects the penis. It's very rare and mostly affects men aged over 50 years old. What is penile cancer? Symptoms Causes Tests and next steps Treatment Help and support",
-  "source": "NHS",
-  "url": "https://www.nhs.uk/conditions/penile-cancer",
-  "category": "health_topic",
-  "language": "en",
-  "fetched_at": "2026-05-26T18:12:47.471958+00:00",
-  "reason": "content_too_short"
+  "url": "https://medlineplus.gov/spanish/refluxininfants.html",
+  "reason": "language_over_target",
+  "language": "es"
 }

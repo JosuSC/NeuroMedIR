@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/birthdefects.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1002,
+  "title": "Commentary - MSD Manual Professional Edition",
+  "content": "Commentary Refine By Show by Type: Show All Commentary Show for Date Range: Keyword: Apply Clear filters normal condensed NEXT >",
+  "source": "MSD Manuals",
+  "url": "https://www.msdmanuals.com/professional/pages-with-widgets/news-list",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:02:35.936275+00:00",
+  "reason": "content_too_short"
 }

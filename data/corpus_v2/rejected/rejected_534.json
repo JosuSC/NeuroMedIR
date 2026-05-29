@@ -1,4 +1,5 @@
 {
-  "url": "https://www.paho.org/es/documentos/organigrama-oficina-sanitaria-panamericana",
-  "reason": "fetch_failed"
+  "url": "https://www.salud.mapfre.es/enfermedades/reportajes-enfermedades/enfermedades-impiden-viajar-en-avion",
+  "reason": "language_over_target",
+  "language": "es"
 }

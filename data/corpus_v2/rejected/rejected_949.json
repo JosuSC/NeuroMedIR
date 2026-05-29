@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/medlineplus-connect/web-application",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1713,
+  "title": "Cómo entender la genética: MedlinePlus Genetics",
+  "content": "Cómo entender la genética Una introducción a temas fundamentales sobre la genética humana, incluyendo ilustraciones y explicaciones básicas de conceptos de genética. Células y ADN Cómo funcionan los genes Variantes y la salud Herencia de condiciones genéticas Genética y rasgos humanos Consulta genética Pruebas genéticas Pruebas genéticas directas para el consumidor Terapia genética y otros avances médicos Investigación genómica Medicina de precisión Vuelva a visitarnos mientras seguimos agregando información sobre temas de genética.",
+  "source": "MedlinePlus ES",
+  "url": "https://medlineplus.gov/spanish/genetica/entender",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-29T06:38:35.071207+00:00",
+  "reason": "content_too_short"
 }

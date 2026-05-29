@@ -1,5 +1,11 @@
 {
-  "url": "https://medlineplus.gov/bonemarrowtransplantation.html",
-  "reason": "language_over_target",
-  "language": "en"
+  "id": 1677,
+  "title": "About the NHS - NHS",
+  "content": "About the NHS What is an NHS number? Find out what an NHS Number is and what they're used for Friends and Family Test (FFT) Find out about the Friends and Family Test, a simple way to provide feedback on NHS services Your choices in the NHS Learn more about the choices you have with your NHS care Quality Accounts Reports about the quality of services offered by NHS healthcare providers Opt out of sharing your health records Find out how to opt out of sharing your health records",
+  "source": "NHS",
+  "url": "https://www.nhs.uk/using-the-nhs/about-the-nhs",
+  "category": "health_topic",
+  "language": "en",
+  "fetched_at": "2026-05-29T06:34:52.566550+00:00",
+  "reason": "content_too_short"
 }

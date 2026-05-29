@@ -1,4 +1,5 @@
 {
-  "url": "https://medlineplus.gov/healthtopics_s.html",
-  "reason": "fetch_failed"
+  "url": "https://medlineplus.gov/spanish/marfansyndrome.html",
+  "reason": "language_over_target",
+  "language": "es"
 }
