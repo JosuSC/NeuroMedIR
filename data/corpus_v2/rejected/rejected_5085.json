@@ -1,0 +1,10 @@
+{
+  "title": "VALIDACION DE CERTIFICADOS SEMERGEN",
+  "content": "Bienvenido a la plataforma de validación de certificados de SEMERGEN. Si dispone del código de validación de un certificado, introdúzcalo a continuación para validarlo. Introduzca el código de validación en el campo de texto y pulse el botón para validar el certificado. Si tiene algún problema validando su certificado, por favor, envíe un correo a la dirección certificados@semergen.es indicando el motivo de su consulta. C/ Jorge Juan 66 - local 28009 Madrid © Servicios Integrales de Congresos S.L. Todos los derechos reservados.",
+  "source": "SEMERGEN",
+  "url": "https://certificados.semergen.es/index.php",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T14:33:44.699448+00:00",
+  "reason": "content_too_short"
+}

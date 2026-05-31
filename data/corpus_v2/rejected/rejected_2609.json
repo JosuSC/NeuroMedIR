@@ -1,0 +1,10 @@
+{
+  "title": "USCS Data Visualizations - CDC",
+  "content": "",
+  "source": "CDC ES",
+  "url": "https://gis.cdc.gov/Cancer/USCS",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T13:19:58.788468+00:00",
+  "reason": "missing_or_empty_content"
+}

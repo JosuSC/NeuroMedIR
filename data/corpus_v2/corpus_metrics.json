@@ -1,0 +1,79 @@
+{
+  "generated_at_utc": "2026-05-31T20:25:05.341013+00:00",
+  "total_valid_documents": 2500,
+  "total_rejected_documents": 11124,
+  "validity_ratio": 0.1835,
+  "distribution_by_language": {
+    "es": 2500
+  },
+  "distribution_by_source": {
+    "CDC ES": 203,
+    "SEMERGEN": 279,
+    "MSD Manuals ES": 1523,
+    "Médicos y Pacientes": 185,
+    "Tu Otro Médico": 67,
+    "MAPFRE Salud": 147,
+    "AECC": 95,
+    "IntraMed": 1
+  },
+  "distribution_by_category": {
+    "health_guideline": 482,
+    "health_topic": 2017,
+    "research_article": 1
+  },
+  "average_content_length_chars": 7601.98,
+  "crawl_duration_seconds": 31243.14,
+  "docs_per_minute": 4.8,
+  "examples": [
+    {
+      "title": "CDC-INFO | CDC-INFO",
+      "content": "CDC-INFO English (US) CDC on Demand ya no está disponible y ya no se pueden pedir publicaciones. Temas del momento Cómo traer un perro a los Estados Unidos Los CDC emiten reglamentaciones para controlar el ingreso de perros a los Estados Unidos desde otros... 21 de ago. del 2024 Enfermedades respiratorias Obtenga respuestas a preguntas frecuentes sobre viajes Solicitudes de los medios de comunicación CDC Division of Media Relations Media request form for Centers for Disease Control and Prevention. Request a Speaker Requesting a CDC speaker instruction and form Red Nacional de Seguridad en la Atención Médica CDC’s National Healthcare Safety Network is the nation’s most widely used healthcare-associated infe... Capacitación y educación continua en línea (TCEO) Servicios de gestión de acceso seguro (SAMS) de los CDC CDC’s National Healthcare Safety Network is the nation’s most widely used healthcare-associated infe... Comuníquese con CDC-INFO Acerca de nuestro servicio CDC-INFO brinda servicios con agentes en vivo para ayudarlo a encontrar la información de salud más... Informarse más 13 de ago. del 2024",
+      "source": "CDC ES",
+      "url": "https://www.cdc.gov/cdc-info/es/index.html",
+      "category": "health_guideline",
+      "language": "es",
+      "fetched_at": "2026-05-31T11:44:38.597912+00:00",
+      "id": 10
+    },
+    {
+      "title": "Long-term Acute Care Hospitals (LTACH) | NHSN | CDC",
+      "content": "Long-term Acute Care Hospitals (LTACH) Print Minus Related Pages Available Components Patient Safety Component (PSC) Healthcare Personnel Safety Component (HPS) Biovigilance Component (BV) New Users Enroll New Facility Training Resources Educational Roadmap PSC Manual 2026 Patient Safety Component Manual [PDF – 6 MB] 2025 Patient Safety Component Manual [PDF – 8 MB] Annual Facility Surveys, Locations & Monthly Reporting Plans LTACH Modules & Events Access relevant training, protocols, data collection forms and supporting materials for each module. AUR Module Antimicrobial Use & Resistance Options BSI Events Bloodstream Infections MDRO & CDI Events Multidrug-Resistant Organism & C. difficile Infections PedVAE Pediatric Ventilator-associated Events HCP COVID-19 Vaccination Healthcare Personnel Safety Component Blood Safety Biovigilance Component PNEU Events Pneumonia (PedVAP) Events SSI Events Surgical Site Infection Events UTI Events Urinary Tract Infections VAE Ventilator-associated Events HCP Flu Vaccination Healthcare Personnel Safety Component HCP Exposure Healthcare Personnel Safety Component NHSN Analysis Quick Reference Guides Analysis Training Videos Annual Reports Adjusted Ranking Metric PSC Resources Frequently Asked Questions Data Validation & Guidance Calculators & Worksheets HAI Checklists CMS Requirements NHSN Newsletters Email Updates Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: January 16, 2026 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+      "source": "CDC ES",
+      "url": "https://www.cdc.gov/nhsn/ltach/index.html",
+      "category": "health_guideline",
+      "language": "es",
+      "fetched_at": "2026-05-31T14:05:02.760675+00:00",
+      "id": 1001
+    },
+    {
+      "title": "AUR | PSC | NHSN | CDC",
+      "content": "Antimicrobial Use and Resistance (AUR) Options Print Minus Related Pages Protocols Chapter 14: Antimicrobial Use and Resistance (AUR) Module – January 2026 [PDF – 81 pages] 2026 Patient Safety Component Summary of Updates [PDF – 285 KB] Supporting Chapters Chapter 1: NHSN Overview – January 2025 [PDF – 6 pages] Chapter 3: Patient Safety Monthly Reporting Plan – January 2025 [PDF – 2 pages] Chapter 15: CDC Location Labels and Location Descriptions – January 2025 [PDF – 55 pages] Top of Page Data Collection Forms & Instructions Annual Facility Survey Forms Top of Page Data Validation AU Option Validation AU Option Implementation Data Validation – April 2026 [PDF – 1 MB] (print version) Customizable Form [DOC – 250 KB] (print version) AU Option Annual Data Validation – February 2021 [PDF – 1 MB] Customizable Form [DOC – 1 MB] AU Option Data Quality Line List – April 2024 [PDF – 550 KB] AR Option Validation AR Option Data Validation – August 2024 [PDF – 400 KB] Customizable Form [DOC – 200 KB] Top of Page Supporting Materials How to Report Zero AR Events [PDF – 400 KB] User Rights in NHSN – AUR Module – January 2021 [PDF – 450 KB] Phenotype Definitions for AR Option Data – January 2024 [PDF – 200 KB] Promoting Interoperability – Guidance for NHSN Facilities – January 2025 [PDF – 500 KB] 2017/2018 Baseline SAAR Details [PDF – 568 KB] 2014 Baseline SAAR Details – December 2018 [PDF – 100 KB] List of Antimicrobial Agents Eligible for AUR Module – January 2026 [XLSX – 500 KB] 2023 AU SAAR Rebaseline AUR Training Educational Roadmap CMS Requirements AU Case Examples AUR Synthetic Data Set CDA Toolkits Quick Reference Guides How to run, modify and interpret all AUR Module reports. FAQs Antimicrobial Use (AU) Option Antimicrobial Resistance (AR) Option CMS PI Program Reporting CMS PI Program Reporting (En Español) [PDF – 460 KB] Locations CDA View All FAQs Supporting Materials How to Report Zero AR Events [PDF – 400 KB] User Rights in NHSN – AUR Module – January 2021 [PDF – 450 KB] Phenotype Definitions for AR Option Data – January 2024 [PDF – 200 KB] More on the page below Analysis Resources Antimicrobial Use and Resistance Module Reports NHSN SRIR/pSIR Guide [PDF – 2 MB] NHSN TAS Guide [PDF – 2 MB] Keys to Success with the SAAR [PDF – 313 KB] NHSN’s Guide to the SAAR [PDF – 2 MB] AUR Quick Reference Guides Detailed instructions on how to run, modify and interpret all AUR Module reports. Keys to Success with the SAAR Keys to Success with TAS PSC – Data Dictionary [XLS – 1 MB] Top of Page Resources for Antimicrobial Stewardship & Preventing Resistance Antibiotic Prescribing and Use in the US Core Elements of Antibiotic Stewardship Implementation Resources for Hospital Stewardship Antibiotic/Antimicrobial Resistance Preventing Healthcare-associated Infections Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: January 9, 2026 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+      "source": "CDC ES",
+      "url": "https://www.cdc.gov/nhsn/psc/aur/index.html",
+      "category": "health_guideline",
+      "language": "es",
+      "fetched_at": "2026-05-31T14:05:06.374477+00:00",
+      "id": 1003
+    },
+    {
+      "title": "HPS | Weekly HCP COVID-19 Vaccination | NHSN | CDC",
+      "content": "Healthcare Personnel (HCP) Safety: COVID-19 Print Minus Related Pages On This Page Announcements Protocol Training Data Collection Forms and Instructions CSV Data Import Person-Level Respiratory Pathogens Form – Instructions and Guidance Documents Person-Level Respiratory Pathogens Data – CSV Data Import Resources COVID-19 Vaccination FAQs Announcements Blast Emails None at this time. Upcoming Webinars None at this time. Replay Session None at this time. Protocol Weekly COVID-19 Vaccination Protocol for Healthcare Personnel [PDF – 350 KB] – January 2026 Training Updates to Data Reporting on Healthcare Personnel – September 2024 YouTube Link [Video 15 min] Slideset [PDF – 606 KB] Quick Learn Demonstration: Reporting Long-term Care COVID-19 Vaccination Data (NHSN Post-Acute Care Training – July 2024) YouTube Link [Video – 10 min] Slideset [PDF – 1 MB] Updates to Weekly COVID-19 Vaccination Data Reporting: Healthcare Personnel Safety Component – January 2024 YouTube Link [Video – 22 min] Slideset [PDF – 939 KB] Top of Page Data Collection Forms and Instructions All Data Collection Forms are Print-only Weekly COVID-19 Vaccination Summary Data Form for Healthcare Personnel at non-LTCFs (57.219) [PDF – 182 KB] – January 2026 Table of Instructions [PDF – 287 KB] – January 2024 Top of Page CSV Data Import Uploading Group COVID-19 .CSV Files Uploading Group COVID-19 .CSV Data Files (12.0) [PDF – 1 MB] – January 2024 Uploading Group COVID-19 .CSV Data Files (11.4.1) [PDF – 1 MB] – June 2023 Healthcare Personnel COVID-19 Vaccination Data Example CSV File (11.4.1) [XLS – 893 B] – January 2024 CSV File Template (11.4.1) [XLS – 542 B] – January 2024 Example CSV File (11.4.1) [XLS – 11 KB] – June 2023 CSV File Template (11.4.1) [XLS – 314 B] – June 2023 Person-Level Respiratory Pathogens Form – Instructions and Guidance Documents Instructions for Reporting Person-Level Respiratory Pathogens Data Optional Person Level Reporting for Healthcare Personnel (Form 57.217) [PDF – 243 KB] – February 2026 Table of Instructions [PDF – 497 KB] – February 2026 Person-Level Respiratory Pathogens Data – CSV Data Import Variable Description and File Layout for Healthcare Personnel of In-patient Facilities/Ambulatory Surgery Centers Variable Description and File Layout for Person-Level Respiratory Pathogens Forms HPS [PDF – 395 KB] – February 2026 CSV Templates and Example Files for Healthcare Personnel of In-Patient Facilities/Ambulatory Surgery Centers .CSV File Template for HPS HCP [XLS – 674 B] – February 2026 .CSV File Example for HPS HCP [XLS – 1 KB] – February 2026 Top of Page Resources UTC Time Zone Guidance [PDF – 238 KB] – July 2024 NHSN Export CSV Variable Crosswalk [XLS – 31 KB] – July 2025 NHSN COVID-19 RP Public Data Dictionary [XLS – 85 KB] – January 2025 Running CMS Reports on COVID-19 Vaccination Data for Healthcare Personnel (Healthcare Personnel Safety Component) [PDF – 588 KB] – March 2026 Quick Reference Guide, How to Run CMS Rate Table Reports [PDF – 660 KB] – February 2024 How to Check NHSN Timestamps- Completed Date [PDF – 468 KB] – February 2024 Quick Reference Guide: How to Enter Weekly Data in HPS Component [PDF – 486 KB] – April 2024 Quick Reference Guide, How to Run Reports for Healthcare Personnel Safety (HPS) Component [PDF – 583 KB] COVID-19: Understanding Key Terms and Up to Date Definition [PDF – 358 KB] – April 2026 Operational Guidance for reporting HCP Data [PDF – 300 KB] – March 2026 Tips for submitting HCP Data [PDF – 250 KB] – June 2024 Quarterly Combined Data Quality Checks [PDF – 1 MB] – July 2024 Data Quality Alerts [PDF – 400 KB] – July 2021 Guidance on Enrollment and Reporting for Physically Separate Facilities/Units [PDF – 233 KB] CMS IRF locations [PDF – 504 KB] – January 2021 IPF locations [PDF – 420 KB] – January 2021 Top of Page Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: January 13, 2026 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+      "source": "CDC ES",
+      "url": "https://www.cdc.gov/nhsn/hps/weekly-covid-vac/index.html",
+      "category": "health_guideline",
+      "language": "es",
+      "fetched_at": "2026-05-31T14:05:16.524483+00:00",
+      "id": 1006
+    },
+    {
+      "title": "Acute Care / Critical Access Hospitals (ACH) | NHSN | CDC",
+      "content": "Acute Care / Critical Access Hospitals (ACH) Print Minus Related Pages Acute care or other short-term stay hospitals (for instance, general hospitals, critical access hospitals, oncology hospitals, military/VA hospitals) Available Components Patient Safety Component (PSC) Healthcare Personnel Safety Component (HPS) Biovigilance Component (BV) New Users Enroll New Facility Training Resources Educational Roadmap PSC Manual 2026 Patient Safety Component Manual [PDF – 6 MB] 2025 Patient Safety Component Manual [PDF – 8 MB] Annual Facility Surveys, Locations & Monthly Reporting Plans ACH Modules & Events Access relevant training, protocols, data collection forms and supporting materials for each module. AUR Module Antimicrobial Use & Resistance Options BSI Events Bloodstream Infections MDRO & CDI Events Multidrug-Resistant Organism & C. difficile Infections PedVAE Pediatric Ventilator-associated Events HCP COVID-19 Vaccination Healthcare Personnel Safety Component Blood Safety Biovigilance Component PNEU Events Pneumonia (PedVAP) Events SSI Events Surgical Site Infection Events UTI Events Urinary Tract Infections VAE Ventilator-associated Events HCP Flu Vaccination Healthcare Personnel Safety Component HCP Exposure Healthcare Personnel Safety Component NHSN Analysis Quick Reference Guides Analysis Training Videos Annual Reports Adjusted Ranking Metric PSC Resources Frequently Asked Questions Data Validation & Guidance Calculators & Worksheets HAI Checklists CMS Requirements NHSN Newsletters Email Updates Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: January 2, 2026 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+      "source": "CDC ES",
+      "url": "https://www.cdc.gov/nhsn/acute-care-hospital/index.html",
+      "category": "health_guideline",
+      "language": "es",
+      "fetched_at": "2026-05-31T14:06:03.879599+00:00",
+      "id": 1024
+    }
+  ]
+}

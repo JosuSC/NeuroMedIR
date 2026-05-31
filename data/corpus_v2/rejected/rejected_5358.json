@@ -1,0 +1,10 @@
+{
+  "title": "Generic (HL7) Message Mapping Guide",
+  "content": "Please find below message mapping guide documents and associated artifacts. The PHIN VADS Case Notification View link takes you to the \"View\" of all the value sets included in an MMG. For case definitions associated with this guide, please visit the Case Definitions page . Current Version — Use this if you are starting implementation Implementation Guides Artifacts Generic v2.0.1 Message Mapping Guide and Test Case Scenarios (07/22/2021) PHIN VADS link to the Generic Case Notification View v.16* Generic v2.0.1 Implementation Spreadsheet (07/22/2021 Generic v2.0.1 Test Message Package (07/22/2021) Example Scenarios for Each Valid Value Used in the Binational Generic Data Element For Historical Reference Only — DO NOT USE Implementation Guides Artifacts Generic Summary Case Notification MMG v1.0 Excel Spreadsheet Generic Summary Case Notification MMG v1.0 Generic Case Notification MMG v1.0 Excel Spreadsheet Generic Case Notification MMG v1.0 Generic v2.0 Message Mapping Guide (12/06/2017) PHIN Notification Message Specification Profile v 2.0 Generic v2.0 Implementation Spreadsheet (07/30/2018) Generic Summary Test Case Scenarios Generic Test Case Scenarios V5 Generic Data Elements that Define a Unique Case Generic v2.0 Test Message Package (11/15/2016) Generic v2.0 MMG Test Case Scenarios (12/06/2017) * PHIN VADS usage tip: On the “View\" page in PHIN VADS, “View Version Description” outlines guide version and updates as applicable. You can also navigate to previous versions or subscribe to future updates. Top of Page Last Reviewed: April 16, 2021 Source: Office of Public Health Data, Surveillance, and Technology",
+  "source": "CDC ES",
+  "url": "https://ndc.services.cdc.gov/mmgpage/generic-v2-0-message-mapping-guide",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T14:46:02.252902+00:00",
+  "reason": "language_mismatch_en_as_es"
+}

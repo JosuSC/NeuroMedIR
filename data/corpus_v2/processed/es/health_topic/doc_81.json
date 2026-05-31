@@ -1,0 +1,10 @@
+{
+  "title": "Eventos solidarios | Asociación Española Contra el Cáncer",
+  "content": "{{ 'INICIO' | translate }} / {{ 'EVENTOS_SOLIDARIOS' | translate }} {{campaign.tituloCampaign}} {{campaign.descripcion}} {{campaign.textoBotonAporta}} {{getTab('K21').descripcion}} {{getTab('K21').descripcionHeader}} {{ 'ENCUENTRA_EVENTO' | translate }} {{ 'TIPO_EVENTO' | translate }} {{ 'TODOS_EVENTOS' | translate }} {{ 'EVENTOS_GASTRONOMICOS' | translate }} {{ 'EVENTOS_CULTURALES' | translate }} {{ 'PROVINCIA' | translate }} {{ 'TODOS_PROVINCIA' | translate }} {{provincia.name}} {{ 'DESDE' | translate }} {{ 'HASTA' | translate }} {{ 'BUSCAR' | translate }} {{getTab('K13').descripcion}} {{evento.name}} {{formateaFecha(evento.eventStartDate)}}, {{evento.eventStartDate | date:'HH:mm'}} {{evento.state}} {{'PARTICIPA' | translate}} {{ 'EVENTOS_MAS' | translate }} No hay eventos relacionados con tu búsqueda {{getTab('K17').descripcion}} {{getTab('K17').descripcionLarga}} {{ 'NOMBRE' | translate }} * {{ 'APELLIDOS' | translate }} * {{ 'CORREO_ELECTRONICO' | translate }} * {{campo.descripcion}} * {{'SELECCIONA' | translate}} {{valor.descripcion}} {{ 'ACEPTO_INFO' | translate }} {{ 'ACEPTAR_LEGALES' | translate }} {{ 'ACEPTAR_LEGALES_AVISO' | translate }} {{ 'Y_LA' | translate }} {{ 'ACEPTAR_LEGALES_POLITICA' | translate }} * {{ 'ACEPTAR_LEGALES_AVISO' | translate }} {{ 'Y_LA' | translate }} {{ 'ACEPTAR_LEGALES_POLITICA' | translate }} {{ 'ACEPTAR_LEGALES' | translate }}* {{ 'DESCARGAR' | translate }} {{getTab('K12').descripcion}} {{getTab('K12').descripcionLarga}} {{info.titulo}} {{getTab('K06').descripcion}} {{getTab('K06').descripcionLarga}} {{faq.pregunta}} {{faq.respuesta}} {{getTab('K14').descripcion}} {{getTab('K14').descripcionLarga}} {{testimonio.descripcion}} {{testimonio.titulo}} {{testimonio.cargo}}",
+  "source": "AECC",
+  "url": "https://www.aecc.es/eventos",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-31T11:47:40.191406+00:00",
+  "id": 81
+}

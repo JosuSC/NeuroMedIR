@@ -1,0 +1,10 @@
+{
+  "title": "Feed handler Site",
+  "content": "Feed handler Site",
+  "source": "CDC ES",
+  "url": "https://www2c.cdc.gov/podcasts",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T12:44:37.022533+00:00",
+  "reason": "content_too_short"
+}

@@ -1,0 +1,10 @@
+{
+  "title": "NHSN LTACH Set-up | NHSN | CDC",
+  "content": "NHSN LTACH Set-up (required before beginning reporting) Print Minus Related Pages Step 1: Map Locations Log in to SAMS using your username and password, and select ‘NHSN Reporting.’ Select your facility from the “NHSN Landing Page”. Go to “facility” on the navigation menu and select locations. For each unit in your facility, create a code, location label and assign a CDC location description. The codes and labels you choose will identify patient care locations in your facility. Location Mapping Quick Reference Guide April 2018 [PDF – 250 KB] CDC Location Labels and Location Descriptions [PDF – 1 MB] Time to complete step: 18 minutes Step 2: Create Monthly Reporting Plan Monthly reporting plans indicate which modules you intend to follow. Can be completed for full calendar year. Step 3: Add Users and Assign Rights a. Each user will need to complete training and register with SAMS. b. We suggest a facility identify at least 2 users with administrative rights. Tip: Set-up is a good time to add other users to assist with reporting. Time to complete step: 6 minutes Report to NHSN Access NHSN reporting at https://sams.cdc.gov . Start entering events for the modules selected in monthly reporting plan. Reporting Resources Go to the Tracking Infections in Long-term Acute Care Facilities for more reporting resources. Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: March 15, 2023 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+  "source": "CDC ES",
+  "url": "https://www.cdc.gov/nhsn/ltach/setup.html",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T13:47:16.437181+00:00",
+  "reason": "language_mismatch_en_as_es"
+}

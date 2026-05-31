@@ -39,7 +39,9 @@ class DocumentStore:
         loaded = 0
         errors = 0
         for filepath in self._processed_dir.rglob("*.json"):
-            if not filepath.is_file():
+            if "rejected" in filepath.parts:
+                continue
+            if filepath.name == "corpus_metrics.json":
                 continue
             try:
                 with open(filepath, "r", encoding="utf-8") as f:

@@ -1,0 +1,10 @@
+{
+  "title": "NHSN digital Quality Measure (dQM) Resource Center | NHSN | CDC",
+  "content": "NHSN digital Quality Measure (dQM) Resource Center Print Minus Related Pages The dQM Resource Center is for a wide audience of hospital staff who implement NHSN digital quality measures. Each page includes resources for both clinical and IT implementers that will help establish and maintain accurate reporting to NHSN’s dQMs. NHSN dQM Specifications Title Module CBE ID* Download Specifications Component Severe Hypoglycemia Glycemic Control 3503e ZIP file [ZIP – 664 KB] Medication Safety Hospital Onset Bacteremia Bacteremia and Fungemia Surveillance 3686 ZIP file [ZIP – 3 MB] Patient Safety Healthcare-associated, antibiotic treated C. difficile Infection C. difficile Surveillance 3688 Coming soon. Patient Safety Adult Community-Onset (CO) Sepsis Standardized Mortality Ratio (SMR) Sepsis Surveillance TBD Coming soon Patient Safety NHSN dQM Implementation Support Title Description Requested FHIR APIs [PDF – 255 KB] These are the FHIR APIs requested for reporting digital quality measures (dQMs) to NHSN. NHSN FHIR IGs These are the FHIR Implementation Guides to support reporting dQMs to NHSN via NHSNLink. NHSN FHIR dQM Readiness Guide This is a guide for engaging facility stakeholders on reporting dQMs to NHSN. NHSN Terminology Resources This is a list of value sets used with NHSN dQMs. The dQM value sets specify terminology codes such as ICD-10-CM/PCS, CPT, SNOMED CT, required for reporting dQMs to NHSN. Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: April 1, 2026 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+  "source": "CDC ES",
+  "url": "https://www.cdc.gov/nhsn/fhirportal/dqm/ach-dQMs.html",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T14:07:02.355956+00:00",
+  "reason": "language_mismatch_en_as_es"
+}

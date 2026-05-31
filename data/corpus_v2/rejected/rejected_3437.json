@@ -1,0 +1,10 @@
+{
+  "title": "PedVAE Calculator | NHSN | CDC",
+  "content": "Pediatric Ventilator-Associated Event Calculator Version 1.0 Print Minus Related Pages Welcome to Version 1.0 of the PedVAE Calculator. Version 1.0 operates based upon the currently posted PedVAE protocol. The Calculator is a web-based tool that is designed to help you learn how the PedVAE surveillance definition algorithm works and assist you in making PedVAE determinations. Please note that the PedVAE Calculator will not ask you to enter any patient identifiers (other than dates of mechanical ventilation, which you can change as you see fit). The PedVAE Calculator does not store any patient data that you enter, and it will not report any data that you enter or any PedVAE determinations to the NHSN. You will not be able to export data entered into the Calculator. If you have questions or suggestions about the Calculator, please feel free to send them to the NHSN mailbox, nhsn@cdc.gov . Pediatric Ventilator-Associated Event Calculator Version 1.0 (must have javascript enabled) Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: July 23, 2025 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+  "source": "CDC ES",
+  "url": "https://www.cdc.gov/nhsn/pedvae-calculator/index.html",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T13:47:12.419955+00:00",
+  "reason": "language_mismatch_en_as_es"
+}

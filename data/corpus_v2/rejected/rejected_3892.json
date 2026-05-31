@@ -1,0 +1,10 @@
+{
+  "title": "NHSN dQM Terminology Resources | NHSN | CDC",
+  "content": "NHSN dQM Terminology Resources Print Minus Related Pages AT A GLANCE This page provides downloadable access to all terminology resources required for NHSN FHIR® Digital Quality Measures (dQMs). Terminology Resources Value sets are lists of codes and corresponding terms from NLM-hosted standard clinical vocabularies (such as SNOMED CT®, RxNorm, LOINC® and others) that define clinical concepts. Value sets represent “allowable” values for a particular data element in an electronic health record (EHR), message, or application programming interface (API) and enable seamless and interoperable health-information exchange. NHSN dQM terminology resources are comprised of value sets and other artifacts derived from terminology standards. NHSN-defined attributes (such as categories of hypoglycemic medications or grouping bacteria and fungi by species and genus) are linked to standardized codes in catalogs that are used by NHSN for analysis and reporting purposes. NHSN FHIR® dQM Terminology Resources Glycemic Control Module Current Version NHSN Glycemic Control Module Terminology Resource – February 2026 [XLS – 579 KB] Bacteremia and Fungemia Surveillance Module Current Version Bacteremia and Fungemia Module Terminology Resource (April 2026) [XLS – 3 MB] Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: January 16, 2026 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+  "source": "CDC ES",
+  "url": "https://www.cdc.gov/nhsn/fhirportal/dqm/terminology-resources.html",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T14:01:05.101663+00:00",
+  "reason": "language_mismatch_en_as_es"
+}

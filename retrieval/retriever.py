@@ -61,6 +61,9 @@ from retrieval.semantic_search import SemanticSearch
 from retrieval.document_store import DocumentStore
 from retrieval.fusion import fuse_results, normalize_scores, rank_results
 from retrieval.neural_reranker import NeuralReranker
+from retrieval.query_expansion import QueryExpander
+from retrieval.relevance_feedback import RelevanceFeedback
+from retrieval.ranker import MultiFactorRanker
 from retrieval.configs import settings as ret_settings
 
 logger = logging.getLogger(__name__)
@@ -90,6 +93,9 @@ class Retriever:
         doc_store: DocumentStore,
         cleaner: TextCleaner = None,
         reranker: NeuralReranker = None,
+        expander: QueryExpander = None,
+        feedback: RelevanceFeedback = None,
+        ranker: MultiFactorRanker = None,
     ):
         """
         Dependency-injected constructor (fixes P1).
@@ -112,6 +118,14 @@ class Retriever:
 
         # Stage 2: Cross-encoder re-ranker (lazy-loaded model)
         self._reranker = reranker or NeuralReranker()
+        
+        self._expander = expander if expander is not None else (
+            QueryExpander() if ret_settings.QUERY_EXPANSION_ENABLED else None
+        )
+        
+        self._feedback = feedback or RelevanceFeedback()
+        
+        self._ranker = ranker or MultiFactorRanker()
 
         reranker_status = "ENABLED" if self._reranker.is_enabled else "DISABLED"
         logger.info(
@@ -285,6 +299,8 @@ class Retriever:
         top_k: int = None,
         strategy: str = None,
         enable_reranking: bool = True,
+        enable_expansion: bool = True,
+        preferred_lang: str = None,
     ) -> List[Dict]:
         """
         Full 3-stage retrieval pipeline:
@@ -312,8 +328,13 @@ class Retriever:
         # Step 1: Preprocess
         t0 = time.perf_counter()
         processed = self.preprocess_query(query)
-        t_preprocess = time.perf_counter() - t0
 
+        # Step 1.5: Query expansion (synonyms + PRF)
+        if self._expander and enable_expansion:
+            processed = self._expander.expand(processed, retriever=self)
+
+        t_preprocess = time.perf_counter() - t0
+        
         # Step 2a: Lexical retrieval (BM25)
         t0 = time.perf_counter()
         lexical_results = self.search_bm25(processed["lexical_tokens"])
@@ -373,7 +394,7 @@ class Retriever:
             )
             t_rerank = time.perf_counter() - t0
 
-            # Stage 3: Final sort by cross-encoder scores
+            
             ranked = rank_results(reranked, top_k=top_k)
 
             logger.info(
@@ -384,7 +405,22 @@ class Retriever:
             # No re-ranking: just truncate to final top_k
             ranked = ranked[:top_k]
 
+        # =============================================================
+        # STAGE 3: MULTI-FACTOR RANKING
+        # =============================================================
+
         t_total = time.perf_counter() - t_start
+
+        enriched = self._enrich_results(ranked)
+        enriched = self._ranker.rerank(
+            enriched,
+            preferred_lang=preferred_lang,
+        )
+
+        for r in enriched:
+            r["latency_ms"] = round(t_total * 1000, 1)
+
+        return enriched
 
         # Log latency per stage
         logger.info(
@@ -398,14 +434,7 @@ class Retriever:
             f"Stage 2 (Re-rank): {t_rerank*1000:.1f}ms → {len(ranked)} results"
         )
 
-        # Step 6: Enrich with document metadata
-        enriched = self._enrich_results(ranked)
-
-        # Attach total latency to the response
-        for r in enriched:
-            r["latency_ms"] = round(t_total * 1000, 1)
-
-        return enriched
+        
 
     def retrieve_lexical_only(self, query: str, top_k: int = 10) -> List[Dict]:
         """Retrieves using only BM25 (for comparison/debugging)."""
@@ -428,6 +457,33 @@ class Retriever:
         """
         return self.retrieve(
             query, top_k=top_k, strategy=strategy, enable_reranking=False
+        )
+
+    def retrieve_with_feedback(
+        self,
+        query: str,
+        feedback_map: Dict[int, bool],
+        top_k: int = None,
+    ) -> List[Dict]:
+        """
+        Re-executes retrieval after applying Rocchio relevance feedback.
+
+        Adjusts the query vector in embedding space based on user-marked
+        results (relevant / irrelevant) and re-runs the full pipeline.
+
+        Args:
+            query:        Original user query string.
+            feedback_map: {doc_id: True/False} — True = relevant, False = not.
+            top_k:        Number of results to return.
+
+        Returns:
+            Re-ranked enriched result list.
+        """
+        return self._feedback.apply(
+            query=query,
+            feedback_map=feedback_map,
+            retriever=self,
+            top_k=top_k,
         )
 
     # -----------------------------------------------------------------------

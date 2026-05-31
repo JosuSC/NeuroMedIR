@@ -1,0 +1,10 @@
+{
+  "title": "LTCF | Point of Care | NHSN | CDC",
+  "content": "Point of Care Print Minus Related Pages The Point of Care (POC) Test Reporting Tool is a separate reporting option for LTCFs to report SARS-CoV-2 test results provided by a POC device. NHSN routes reported POC laboratory test result data to the public health agency at the local or state level with jurisdictional authority and responsibility for receiving those data. On This Page Trainings Data Collection Forms and Instructions POC CSV Data Import FAQs about the POC Testing Reporting Tool [PDF - 3 MB] Trainings Point of Care Test Reporting Tool – February 2025 Slideset [PDF – 4 MB] Data Collection Forms and Instructions Point of Care Test Reporting Tool (57.155) [PDF – 80 KB] – January 2026 Table of Instructions (57.155) [PDF – 200 KB] – January 2026 Top of Page Point of Care (POC) Testing CSV Data Import Using DIRECT CSV File Template [CSV – 1 KB] – September 30, 2024 File Layout [PDF – 458 KB] – December 2025 Not using DIRECT CSV File Template [CSV – 1 KB] – September 30, 2024 File Layout [PDF – 458 KB] – December 2025 Staff Demographic Data CSV File Template [CSV – 1 KB] – September 30, 2024 File Layout [PDF – 200 KB] – January 2026 Resident Demographic Data CSV File Template [CSV – 1 KB] – September 30, 2024 File Layout [PDF – 500 KB] – January 2026 State/Territory/County codes for US [XLSX – 120 KB] – February 4, 2021 Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: January 21, 2026 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+  "source": "CDC ES",
+  "url": "https://www.cdc.gov/nhsn/ltc/covid19/poc.html",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T13:46:41.996375+00:00",
+  "reason": "language_mismatch_en_as_es"
+}

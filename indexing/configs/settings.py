@@ -9,6 +9,14 @@ INDEX_STORAGE_DIR = BASE_DIR / "indices"
 
 os.makedirs(INDEX_STORAGE_DIR, exist_ok=True)
 
+# Índices separados para documentos de expansión web dinámica
+# El profesor indicó explícitamente que deben ser representaciones independientes
+EXPANSION_DATA_DIR = DATA_DIR / "expansion" / "processed"
+EXPANSION_INDEX_DIR = BASE_DIR / "indices_expansion"
+
+os.makedirs(EXPANSION_DATA_DIR, exist_ok=True)
+os.makedirs(EXPANSION_INDEX_DIR, exist_ok=True)
+
 # Lexical configs
 BM25_PARAMS = {
     "k1": 1.5,

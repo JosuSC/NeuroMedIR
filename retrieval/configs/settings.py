@@ -54,3 +54,45 @@ RERANK_BATCH_SIZE = 32
 # Maximum sequence length for cross-encoder input (query + document tokens)
 # 512 is the standard for MiniLM models. Documents are truncated to fit.
 RERANK_MAX_LENGTH = 512
+
+
+# ---------------------------------------------------------------------------
+# Query Expansion
+# ---------------------------------------------------------------------------
+QUERY_EXPANSION_ENABLED = True
+
+# Técnica 1: sinónimos estáticos
+EXPANSION_USE_SYNONYMS = True
+
+# Técnica 2: pseudo-relevance feedback
+EXPANSION_USE_PRF = True
+
+# Cuántos docs del retrieve inicial se analizan para PRF
+PRF_TOP_DOCS = 3
+
+# Cuántos términos TF-IDF se agregan a la query
+PRF_TOP_TERMS = 5
+
+# Score TF-IDF mínimo para que un término califique
+PRF_MIN_SCORE = 0.1
+
+
+# ---------------------------------------------------------------------------
+# Multi-factor Ranker (Stage 3)
+# ---------------------------------------------------------------------------
+# Pesos del score compuesto — deben sumar 1.0
+RANKER_W_RELEVANCE  = 0.60   # Score del cross-encoder
+RANKER_W_SOURCE     = 0.20   # Confiabilidad de la fuente
+RANKER_W_FRESHNESS  = 0.10   # Frescura del documento
+RANKER_W_LANGUAGE   = 0.05   # Coincidencia de idioma con la query
+RANKER_W_DIVERSITY  = 0.05   # Diversidad de fuentes
+
+# Máximo de documentos del mismo dominio sin penalización
+RANKER_MAX_PER_SOURCE = 2
+
+# Peso por defecto para dominios no listados en SOURCE_RELIABILITY
+RANKER_DEFAULT_SOURCE_WEIGHT = 0.60
+
+# Vida media para el decay de frescura (en días)
+# Un documento de esta antigüedad recibe score de frescura = 0.5
+RANKER_FRESHNESS_HALF_LIFE_DAYS = 180

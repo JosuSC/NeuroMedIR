@@ -1,0 +1,10 @@
+{
+  "title": "VAE Calculator | NHSN | CDC",
+  "content": "Ventilator-Associated Event Calculator (Version 12.0) Print Minus Related Pages Welcome to Version 12.0 of the VAE Calculator. Version 12.0 operates based upon the currently posted VAE protocol. The Calculator is a web-based tool that is designed to help you learn how the VAE surveillance definition algorithm works and assist you in making VAE determinations. Please note that the VAE Calculator will not ask you to enter any patient identifiers (other than dates of mechanical ventilation, which you can change as you see fit). The VAE Calculator does not store any patient data that you enter, and it will not report any data that you enter or any VAE determinations to the NHSN. You will not be able to export data entered into the Calculator. If you have questions or suggestions about the Calculator, please feel free to send them to the NHSN mailbox, nhsn@cdc.gov . Ventilator-Associated Event (VAE) Calculator Version 12.0 (must have javascript enabled) Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: July 23, 2025 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+  "source": "CDC ES",
+  "url": "https://www.cdc.gov/nhsn/vae-calculator/index.html",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T13:55:09.147305+00:00",
+  "reason": "language_mismatch_en_as_es"
+}

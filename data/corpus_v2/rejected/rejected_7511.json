@@ -1,0 +1,10 @@
+{
+  "title": "Colabora con nosotros | Asociación Española Contra el Cáncer",
+  "content": "{{campaign.tituloCampaign}} {{campaign.descripcion}} {{ 'HAZTE_SOCIO' | translate }} {{info.titulo}} {{info.descripcion}} {{info.ctaDescripcion}} {{info.ctaDescripcion}} {{getTab('K18').descripcion}} {{info.titulo}} {{info.descripcion}} {{info.ctaDescripcion}} {{getTab('K19').descripcion}} {{update.titulo}} {{update.descripcion}} {{update.ctaDescripcion}} {{getTab('K11').descripcion}} {{destacado.titulo}} {{destacado.descripcion}} {{destacado.cta}} {{picto.titulo}} {{picto.descripcion}} {{picto.cta}} {{getTab('K21').descripcion}} {{nivelUno.nombre}}",
+  "source": "AECC",
+  "url": "https://www.aecc.es/ca/colabora",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-31T16:28:45.585587+00:00",
+  "reason": "content_too_short"
+}

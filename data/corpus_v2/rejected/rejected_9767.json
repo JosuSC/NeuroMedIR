@@ -1,0 +1,10 @@
+{
+  "title": "Hazte Socio y Colabora en la Lucha Contra el Cáncer",
+  "content": "{{ 'INICIO' | translate }} / {{ 'HAZTE_SOCIO' | translate }} {{campaign.tituloCampaign}} {{campaign.descripcion}} {{ 'MENSUAL' | translate }} {{ 'MENSUAL' | translate }} {{ 'TRIMESTRAL' | translate }} {{ 'ANUAL' | translate }} Selecciona el importe a donar {{formatCurrency(boton.importe, 0)}} {{'OTRA_CANTIDAD' | translate}} Otra cantidad € Sin decimales Sense decimals Sen decimais Hamartarrik gabe {{botonExplicacion.texto}} {{ 'BENEFICIO_DESGRAVA' | translate }} {{formatCurrency(desgravacion)}} {{ 'CUOTA' | translate }} {{tipo}} {{campaign.textoBotonAporta}} {{getTab('K14').descripcion}} {{getTab('K14').descripcionLarga}} {{testimonio.titulo}} {{testimonio.cargo}} {{testimonio.descripcion}} {{getTab('K11').descripcion}} {{getTab('K11').descripcionLarga}} {{testimonio.descripcion}} {{testimonio.cta}} {{testimonio.titulo}} {{testimonio.cargo}} {{testimonio.descripcion}} {{testimonio.titulo}} {{testimonio.cargo}} {{getTab('K17').descripcionHeader}} {{getTab('K17').descripcion}} {{ 'CALCULA_DESGRAVACION' | translate }} {{info.titulo}} {{info.descripcion}} {{getTab('K17').descripcionLarga}} {{getTab('K06').descripcion}} {{getTab('K06').descripcionLarga}} {{faq.pregunta}} {{faq.respuesta}} {{getTab('K18').descripcion}} {{getTab('K18').descripcionLarga}} {{dudas.titulo}} {{dudas.descripcion}}",
+  "source": "AECC",
+  "url": "https://www.aecc.es/eu/colabora/hazte-socio",
+  "category": "health_topic",
+  "language": "es",
+  "fetched_at": "2026-05-31T19:05:08.083484+00:00",
+  "reason": "duplicate_content"
+}

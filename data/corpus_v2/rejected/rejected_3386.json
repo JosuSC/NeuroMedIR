@@ -1,0 +1,10 @@
+{
+  "title": "MDRO & CDI LabID Event Calculator | NHSN | CDC",
+  "content": "MDRO & CDI LabID Event Calculator Version 2.0 Print Minus Related Pages Welcome to Version 2.0 of the MDRO & CDI LabID Event Calculator. Version 2.0 operates based upon the currently posted LabID Event protocols in the NHSN Multidrug-Resistant Organism (MDRO) & Clostridioides difficile Infection (CDI) Module. The calculator is a web-based tool that is designed to help users learn how to accurately apply the MDRO & CDI LabID Event algorithms and assist users in making the correct MDRO & CDI LabID Event determinations. Please note that the MDRO & CDI LabID Event Calculator does not ask users to enter any patient identifiers (other than dates of specimen collection, which can be changed as needed). The MDRO & CDI LabID Event Calculator does not save, store, or report any data that is entered. Likewise, LabID Event determination data are NOT reported to the NHSN application, and users will not be able to export data entered into the Calculator. Therefore, events that are determined by the Calculator to be LabID Events will need to be entered into the NHSN application either manually or via CDA. If you have questions or suggestions about the Calculator, please feel free to send them to the NHSN mailbox: nhsn@cdc.gov . MDRO & CDI LabID Event Calculator Version 2.0 (must have javascript enabled) Training Newsletters / Members Meeting Updates E-mail Updates Health Department HAI/AR Programs Last Reviewed: May 11, 2026 Source: Centers for Disease Control and Prevention , National Center for Emerging and Zoonotic Infectious Diseases (NCEZID) , Division of Healthcare Quality Promotion (DHQP)",
+  "source": "CDC ES",
+  "url": "https://www.cdc.gov/nhsn/labid-calculator/index.html",
+  "category": "health_guideline",
+  "language": "es",
+  "fetched_at": "2026-05-31T13:46:28.991472+00:00",
+  "reason": "language_mismatch_en_as_es"
+}

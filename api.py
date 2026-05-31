@@ -41,8 +41,8 @@ from indexing.configs import settings as idx_settings
 from chat.intent_classifier import IntentClassifier, IntentType
 
 from chat.configs import settings as chat_settings
-
 from dynamic_expansion import expand_corpus_from_query
+from indexing.configs import settings as idx_settings
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +66,7 @@ rag_pipeline = None
 intent_classifier: Optional[IntentClassifier] = None
 
 llm_client = None  # LLM client para uso directo en chat
+expansion_retriever: Optional[Retriever] = None  # Índices de expansión web (separados)
 
 # ---------------------------------------------------------------------------
 # Configuración de expansión web automática
@@ -97,6 +98,12 @@ class RAGQueryRequest(BaseModel):
     query: str
     top_k: Optional[int] = None
 
+class FeedbackRequest(BaseModel):
+    """Request para retroalimentación por relevancia (Rocchio)."""
+    query: str
+    results: List[Dict[str, Any]]
+    # Cada elemento: {"doc_id": int, "relevant": bool}
+    top_k: Optional[int] = None
 
 # ---------------------------------------------------------------------------
 # Startup: Inicializar todos los motores
@@ -171,6 +178,9 @@ def startup_event():
     intent_classifier = IntentClassifier()
     print("OK: Clasificador de intención inicializado.")
 
+    # --- Retriever de expansión web (índices separados del corpus principal) ---
+    global expansion_retriever
+    expansion_retriever = _build_expansion_retriever()
 
     print(f"OK: Sistema listo. Documentos: {doc_store.count}")
 
@@ -397,9 +407,15 @@ def _handle_question(message: str, lang_code: str) -> dict:
     t_start = time.time()
     used_web_search = False
 
-    # Evaluar si la base local es insuficiente
     try:
-        initial_results = retriever.retrieve(message, top_k=5)
+        initial_results = retriever.retrieve(message, top_k=5, preferred_lang=lang_code)
+        # Complementar con resultados de expansión si existen
+        if expansion_retriever is not None:
+            try:
+                exp_results = expansion_retriever.retrieve(message, top_k=3, preferred_lang=lang_code)
+                initial_results = initial_results + exp_results
+            except Exception:
+                pass
     except Exception as e:
         logger.error(f"Retrieval inicial falló: {e}")
         initial_results = []
@@ -449,7 +465,7 @@ def _handle_question(message: str, lang_code: str) -> dict:
 
     # Si RAG no está disponible o falló, usar retrieval directo
     if answer_text is None:
-        results = retriever.retrieve(message, top_k=5)
+        results = retriever.retrieve(message, top_k=5, preferred_lang=lang_code)
         sources = results
         answer_text = _build_answer_from_results(results, lang_code)
 
@@ -547,6 +563,61 @@ def rag_query(req: RAGQueryRequest):
 
 
 # ---------------------------------------------------------------------------
+# Retroalimentación por relevancia (Rocchio)
+# ---------------------------------------------------------------------------
+
+@app.post("/api/feedback")
+def feedback_endpoint(req: FeedbackRequest):
+    """
+    Recibe feedback explícito del usuario sobre resultados previos
+    y devuelve una lista re-rankeada usando ajuste Rocchio.
+
+    Body:
+        {
+            "query": "síntomas de diabetes",
+            "results": [
+                {"doc_id": 42, "relevant": true},
+                {"doc_id": 17, "relevant": false}
+            ],
+            "top_k": 10
+        }
+    """
+    if not req.query or not req.query.strip():
+        raise HTTPException(status_code=400, detail="Query vacía.")
+
+    if not req.results:
+        raise HTTPException(status_code=400, detail="Lista de feedback vacía.")
+
+    # Construir feedback_map: {doc_id: bool}
+    feedback_map: Dict[int, bool] = {}
+    for item in req.results:
+        doc_id = item.get("doc_id")
+        relevant = item.get("relevant")
+        if doc_id is None or relevant is None:
+            raise HTTPException(
+                status_code=422,
+                detail="Cada resultado debe tener 'doc_id' (int) y 'relevant' (bool)."
+            )
+        feedback_map[int(doc_id)] = bool(relevant)
+
+    try:
+        results = retriever.retrieve_with_feedback(
+            query=req.query,
+            feedback_map=feedback_map,
+            top_k=req.top_k,
+        )
+    except Exception as e:
+        logger.error(f"Feedback endpoint falló: {e}")
+        raise HTTPException(status_code=500, detail=f"Error en retroalimentación: {e}")
+
+    return {
+        "type": "feedback",
+        "query": req.query,
+        "results": results,
+        "feedback_applied": len(feedback_map),
+    }
+
+# ---------------------------------------------------------------------------
 # Utilidades internas
 # ---------------------------------------------------------------------------
 
@@ -579,24 +650,75 @@ def _build_bibliography(retrieval_results: list) -> list:
         })
     return bibliography
 
-def _try_expand_corpus(query: str) -> bool:
-    """Ejecuta expansión web y reindexa incrementalmente."""
-    global doc_store, retriever
+def _build_expansion_retriever() -> Optional[Retriever]:
+    """
+    Construye un Retriever independiente sobre los índices de expansión web.
+    Si los índices no existen aún, retorna None (se crean en el primer expand).
+    """
+    try:
+        exp_bm25 = BM25Index(
+            k1=idx_settings.BM25_PARAMS["k1"],
+            b=idx_settings.BM25_PARAMS["b"],
+        )
+        exp_faiss = FAISSHNSWIndex(
+            dimension=idx_settings.EMBEDDING_DIM,
+            m=idx_settings.HNSW_M,
+            ef_construction=idx_settings.HNSW_EF_CONSTRUCTION,
+        )
+        exp_encoder = None
+        try:
+            exp_encoder = TextEncoder(idx_settings.EMBEDDING_MODEL_NAME)
+        except Exception as e:
+            logger.warning(f"Expansion retriever: encoder no disponible: {e}")
 
-    if indexer is None or indexer.encoder is None:
-        logger.warning("Expansión web omitida: encoder no disponible.")
-        return False
+        exp_doc_store = DocumentStore(idx_settings.EXPANSION_DATA_DIR)
+        exp_storage = IndexStorage(str(idx_settings.EXPANSION_INDEX_DIR))
+
+        lex_ok = exp_storage.load_lexical(exp_bm25)
+        vec_ok = exp_storage.load_vector(exp_faiss)
+
+        if not (lex_ok and vec_ok):
+            logger.info("Expansion indices not found yet — will be created on first expand.")
+            return None
+
+        return Retriever(exp_bm25, exp_faiss, exp_encoder, exp_doc_store)
+    except Exception as e:
+        logger.error(f"Failed to build expansion retriever: {e}")
+        return None
+
+
+def _try_expand_corpus(query: str) -> bool:
+    """
+    Ejecuta expansión web e indexa los nuevos documentos en índices
+    SEPARADOS del corpus principal (indicación del profesor).
+
+    El expansion_retriever se reconstruye tras cada expansión para
+    incluir los nuevos documentos en búsquedas futuras.
+    """
+    global expansion_retriever
 
     new_docs = expand_corpus_from_query(query, max_new_docs=WEB_EXPANSION_TARGET_DOCS)
     if not new_docs:
         return False
 
     try:
-        indexer.add_documents(new_docs)
-        doc_store = DocumentStore(idx_settings.PROCESSED_DATA_DIR)
-        if retriever is not None:
-            retriever._doc_store = doc_store
+        # Indexer exclusivo para expansión — rutas separadas
+        exp_indexer = Indexer()
+        exp_indexer.storage = IndexStorage(str(idx_settings.EXPANSION_INDEX_DIR))
+
+        # Si ya existen índices de expansión, cargarlos para agregar incrementalmente
+        exp_indexer.load_indices()
+
+        
+
+        exp_indexer.add_documents(new_docs)
+
+        # Reconstruir expansion_retriever con los nuevos índices
+        expansion_retriever = _build_expansion_retriever()
+
+        logger.info(f"Expansión web: {len(new_docs)} docs indexados en índices separados.")
         return True
+
     except Exception as e:
         logger.error(f"Expansión web falló al reindexar: {e}")
         return False
