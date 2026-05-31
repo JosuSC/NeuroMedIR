@@ -19,13 +19,13 @@ class CrawlConfig:
     max_depth: int = 3
     max_pages: int = 30000
     request_timeout_seconds: int = 15
-    delay_seconds: float = 1.0
+    delay_seconds: float = 0.7
     user_agent: str = "NeuroMedIR-CorpusBuilder/2.0"
     max_retries: int = 3
     backoff_base_seconds: float = 1.8
     min_content_chars: int = 600
-    min_valid_documents: int = 3800
-    language_targets: Dict[str, int] = field(default_factory=lambda: {"en": 1200, "es": 2500})
+    min_valid_documents: int = 2500
+    language_targets: Dict[str, int] = field(default_factory=lambda: {"es": 2500})
     output_dir: Path = Path("data") / "corpus_v2"
     save_raw_html: bool = False
 
@@ -116,28 +116,7 @@ DEFAULT_DOMAINS: List[DomainConfig] = [
         category_hint="health_guideline",
         allowed_domains=["paho.org"],
     ),
-    DomainConfig(
-        domain="scielo.org",
-        seeds=[
-            "https://scielo.org/es/",
-            "https://search.scielo.org/?q=salud&lang=es",
-            "https://search.scielo.org/?q=medicina&lang=es",
-            "https://search.scielo.org/?q=epidemiologia&lang=es",
-            "https://search.scielo.org/?q=atencion+primaria&lang=es",
-        ],
-        language_hint="es",
-        source_name="SciELO",
-        category_hint="research_article",
-        allowed_domains=[
-            "scielo.org",
-            "scielo.br",
-            "scielo.cl",
-            "scielo.isciii.es",
-            "scielo.sld.cu",
-            "scielo.sa.cr",
-            "scielo.org.mx",
-        ],
-    ),
+   
     DomainConfig(
         domain="cun.es",
         seeds=[
@@ -230,85 +209,83 @@ DEFAULT_DOMAINS: List[DomainConfig] = [
         category_hint="health_guideline",
         allowed_domains=["semergen.es"],
     ),
-    
-    DomainConfig(
-        domain="medlineplus.gov",
-        seeds=[
-            "https://medlineplus.gov/healthtopics.html",
-            "https://medlineplus.gov/encyclopedia.html",
-        ],
-        language_hint="en",
-        source_name="MedlinePlus",
-        category_hint="health_topic",
-        allowed_domains=["medlineplus.gov"],
-    ),
-    DomainConfig(
-        domain="pubmed.ncbi.nlm.nih.gov",
-        seeds=[
-            "https://pubmed.ncbi.nlm.nih.gov/trending/",
-            "https://pubmed.ncbi.nlm.nih.gov/?term=medicine",
-            "https://pubmed.ncbi.nlm.nih.gov/?term=public+health",
-        ],
-        language_hint="en",
-        source_name="PubMed",
-        category_hint="research_article",
-        allowed_domains=["pubmed.ncbi.nlm.nih.gov"],
-    ),
-    DomainConfig(
-        domain="nih.gov",
-        seeds=[
-            "https://www.nih.gov/health-information",
-            "https://newsinhealth.nih.gov/",
-        ],
-        language_hint="en",
-        source_name="NIH",
-        category_hint="health_guideline",
-        allowed_domains=["nih.gov", "newsinhealth.nih.gov"],
-    ),
-    DomainConfig(
-        domain="msdmanuals.com",
-        seeds=[
-            "https://www.msdmanuals.com/professional",
-            "https://www.msdmanuals.com/home",
-        ],
-        language_hint="en",
-        source_name="MSD Manuals",
-        category_hint="health_topic",
-        allowed_domains=["msdmanuals.com"],
-    ),
-    DomainConfig(
-        domain="cdc.gov",
-        seeds=[
-            "https://www.cdc.gov/",
-            "https://www.cdc.gov/healthinformation/",
-        ],
-        language_hint="en",
-        source_name="CDC",
-        category_hint="health_guideline",
-        allowed_domains=["cdc.gov"],
-    ),
-    DomainConfig(
-        domain="mayoclinic.org",
-        seeds=[
-            "https://www.mayoclinic.org/diseases-conditions",
-            "https://www.mayoclinic.org/symptom-checker",
-        ],
-        language_hint="en",
-        source_name="Mayo Clinic",
-        category_hint="health_topic",
-        allowed_domains=["mayoclinic.org"],
-    ),
-    DomainConfig(
-        domain="nhs.uk",
-        seeds=[
-            "https://www.nhs.uk/conditions/",
-        ],
-        language_hint="en",
-        source_name="NHS",
-        category_hint="health_topic",
-        allowed_domains=["nhs.uk"],
-    ),
-    
+    # DomainConfig(
+    #     domain="medlineplus.gov",
+    #     seeds=[
+    #         "https://medlineplus.gov/healthtopics.html",
+    #         "https://medlineplus.gov/encyclopedia.html",
+    #     ],
+    #     language_hint="en",
+    #     source_name="MedlinePlus",
+    #     category_hint="health_topic",
+    #     allowed_domains=["medlineplus.gov"],
+    # ),
+    # DomainConfig(
+    #     domain="pubmed.ncbi.nlm.nih.gov",
+    #     seeds=[
+    #         "https://pubmed.ncbi.nlm.nih.gov/trending/",
+    #         "https://pubmed.ncbi.nlm.nih.gov/?term=medicine",
+    #         "https://pubmed.ncbi.nlm.nih.gov/?term=public+health",
+    #     ],
+    #     language_hint="en",
+    #     source_name="PubMed",
+    #     category_hint="research_article",
+    #     allowed_domains=["pubmed.ncbi.nlm.nih.gov"],
+    # ),
+    # DomainConfig(
+    #     domain="nih.gov",
+    #     seeds=[
+    #         "https://www.nih.gov/health-information",
+    #         "https://newsinhealth.nih.gov/",
+    #     ],
+    #     language_hint="en",
+    #     source_name="NIH",
+    #     category_hint="health_guideline",
+    #     allowed_domains=["nih.gov", "newsinhealth.nih.gov"],
+    # ),
+    # DomainConfig(
+    #     domain="msdmanuals.com",
+    #     seeds=[
+    #         "https://www.msdmanuals.com/professional",
+    #         "https://www.msdmanuals.com/home",
+    #     ],
+    #     language_hint="en",
+    #     source_name="MSD Manuals",
+    #     category_hint="health_topic",
+    #     allowed_domains=["msdmanuals.com"],
+    # ),
+    # DomainConfig(
+    #     domain="cdc.gov",
+    #     seeds=[
+    #         "https://www.cdc.gov/",
+    #         "https://www.cdc.gov/healthinformation/",
+    #     ],
+    #     language_hint="en",
+    #     source_name="CDC",
+    #     category_hint="health_guideline",
+    #     allowed_domains=["cdc.gov"],
+    # ),
+    # DomainConfig(
+    #     domain="mayoclinic.org",
+    #     seeds=[
+    #         "https://www.mayoclinic.org/diseases-conditions",
+    #         "https://www.mayoclinic.org/symptom-checker",
+    #     ],
+    #     language_hint="en",
+    #     source_name="Mayo Clinic",
+    #     category_hint="health_topic",
+    #     allowed_domains=["mayoclinic.org"],
+    # ),
+    # DomainConfig(
+    #     domain="nhs.uk",
+    #     seeds=[
+    #         "https://www.nhs.uk/conditions/",
+    #     ],
+    #     language_hint="en",
+    #     source_name="NHS",
+    #     category_hint="health_topic",
+    #     allowed_domains=["nhs.uk"],
+    # ),
 ]
 
 

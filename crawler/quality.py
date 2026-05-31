@@ -1,3 +1,5 @@
+import re
+from collections import Counter
 from dataclasses import dataclass
 from typing import Dict, Optional
 
@@ -12,6 +14,26 @@ quiero poder decir rápidamente si fue por idioma, duplicado, URL repetida
 o porque el contenido es demasiado corto.
 """
 
+
+BOILERPLATE_PATTERNS = [
+    r"all rights reserved",
+    r"terms of use",
+    r"privacy policy",
+    r"copyright",
+    r"unauthorized",
+    r"artificial intelligence",
+    r"ai systems",
+    r"legal action",
+]
+
+NAVIGATION_PATTERNS = [
+    r"see also",
+    r"related topics",
+    r"browse all",
+    r"all topics",
+    r"drug information",
+    r"sitemap",
+]
 
 @dataclass
 class ValidationResult:
@@ -45,6 +67,105 @@ class CorpusQualityGate:
         if content:
             self._seen_fingerprints.add(text_fingerprint(content))
 
+    def _contains_boilerplate(self, text: str) -> bool:
+        lowered = text.lower()
+
+        matches = sum(
+            1
+            for pattern in BOILERPLATE_PATTERNS
+            if re.search(pattern, lowered)
+        )
+
+        return matches >= 2
+    
+    def _looks_like_navigation_page(self, text: str) -> bool:
+        lowered = text.lower()
+
+        matches = sum(
+            1
+            for pattern in NAVIGATION_PATTERNS
+            if re.search(pattern, lowered)
+        )
+
+        short_lines = [
+            line.strip()
+            for line in text.splitlines()
+            if 0 < len(line.strip()) < 80
+        ]
+
+        if matches >= 3:
+            return True
+
+        if len(short_lines) > 200:
+            return True
+
+        return False    
+    
+    def _is_portal_or_landing_page(self, text: str) -> bool:
+        """Detecta páginas portada, índices y hubs de navegación."""
+        # Señales fuertes de página portada
+        PORTAL_SIGNALS = [
+            r"leer (todo|más)",
+            r"read (more|all)",
+            r"ver (todo|más)",
+            r"search search",
+            r"haz(te)? socio",
+            r"dona(r)?",
+            r"suscri(bete|base)",
+            r"newsletter",
+            r"últimas noticias",
+            r"noticias destacadas",
+            r"en portada",
+            r"política de cookies",
+            r"acepta(r)? cookies",
+            r"gestionar (el )?consentimiento",
+        ]
+        lowered = text.lower()
+        signal_count = sum(
+            1 for p in PORTAL_SIGNALS
+            if re.search(p, lowered)
+        )
+        # Si tiene 2 o más señales de portada, es ruido
+        if signal_count >= 2:
+            return True
+
+        # Ratio de oraciones completas: texto real tiene oraciones largas
+        sentences = [
+            s.strip() for s in re.split(r'[.!?]', text)
+            if len(s.strip()) > 40
+        ]
+        total_words = len(text.split())
+        if total_words > 100 and len(sentences) < 3:
+            return True
+
+        # Detectar patrones repetidos de hub/listado
+        leer_todo_count = len(re.findall(r'\bleer (todo|más)\b', lowered))
+        read_more_count = len(re.findall(r'\bread (more|all)\b', lowered))
+        ir_al_articulo_count = len(re.findall(r'\bir al artículo\b', lowered))
+        min_lectura_count = len(re.findall(r'\bmin de lectura\b', lowered))
+        if leer_todo_count >= 3 or read_more_count >= 3:
+            return True
+        if ir_al_articulo_count >= 2 or min_lectura_count >= 4:
+            return True
+        
+        return False
+    
+    def _has_excessive_repetition(self, text: str) -> bool:
+        words = re.findall(r"\w+", text.lower())
+
+        if len(words) < 200:
+            return False
+
+        counter = Counter(words)
+
+        top_10_ratio = (
+            sum(freq for _, freq in counter.most_common(10))
+            / len(words)
+        )
+
+        return top_10_ratio > 0.30
+    
+    
     def validate(self, doc: Dict) -> ValidationResult:
         """Valida la estructura y calidad mínima del documento.
 
@@ -64,8 +185,31 @@ class CorpusQualityGate:
         if doc["language"] not in {"en", "es"}:
             return ValidationResult(False, "invalid_language")
 
+        # Validar que el contenido coincida con el idioma declarado
+        content_lower = doc["content"].lower()
+        es_markers = {"el ", "la ", "los ", "las ", "de ", "en ", "que ", "por ", "con ", "una "}
+        en_markers = {"the ", "and ", "for ", "with ", "this ", "that ", "from ", "have ", "are ", "not "}
+        es_count = sum(1 for m in es_markers if m in content_lower)
+        en_count = sum(1 for m in en_markers if m in content_lower)
+        if doc["language"] == "es" and en_count > es_count + 3:
+            return ValidationResult(False, "language_mismatch_en_as_es")
+        if doc["language"] == "en" and es_count > en_count + 3:
+            return ValidationResult(False, "language_mismatch_es_as_en")
+
         if len(doc["content"]) < self.min_content_chars:
             return ValidationResult(False, "content_too_short")
+        
+        if self._contains_boilerplate(doc["content"]):
+            return ValidationResult(False, "boilerplate_content")
+
+        if self._looks_like_navigation_page(doc["content"]):
+            return ValidationResult(False, "navigation_page")
+
+        if self._is_portal_or_landing_page(doc["content"]):
+            return ValidationResult(False, "portal_or_landing_page")
+
+        if self._has_excessive_repetition(doc["content"]):
+            return ValidationResult(False, "excessive_repetition")
 
         normalized_url = doc["url"].strip().lower()
         if normalized_url in self._seen_urls:

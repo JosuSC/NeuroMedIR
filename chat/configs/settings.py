@@ -18,15 +18,15 @@ DIAGNOSIS_TOP_K = 10
 # Respuestas Conversacionales (fallback cuando no hay LLM disponible)
 # ---------------------------------------------------------------------------
 SALUDOS_ES = [
-    "¡Hola! Soy NeuroMedIR, tu asistente médico. ¿En qué puedo ayudarte hoy? Puedes contarme tus síntomas o hacerme preguntas sobre condiciones médicas.",
-    "¡Bienvenido! Soy NeuroMedIR. Estoy aquí para ayudarte con consultas médicas. ¿Qué te preocupa hoy?",
-    "¡Hola! Me da gusto que estés aquí. Soy NeuroMedIR, tu asistente de salud. Puedes preguntarme sobre síntomas, enfermedades o cualquier tema médico.",
+    "¡Hola! Soy NeuroMedIR, tu asistente de salud. Puedes preguntarme sobre síntomas, enfermedades, tratamientos o prevención. ¿En qué puedo ayudarte hoy?",
+    "¡Bienvenido! Soy NeuroMedIR. Estoy aquí para responder tus consultas médicas. ¿Qué te gustaría saber?",
+    "¡Hola! Me da gusto que estés aquí. Puedes preguntarme sobre cualquier tema de salud: síntomas, enfermedades, medicamentos o prevención.",
 ]
 
 SALUDOS_EN = [
-    "Hello! I'm NeuroMedIR, your medical assistant. How can I help you today?",
-    "Welcome! I'm NeuroMedIR. I'm here to help with medical queries. What's on your mind?",
-    "Hi there! I'm NeuroMedIR, your health assistant. Ask me about symptoms, diseases, or any medical topic.",
+    "Hello! I'm NeuroMedIR, your health assistant. You can ask me about symptoms, diseases, treatments, or prevention. How can I help you today?",
+    "Welcome! I'm NeuroMedIR. Feel free to ask me any medical question. What would you like to know?",
+    "Hi there! I'm NeuroMedIR. Ask me about symptoms, diseases, medications, or any health topic you have in mind.",
 ]
 
 DESPEDIDAS_ES = [
@@ -40,12 +40,12 @@ DESPEDIDAS_EN = [
 ]
 
 NO_MEDICO_ES = [
-    "Soy un asistente especializado en temas de salud. Por favor, pregúntame sobre enfermedades, síntomas, tratamientos, o cuéntame si te sientes mal y te haré algunas preguntas para ayudarte.",
+    "Soy un asistente especializado en temas de salud. Por favor, pregúntame sobre enfermedades, síntomas, tratamientos o prevención.",
     "Mi área de especialización es la salud médica. ¿Tienes alguna consulta sobre síntomas, enfermedades, o cómo prevenir alguna condición? Estoy aquí para ayudarte.",
 ]
 
 NO_MEDICO_EN = [
-    "I'm a health-specialized assistant. Please ask me about diseases, symptoms, treatments, or tell me if you're feeling unwell and I'll ask some questions to help you.",
+    "I'm a health-specialized assistant. Please ask me about diseases, symptoms, treatments, or prevention.",
     "My area of expertise is medical health. Do you have any questions about symptoms, diseases, or how to prevent a condition? I'm here to help.",
 ]
 
@@ -87,24 +87,4 @@ SYSTEM_PROMPT_MEDICAL_EN = (
     "NEVER invent medical information. If you lack sufficient information, say so clearly. "
     "Always include a disclaimer that your information does not replace professional consultation. "
     "If the user asks about non-medical topics, kindly redirect them to health-related queries."
-)
-
-SYSTEM_PROMPT_FORM_ES = (
-    "Eres un médico especialista que debe determinar qué preguntas hacerle a un paciente "
-    "para llegar a un diagnóstico diferencial preciso. "
-    "Basándote en los síntomas que reporta el paciente, genera las preguntas específicas "
-    "que un médico real le haría para distinguir entre las posibles condiciones. "
-    "Las preguntas deben ser claras, fáciles de responder para cualquier persona de cualquier edad, "
-    "y orientadas al diagnóstico diferencial. "
-    "DEBES generar las preguntas en formato JSON siguiendo el esquema proporcionado."
-)
-
-SYSTEM_PROMPT_DIAGNOSIS_ES = (
-    "Eres un médico diagnosticador experto. Analiza la información del paciente "
-    "y los documentos médicos recuperados para generar un diagnóstico diferencial "
-    "con probabilidades fundadas. "
-    "Basate en la evidencia de los documentos cuando sea posible. "
-    "Si los documentos no son suficientes para cierta condición, indícalo. "
-    "NUNCA inventes información médica. "
-    "DEBES responder en formato JSON siguiendo el esquema proporcionado."
 )

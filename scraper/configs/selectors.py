@@ -76,12 +76,7 @@ DOMAIN_SELECTORS = {
         "div.article-content",
         "body",
     ],
-    "scielo.org": [
-        "main",
-        "article",
-        "#articleText",
-        "body",
-    ],
+    
     "paho.org": [
         "main",
         "article",
@@ -145,29 +140,7 @@ DOMAIN_SELECTORS = {
         "main",
         "body",
     ],
-    "scielo.br": [
-        "div#articleText",
-        "article",
-        "main",
-        "body",
-    ],
-    "scielo.cl": [
-        "div#articleText",
-        "article",
-        "main",
-        "body",
-    ],
-    "scielo.isciii.es": [
-        "div#articleText",
-        "article",
-        "main",
-        "body",
-    ],
-    "scielo.sld.cu": [
-        "div#articleText",
-        "article",
-        "main",
-        "body",
-    ],
+    
+    
 }
 

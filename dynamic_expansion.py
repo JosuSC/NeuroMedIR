@@ -119,19 +119,7 @@ def _build_dynamic_domains(url_query: str) -> List[DomainConfig]:
             category_hint="health_guideline",
             allowed_domains=["who.int"],
         ),
-        DomainConfig(
-            domain="search.scielo.org",
-            seeds=[
-                f"https://search.scielo.org/?q={url_query}&lang=es",
-            ],
-            language_hint="es",
-            source_name="SciELO (Dinámico)",
-            category_hint="research_article",
-            allowed_domains=[
-                "scielo.org", "scielo.br", "scielo.cl",
-                "scielo.isciii.es", "scielo.sld.cu",
-            ],
-        ),
+      
         # --- Inglés (complementario) ---
         DomainConfig(
             domain="medlineplus.gov",

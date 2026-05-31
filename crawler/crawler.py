@@ -1,30 +1,41 @@
 """
-crawler.py — Crawler BFS para construir corpus médico bilingüe.
+crawler.py — Crawler BFS PARALELO para construir corpus médico.
 
-Responsabilidades exclusivas de crawling (NO scraping):
-    - Coordinar el flujo BFS de navegación web
-    - Respetar robots.txt y políticas de delay entre peticiones
-    - Gestionar la cola de URLs (semillas, profundidad, dominios permitidos)
-    - Validar calidad de documentos mediante CorpusQualityGate
-    - Persistir resultados en disco mediante CorpusStorage
-    - Balancear el corpus por idioma (language_targets)
+Cambio principal respecto a la versión anterior:
+    - Antes: un solo hilo, cola global, time.sleep() global de 1s por página.
+      Resultado: ~1 página/segundo en TODO el sistema (delay en serie).
+    - Ahora: un hilo por dominio (ThreadPoolExecutor). Cada dominio corre su
+      propio BFS aislado y respeta su propio delay de cortesía. Los N dominios
+      avanzan en paralelo → throughput ~N veces mayor sin maltratar ningún
+      servidor individual.
 
-Dependencias:
-    - scraper.DomainScraper: Para fetch/parse/extract (inyectado, NO interno)
-    - crawler.storage: Para persistencia en disco
-    - crawler.quality: Para compuerta de calidad del corpus
-    - crawler.language: Para detección de idioma
-    - crawler.utils: Para helpers de URLs y logging
+Por qué hilos y no procesos:
+    - El crawling es I/O-bound: las peticiones de red liberan el GIL, así que
+      los hilos dan paralelismo real para la parte cara (esperar la red).
+    - Estado compartido coordinado en un solo lugar: dedup global (URLs y
+      fingerprints), contador de doc_id atómico, balance de idioma y objetivos
+      del corpus. Con procesos separados habría que fusionar corpus al final.
+    - El resume (cargar estado previo de disco) sigue funcionando igual.
 
-Complejidad algorítmica:
-    - run():              O(max_paginas * (tiempo_fetch + tiempo_parse + delay))
-    - _can_fetch():       O(1) amortizado con caché de robots.txt
-    - _is_allowed_domain(): O(dominios_permitidos) por URL verificada
+Aislamiento por dominio:
+    El BFS nunca cruza de un dominio a otro porque _is_allowed_domain filtra
+    los enlaces por allowed_domains. Por eso cada DomainConfig se puede ejecutar
+    como un crawler independiente sin pisarse con los demás.
+
+Seguridad de hilos:
+    - Estado compartido (quality gate, contadores, valid_docs, next_doc_id,
+      rejected_count, pages_crawled) protegido por un único lock.
+    - visited y robots_cache son LOCALES a cada hilo (cada dominio solo se
+      visita a sí mismo), así que no necesitan lock.
+    - Cada hilo usa su propia instancia de scraper (requests.Session no es
+      thread-safe para uso concurrente).
 """
 
 import time
+import threading
 import urllib.robotparser
 from collections import Counter, deque
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Deque, Dict, List, Optional, Set
@@ -38,30 +49,18 @@ from .utils import (
     domain_from_url,
     is_http_url,
     normalize_url,
-    same_domain_or_subdomain,
     setup_logger,
 )
 
-# Antes: from .scraper import DomainScraper  (scraper dentro de crawler — mezcla responsabilidades)
-# Ahora: from scraper import DomainScraper   (scraper es módulo independiente)
 from scraper import DomainScraper
+from .url_filters import should_skip_url
 
 logger = setup_logger(__name__)
 
 
 @dataclass
 class QueueItem:
-    """Estructura ligera para representar URLs en la cola del crawler.
-
-    Campos:
-        url: URL a procesar.
-        depth: Profundidad desde la URL semilla (0 = semilla).
-        language_hint: Idioma esperado ("en" o "es").
-        source_name: Nombre de la fuente (ej. "PubMed", "MedlinePlus ES").
-        category_hint: Categoría esperada (ej. "health_topic").
-        domain_scope: Dominio principal de esta rama de crawling.
-        allowed_domains: Dominios permitidos para expansión de enlaces.
-    """
+    """URL pendiente dentro del BFS de un dominio."""
     url: str
     depth: int
     language_hint: str
@@ -72,21 +71,11 @@ class QueueItem:
 
 
 class CorpusCrawler:
-    """Crawler orientado a construir un corpus médico bilingüe.
+    """Crawler paralelo (un hilo por dominio) para corpus médico.
 
-    Flujo principal:
-        1. Inicializar cola con URLs semilla por dominio
-        2. Para cada URL en la cola:
-           a. Verificar si ya fue visitada
-           b. Respetar robots.txt
-           c. Hacer fetch+parse vía DomainScraper (inyectado)
-           d. Validar calidad del documento
-           e. Guardar (aceptado o rechazado)
-           f. Extraer enlaces y encolar los válidos
-        3. Repetir hasta agotar la cola o cumplir objetivos
-
-    NOTA: El scraping (fetch/parse/extract) se delega al módulo scraper/.
-    Este módulo SOLO coordina el flujo de crawling BFS.
+    Interfaz pública sin cambios: CorpusCrawler(config, domains, scraper).run()
+    devuelve el mismo diccionario de métricas que la versión secuencial, para
+    que build_corpus.py no necesite modificaciones.
     """
 
     def __init__(
@@ -94,71 +83,75 @@ class CorpusCrawler:
         config: CrawlConfig,
         domains: Optional[List[DomainConfig]] = None,
         scraper: Optional[DomainScraper] = None,
+        max_workers: Optional[int] = None,
     ):
-        """Inicializa el crawler con configuración, dominios y scraper inyectado.
-
+        """
         Args:
             config: Configuración de crawling (delays, depths, targets).
-            domains: Lista de configuraciones por dominio (semillas, idioma, etc.).
-                     Si es None, usa DEFAULT_DOMAINS del config.
-            scraper: DomainScraper inyectado desde el módulo scraper/.
-                     Si es None, se crea una instancia nueva con los
-                     parámetros del config. La inyección permite tests
-                     con scraper mock sin hacer peticiones HTTP reales.
+            domains: Configuraciones por dominio. Si es None usa DEFAULT_DOMAINS.
+            scraper: Scraper inyectado. Si se pasa, se COMPARTE entre hilos
+                     (úsalo solo en tests con un mock). En producción déjalo en
+                     None: cada hilo crea su propia instancia (thread-safe).
+            max_workers: Nº máximo de hilos concurrentes. Por defecto, uno por
+                         dominio (acotado a 16).
         """
         self.config = config
         self.domains = domains or DEFAULT_DOMAINS
         self.headers = {"User-Agent": config.user_agent}
 
-        # Scraper inyectado: viene del módulo scraper/, no es interno a crawler
-        self.scraper = scraper or DomainScraper(
-            timeout=config.request_timeout_seconds,
-            max_retries=config.max_retries,
-            backoff_base_seconds=config.backoff_base_seconds,
-        )
+        # Si inyectan un scraper (tests), se comparte. Si no, cada hilo crea
+        # el suyo con la factory.
+        self._shared_scraper = scraper
         self.storage = CorpusStorage(config.output_dir)
         self.quality = CorpusQualityGate(config.min_content_chars)
 
-        # Estructuras internas del BFS
-        self.queue: Deque[QueueItem] = deque()
-        self.visited: Set[str] = set()
-        self.robot_cache: Dict[str, Optional[urllib.robotparser.RobotFileParser]] = {}
+        self.max_workers = max_workers or min(len(self.domains), 16)
 
-        # Métricas y resultados en memoria durante la ejecución
+        # ---- Estado compartido entre hilos (protegido por _lock) ----
+        self._lock = threading.Lock()
+        self._stop = threading.Event()
         self.valid_docs: List[Dict] = []
         self.rejected_count = 0
         self.next_doc_id = 1
-        self.language_counter = Counter()
+        self.language_counter: Counter = Counter()
+        self.pages_crawled = 0
 
-        # Restaurar estado previo si ya hay documentos en disco
         self._load_existing_state()
-        # Poblar la cola con las URLs semilla
-        self._bootstrap_queue()
+
+    # =========================================================================
+    # Factory de scraper por hilo
+    # =========================================================================
+
+    def _new_scraper(self) -> DomainScraper:
+        """Devuelve el scraper compartido (tests) o crea uno nuevo por hilo."""
+        if self._shared_scraper is not None:
+            return self._shared_scraper
+        return DomainScraper(
+            timeout=self.config.request_timeout_seconds,
+            max_retries=self.config.max_retries,
+            backoff_base_seconds=self.config.backoff_base_seconds,
+        )
+
+    # =========================================================================
+    # Resume: cargar estado previo de disco
+    # =========================================================================
 
     def _load_existing_state(self):
-        """Carga documentos ya procesados para mantener continuidad entre ejecuciones.
-
-        Permite reanudar un crawling interrumpido sin perder el trabajo previo.
-        Registra los documentos existentes en la compuerta de calidad para
-        evitar aceptar duplicados, y restaura el contador de IDs.
-        """
+        """Carga documentos ya procesados para reanudar sin perder trabajo."""
         existing_docs = self.storage.load_existing_documents()
         if not existing_docs:
             return
 
         max_id = 0
         for doc in existing_docs:
-            # Registrar en la compuerta de calidad para evitar duplicados
             self.quality.register_existing(doc)
 
-            # Restaurar contador de idiomas
             lang = doc.get("language")
             if not isinstance(lang, str) or not lang:
                 lang = infer_language_from_url(str(doc.get("url", "")))
             if isinstance(lang, str):
                 self.language_counter[lang] += 1
 
-            # Restaurar contador de IDs para no colisionar
             doc_id = doc.get("id", 0)
             if isinstance(doc_id, int) and doc_id > max_id:
                 max_id = doc_id
@@ -166,49 +159,16 @@ class CorpusCrawler:
         self.next_doc_id = max_id + 1
         logger.info(
             "Estado previo cargado | documentos=%s | por_idioma=%s | proximo_id=%s",
-            len(existing_docs),
-            dict(self.language_counter),
-            self.next_doc_id,
+            len(existing_docs), dict(self.language_counter), self.next_doc_id,
         )
 
-    def _bootstrap_queue(self):
-        """Añade las URLs semilla definidas en cada DomainConfig a la cola BFS.
-
-        Cada DomainConfig contiene una lista de semillas que son los puntos
-        de partida del crawling para ese dominio.
-        """
-        for domain_cfg in self.domains:
-            for seed in domain_cfg.seeds:
-                if not is_http_url(seed):
-                    continue
-                self.queue.append(
-                    QueueItem(
-                        url=normalize_url(seed),
-                        depth=0,
-                        language_hint=domain_cfg.language_hint,
-                        source_name=domain_cfg.source_name,
-                        category_hint=domain_cfg.category_hint,
-                        domain_scope=domain_cfg.domain,
-                        allowed_domains=domain_cfg.allowed_domains or [domain_cfg.domain],
-                    )
-                )
+    # =========================================================================
+    # Helpers de dominio / robots
+    # =========================================================================
 
     @staticmethod
     def _is_allowed_domain(url: str, allowed_domains: List[str]) -> bool:
-        """Verifica si una URL pertenece a la lista de dominios permitidos.
-
-        Comprueba tanto el dominio exacto como subdominios.
-        Ej: si allowed_domains=["nih.gov"], acepta "newsinhealth.nih.gov".
-
-        Complejidad: O(d) donde d = número de dominios permitidos.
-
-        Args:
-            url: URL a verificar.
-            allowed_domains: Lista de dominios permitidos.
-
-        Returns:
-            True si la URL pertenece a un dominio permitido.
-        """
+        """True si la URL pertenece a un dominio permitido o a un subdominio."""
         host = (urlparse(url).hostname or "").lower()
         if not host:
             return False
@@ -218,48 +178,33 @@ class CorpusCrawler:
                 return True
         return False
 
-    def _can_fetch(self, url: str) -> bool:
-        """Verifica si el crawler puede acceder a la URL según robots.txt.
-
-        Mantiene un caché de parsers de robots.txt por dominio para no
-        descargar el mismo archivo repetidamente.
-
-        Complejidad: O(1) amortizado gracias al caché.
-
-        Args:
-            url: URL a verificar.
-
-        Returns:
-            True si robots.txt permite el acceso, False si lo prohíbe.
-            Si no se puede leer robots.txt, se asume permisivo.
-        """
+    def _can_fetch(self, url: str, robot_cache: dict) -> bool:
+        """Verifica robots.txt usando un caché LOCAL del hilo (sin lock)."""
         parsed_domain = domain_from_url(url)
         if not parsed_domain:
             return False
 
         base = f"https://{parsed_domain}"
-        if base not in self.robot_cache:
+        if base not in robot_cache:
             rp = urllib.robotparser.RobotFileParser()
             rp.set_url(f"{base}/robots.txt")
             try:
                 rp.read()
-                self.robot_cache[base] = rp
+                robot_cache[base] = rp
             except Exception:
-                # Si no se puede leer robots.txt, asumimos permisividad
-                # (más seguro para un contexto de investigación académica)
-                self.robot_cache[base] = None
+                robot_cache[base] = None
 
-        parser = self.robot_cache[base]
+        parser = robot_cache[base]
         if parser is None:
             return True
         return parser.can_fetch(self.config.user_agent, url)
 
-    def _target_met(self) -> bool:
-        """Comprueba si se alcanzaron los objetivos de tamaño e idioma del corpus.
+    # =========================================================================
+    # Objetivos del corpus (se llaman con el lock tomado)
+    # =========================================================================
 
-        Returns:
-            True si el corpus ya tiene suficientes documentos y balance de idiomas.
-        """
+    def _target_met_locked(self) -> bool:
+        """True si ya se alcanzaron tamaño y balance de idioma. Asume lock."""
         if len(self.valid_docs) < self.config.min_valid_documents:
             return False
         for idioma, objetivo in self.config.language_targets.items():
@@ -268,20 +213,10 @@ class CorpusCrawler:
         return True
 
     def _to_document(self, item: QueueItem, parsed: Dict[str, str], url: str) -> Dict:
-        """Convierte el resultado del parser en la estructura de documento persistible.
-
-        Args:
-            item: Elemento de la cola con metadatos de la URL.
-            parsed: Resultado del scraper con {"title", "content"}.
-            url: URL final del documento.
-
-        Returns:
-            Diccionario listo para persistir con todos los campos requeridos.
-        """
+        """Convierte el parseo en documento (sin asignar id todavía)."""
         contenido = parsed.get("content", "")
         idioma = detect_language(contenido, hint=item.language_hint)
         return {
-            "id": self.next_doc_id,
             "title": parsed.get("title", ""),
             "content": contenido,
             "source": item.source_name,
@@ -291,63 +226,121 @@ class CorpusCrawler:
             "fetched_at": datetime.now(timezone.utc).isoformat(),
         }
 
-    def run(self) -> Dict:
-        """Ejecuta el crawling BFS hasta agotar la cola o alcanzar max_pages.
+    # =========================================================================
+    # Registro thread-safe de resultados
+    # =========================================================================
 
-        Flujo por cada URL:
-            1. Verificar si ya fue visitada o excede profundidad
-            2. Respetar robots.txt
-            3. Hacer fetch vía DomainScraper
-            4. Validar tipo de contenido (solo text/html)
-            5. Parsear contenido vía DomainScraper
-            6. Validar calidad del documento
-            7. Guardar como aceptado o rechazado
-            8. Extraer enlaces y encolar los válidos
-            9. Esperar delay entre peticiones
+    def _register_valid(self, documento: Dict) -> bool:
+        """Valida, asigna id y persiste un documento. Devuelve True si se aceptó.
 
-        Returns:
-            Métricas del crawling: documentos válidos, rechazados, distribución.
+        Toda la sección crítica (validación con dedup + asignación de id +
+        actualización de contadores) ocurre bajo el lock para evitar carreras.
         """
-        inicio = time.time()
-        paginas_crawleadas = 0
+        with self._lock:
+            if self._stop.is_set():
+                return False
 
-        while self.queue and paginas_crawleadas < self.config.max_pages:
-            if self._target_met():
+            calidad = self.quality.validate(documento)
+            if not calidad.is_valid:
+                self.rejected_count += 1
+                idx = self.rejected_count
+                payload = dict(documento)
+                payload["reason"] = calidad.reason
+                # El guardado a disco puede salir del lock, pero es barato; lo
+                # dejamos dentro para no complicar el manejo de índices.
+                self.storage.save_rejected(idx, payload)
+                return False
+
+            idioma = documento["language"]
+            if idioma in self.config.language_targets:
+                if self.language_counter[idioma] > self.config.language_targets[idioma] + 100:
+                    self.rejected_count += 1
+                    idx = self.rejected_count
+                    payload = dict(documento)
+                    payload["reason"] = "language_over_target"
+                    self.storage.save_rejected(idx, payload)
+                    return False
+
+            doc_id = self.next_doc_id
+            self.next_doc_id += 1
+            documento["id"] = doc_id
+            self.storage.save_processed(doc_id, documento)
+            self.valid_docs.append(documento)
+            self.language_counter[idioma] += 1
+
+            if self._target_met_locked():
+                self._stop.set()
+            return True
+
+    def _register_fetch_failure(self, url: str, reason: str):
+        with self._lock:
+            self.rejected_count += 1
+            idx = self.rejected_count
+        self.storage.save_rejected(idx, {"url": url, "reason": reason})
+
+    # =========================================================================
+    # Worker: BFS de un solo dominio
+    # =========================================================================
+
+    def _crawl_domain(self, domain_cfg: DomainConfig):
+        """Ejecuta el BFS completo de un dominio en su propio hilo."""
+        scraper = self._new_scraper()
+        visited: Set[str] = set()
+        robot_cache: Dict[str, Optional[urllib.robotparser.RobotFileParser]] = {}
+
+        queue: Deque[QueueItem] = deque()
+        for seed in domain_cfg.seeds:
+            if is_http_url(seed):
+                queue.append(QueueItem(
+                    url=normalize_url(seed),
+                    depth=0,
+                    language_hint=domain_cfg.language_hint,
+                    source_name=domain_cfg.source_name,
+                    category_hint=domain_cfg.category_hint,
+                    domain_scope=domain_cfg.domain,
+                    allowed_domains=domain_cfg.allowed_domains or [domain_cfg.domain],
+                ))
+
+        logger.info("[%s] iniciando (%s semillas)", domain_cfg.source_name, len(queue))
+
+        while queue:
+            if self._stop.is_set():
                 break
 
-            item = self.queue.popleft()
+            # Tope global de páginas (lectura/escritura atómica)
+            with self._lock:
+                if self.pages_crawled >= self.config.max_pages:
+                    self._stop.set()
+                    break
+
+            item = queue.popleft()
             url = normalize_url(item.url)
 
-            # Filtros previos al fetch
-            if url in self.visited:
+            if url in visited:
                 continue
             if item.depth > self.config.max_depth:
                 continue
-            if not self._can_fetch(url):
-                self.visited.add(url)
+            if not self._can_fetch(url, robot_cache):
+                visited.add(url)
+                continue
+            if should_skip_url(url):
+                visited.add(url)
                 continue
 
-            # Fetch vía scraper
-            respuesta = self.scraper.fetch(url, headers=self.headers)
-            self.visited.add(url)
-            paginas_crawleadas += 1
+            respuesta = scraper.fetch(url, headers=self.headers)
+            visited.add(url)
+            with self._lock:
+                self.pages_crawled += 1
 
             if respuesta is None:
-                self.rejected_count += 1
-                self.storage.save_rejected(
-                    self.rejected_count,
-                    {"url": url, "reason": "fetch_failed"},
-                )
+                self._register_fetch_failure(url, "fetch_failed")
+                time.sleep(self.config.delay_seconds)
                 continue
 
-            # Solo procesar contenido HTML
             tipo_contenido = respuesta.headers.get("Content-Type", "")
             if "text/html" not in tipo_contenido:
-                self.rejected_count += 1
-                self.storage.save_rejected(
-                    self.rejected_count,
-                    {"url": url, "reason": "non_html_content_type"},
-                )
+                self._register_fetch_failure(url, "non_html_content_type")
+                time.sleep(self.config.delay_seconds)
                 continue
 
             html_bytes = respuesta.content
@@ -357,65 +350,61 @@ class CorpusCrawler:
                     decoded = html_bytes.decode(decode_enc, errors="replace")
                 except Exception:
                     decoded = html_bytes.decode("utf-8", errors="replace")
+                # next_doc_id puede cambiar entre hilos; el raw es solo auxiliar
                 self.storage.save_raw(self.next_doc_id, {"url": url, "html": decoded})
 
-            # Parse y validación (pasamos bytes para que BeautifulSoup detecte encoding)
             dominio_fuente = domain_from_url(url)
-            parsed = self.scraper.parse_content(html_bytes, source_domain=dominio_fuente)
+            parsed = scraper.parse_content(html_bytes, source_domain=dominio_fuente)
             documento = self._to_document(item, parsed, url)
-            calidad = self.quality.validate(documento)
+            self._register_valid(documento)
 
-            if calidad.is_valid:
-                idioma = documento["language"]
-
-                # Evitar desequilibrar el corpus en un idioma
-                if idioma in self.config.language_targets:
-                    if self.language_counter[idioma] > self.config.language_targets[idioma] + 100:
-                        self.rejected_count += 1
-                        self.storage.save_rejected(
-                            self.rejected_count,
-                            {"url": url, "reason": "language_over_target", "language": idioma},
-                        )
-                        continue
-
-                # Guardar documento válido
-                self.storage.save_processed(self.next_doc_id, documento)
-                self.valid_docs.append(documento)
-                self.language_counter[idioma] += 1
-                self.next_doc_id += 1
-            else:
-                # Guardar rechazado para auditoría
-                self.rejected_count += 1
-                payload = dict(documento)
-                payload["reason"] = calidad.reason
-                self.storage.save_rejected(self.rejected_count, payload)
-
-            # Extraer y encolar enlaces si no se alcanzó la profundidad máxima
+            # Encolar enlaces del mismo dominio
             if item.depth < self.config.max_depth:
-                enlaces = self.scraper.extract_links(html_bytes, base_url=url)
+                enlaces = scraper.extract_links(html_bytes, base_url=url)
                 for enlace in enlaces:
                     enlace_normalizado = normalize_url(enlace)
-                    if enlace_normalizado in self.visited:
+                    if enlace_normalizado in visited:
                         continue
                     if not self._is_allowed_domain(enlace_normalizado, item.allowed_domains):
                         continue
+                    if should_skip_url(enlace_normalizado):
+                        continue
+                    queue.append(QueueItem(
+                        url=enlace_normalizado,
+                        depth=item.depth + 1,
+                        language_hint=item.language_hint,
+                        source_name=item.source_name,
+                        category_hint=item.category_hint,
+                        domain_scope=item.domain_scope,
+                        allowed_domains=item.allowed_domains,
+                    ))
 
-                    self.queue.append(
-                        QueueItem(
-                            url=enlace_normalizado,
-                            depth=item.depth + 1,
-                            language_hint=item.language_hint,
-                            source_name=item.source_name,
-                            category_hint=item.category_hint,
-                            domain_scope=item.domain_scope,
-                            allowed_domains=item.allowed_domains,
-                        )
-                    )
-
-            # Respetar delay entre peticiones
+            # Cortesía: este delay es POR DOMINIO (cada hilo espera a su propio
+            # servidor). Los demás dominios siguen avanzando en paralelo.
             time.sleep(self.config.delay_seconds)
 
-        # Calcular métricas finales
+        logger.info("[%s] terminado", domain_cfg.source_name)
+
+    # =========================================================================
+    # Orquestación paralela
+    # =========================================================================
+
+    def run(self) -> Dict:
+        """Lanza un hilo por dominio y espera a que todos terminen."""
+        inicio = time.time()
+        logger.info(
+            "Crawling paralelo | dominios=%s | workers=%s | delay/dominio=%ss",
+            len(self.domains), self.max_workers, self.config.delay_seconds,
+        )
+
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = [executor.submit(self._crawl_domain, d) for d in self.domains]
+            for f in futures:
+                try:
+                    f.result()
+                except Exception as e:
+                    logger.error("Worker de dominio falló: %s", e)
+
         fin = time.time()
         todos_docs = self.storage.load_existing_documents()
         metricas = self.storage.write_metrics(

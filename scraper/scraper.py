@@ -63,6 +63,7 @@ class DomainScraper:
         self.timeout = timeout
         self.max_retries = max_retries
         self.backoff_base_seconds = backoff_base_seconds
+        self.session = requests.Session()
 
     def fetch(
         self, url: str, headers: Dict[str, str]
@@ -86,7 +87,7 @@ class DomainScraper:
         """
         for intento in range(self.max_retries):
             try:
-                respuesta = requests.get(
+                respuesta = self.session.get(
                     url, headers=headers, timeout=self.timeout
                 )
                 respuesta.raise_for_status()

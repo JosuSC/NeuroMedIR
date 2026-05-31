@@ -10,13 +10,13 @@ Responsabilidades exclusivas de scraping:
 """
 
 from .scraper import DomainScraper, DOMAIN_SELECTORS
-from .document_classifier import DocumentClassifier
+
 from .utils import clean_text, strip_noise, setup_logger
 
 __all__ = [
     "DomainScraper",
     "DOMAIN_SELECTORS",
-    "DocumentClassifier",
+    
     "clean_text",
     "strip_noise",
     "setup_logger",

@@ -29,14 +29,68 @@ def setup_logger(name: str) -> logging.Logger:
     return logger
 
 
+from urllib.parse import (
+    urlparse,
+    urlunparse,
+    parse_qsl,
+    urlencode,
+)
+
+TRACKING_PARAMS = {
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_term",
+    "utm_content",
+    "fbclid",
+    "gclid",
+    "mc_cid",
+    "mc_eid",
+    "ref",
+    "source",
+}
+
+
 def normalize_url(url: str) -> str:
-    """Normaliza una URL para evitar duplicados por detalles menores."""
+    """
+    Normaliza una URL para evitar duplicados semánticos.
+
+    Acciones:
+        - lowercase de scheme y host
+        - elimina fragmentos (#section)
+        - elimina trailing slash redundante
+        - elimina parámetros tracking/analytics
+        - ordena query params para canonicalización estable
+    """
     parsed = urlparse(url.strip())
+
     scheme = parsed.scheme.lower()
     netloc = parsed.netloc.lower()
+    netloc = netloc.replace(":80", "").replace(":443", "")
+
+    # Normalizar path
     path = parsed.path.rstrip("/") if parsed.path not in ("", "/") else "/"
-    query = parsed.query
-    return urlunparse((scheme, netloc, path, "", query, ""))
+
+    # Parsear query params
+    query_params = parse_qsl(parsed.query, keep_blank_values=False)
+
+    # Filtrar tracking params
+    filtered_params = [
+        (k, v)
+        for k, v in query_params
+        if k.lower() not in TRACKING_PARAMS
+    ]
+
+    # Orden estable para evitar duplicados por orden distinto
+    filtered_params.sort()
+
+    # Reconstruir query
+    query = urlencode(filtered_params, doseq=True)
+
+    # Eliminar fragment (#...)
+    fragment = ""
+
+    return urlunparse((scheme, netloc, path, "", query, fragment))
 
 
 def is_http_url(url: str) -> bool:

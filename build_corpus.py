@@ -24,13 +24,13 @@ logging.basicConfig(
 def main():
     """Lee parámetros de línea de comandos y ejecuta el crawler principal."""
     parser = argparse.ArgumentParser(description="Build NeuroMedIR bilingual medical corpus")
-    parser.add_argument("--max-pages", type=int, default=20000)
+    parser.add_argument("--max-pages", type=int, default=25000)
     parser.add_argument("--max-depth", type=int, default=3)
-    parser.add_argument("--delay", type=float, default=1.0)
+    parser.add_argument("--delay", type=float, default=0.7)
     parser.add_argument("--min-content-chars", type=int, default=600)
-    parser.add_argument("--target-valid", type=int, default=2000)
-    parser.add_argument("--target-en", type=int, default=1200)
-    parser.add_argument("--target-es", type=int, default=800)
+    parser.add_argument("--target-valid", type=int, default=2500)
+    parser.add_argument("--target-en", type=int, default=0)
+    parser.add_argument("--target-es", type=int, default=2500)
     parser.add_argument("--output-dir", type=str, default="data/corpus_v2")
     parser.add_argument("--wipe-processed", action="store_true", help="Borrar los JSON procesados antes de ejecutar el crawler")
     args = parser.parse_args()
@@ -42,7 +42,14 @@ def main():
     config.delay_seconds = args.delay
     config.min_content_chars = args.min_content_chars
     config.min_valid_documents = args.target_valid
-    config.language_targets = {"en": args.target_en, "es": args.target_es}
+     # Solo incluir idiomas con objetivo > 0. Así, al no crawlear inglés,
+    # no se exige un target "en" imposible que dejaría el crawler sin parar.
+    language_targets = {}
+    if args.target_en > 0:
+        language_targets["en"] = args.target_en
+    if args.target_es > 0:
+        language_targets["es"] = args.target_es
+    config.language_targets = language_targets
     config.output_dir = Path(args.output_dir)
     config.output_dir.mkdir(parents=True, exist_ok=True)
 

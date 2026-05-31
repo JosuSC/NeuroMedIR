@@ -39,7 +39,7 @@ from retrieval.document_store import DocumentStore
 from indexing.storage.index_io import IndexStorage
 from indexing.configs import settings as idx_settings
 from chat.intent_classifier import IntentClassifier, IntentType
-from chat.diagnosis_engine import DiagnosisEngine
+
 from chat.configs import settings as chat_settings
 
 from dynamic_expansion import expand_corpus_from_query
@@ -64,7 +64,7 @@ indexer: Optional[Indexer] = None
 doc_store: Optional[DocumentStore] = None
 rag_pipeline = None
 intent_classifier: Optional[IntentClassifier] = None
-diagnosis_engine: Optional[DiagnosisEngine] = None
+
 llm_client = None  # LLM client para uso directo en chat
 
 # ---------------------------------------------------------------------------
@@ -171,9 +171,6 @@ def startup_event():
     intent_classifier = IntentClassifier()
     print("OK: Clasificador de intención inicializado.")
 
-    # --- Motor de Diagnóstico (con LLM) ---
-    diagnosis_engine = DiagnosisEngine(llm_client=rag_pipeline._llm if rag_pipeline else None)
-    print("OK: Motor de diagnóstico inicializado.")
 
     print(f"OK: Sistema listo. Documentos: {doc_store.count}")
 
@@ -457,7 +454,7 @@ def _handle_question(message: str, lang_code: str) -> dict:
         answer_text = _build_answer_from_results(results, lang_code)
 
     # Construir bibliografía
-    bibliography = diagnosis_engine._build_bibliography(sources) if sources else []
+    bibliography = _build_bibliography(sources) if sources else []
 
     disclaimer = chat_settings.DISCLAIMER_ES if lang_code == "es" else chat_settings.DISCLAIMER_EN
 
@@ -562,6 +559,25 @@ def _should_expand(results: list) -> bool:
     top_score = results[0].get("score", 0.0) if results else 0.0
     return top_score < 0.15
 
+
+def _build_bibliography(retrieval_results: list) -> list:
+    """Construye la bibliografía a partir de los resultados del retrieval."""
+    bibliography = []
+    seen_titles = set()
+    for idx, result in enumerate(retrieval_results, 1):
+        title = result.get("title", "Sin título")
+        if title in seen_titles:
+            continue
+        seen_titles.add(title)
+        bibliography.append({
+            "ref_num": idx,
+            "title": title,
+            "url": result.get("url", "#"),
+            "source": result.get("source", ""),
+            "category": result.get("category", "other"),
+            "snippet": (result.get("snippet", ""))[:150] + "...",
+        })
+    return bibliography
 
 def _try_expand_corpus(query: str) -> bool:
     """Ejecuta expansión web y reindexa incrementalmente."""
