@@ -46,12 +46,19 @@ RAG_DO_SAMPLE = False           # Kept for compatibility with older configs
 # ---------------------------------------------------------------------------
 # Context Window
 # ---------------------------------------------------------------------------
-RAG_MAX_CONTEXT_TOKENS = 2048   # Max tokens for context (input documents)
+RAG_MAX_CONTEXT_TOKENS = 8192   # Max tokens for context (input documents).
+                                # Gemini 2.5 Flash supports far more; this fits
+                                # ~5 full medical docs comfortably.
 RAG_CHARS_PER_TOKEN = 4         # Heuristic: avg 4 chars per token for English/Spanish
 
 # ---------------------------------------------------------------------------
 # Retrieval Parameters (RAG-specific, override retrieval defaults)
 # ---------------------------------------------------------------------------
 RAG_TOP_K = 5                   # Number of documents to retrieve per query
-RAG_MIN_SCORE_THRESHOLD = 0.1   # Minimum retrieval score to include a document
+RAG_MIN_SCORE_THRESHOLD = -999.0  # Cross-encoder produces logits (can be negative);
+                                  # the retriever already ranks by quality, so don't
+                                  # re-filter here. The pipeline keeps top-k as-is.
 
+RAG_MIN_DOC_CONTENT_CHARS = 2000  # Docs con menos contenido (videos sin
+                                  # transcripción, índices) se excluyen del
+                                  # contexto si hay alternativas más completas.

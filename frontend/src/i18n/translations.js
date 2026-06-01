@@ -13,25 +13,11 @@ export const translations = {
         ensureDatabase: 'Asegúrese de que el servidor NeuroMedIR esté corriendo.',
 
         // --- Bienvenida ---
-        welcome: '¡Hola! Soy NeuroMedIR, tu asistente médico inteligente.\n\nPuedes preguntarme sobre cualquier tema de salud o contarme tus síntomas y te ayudaré a entenderlos mejor. Si me cuentas qué sientes, generaré un formulario personalizado para darte un análisis más preciso.',
+        welcome: '¡Hola! Soy NeuroMedIR, tu asistente médico inteligente.\n\nPuedes preguntarme sobre cualquier tema de salud o contarme tus síntomas y te ayudaré a entenderlos mejor.',
 
-        // --- Formulario de síntomas ---
-        fillForm: 'Complete el formulario',
-        submitForm: 'Enviar formulario',
-        intensity: 'Intensidad',
-        duration: 'Duración',
-        additionalNotes: 'Notas adicionales',
-        detectedSymptoms: 'Síntomas detectados',
-        dynamicSymptoms: 'Síntomas relacionados',
-        selectDuration: 'Seleccione la duración',
-        placeholderNotes: 'Ej. Soy diabético, tomo Losartán...',
+        
 
-        // --- Diagnóstico ---
-        possibleDiagnoses: 'Posibles condiciones',
-        probability: 'Probabilidad',
-        bibliography: 'Bibliografía',
-        sources: 'Fuentes consultadas',
-        supportedBy: 'Sustentado por',
+       
 
         // --- Respuestas ---
         greeting: 'saludo',

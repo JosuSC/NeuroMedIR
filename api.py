@@ -142,7 +142,22 @@ def startup_event():
         print("Advertencia: No se pudieron cargar los índices de disco.")
 
     reranker = NeuralReranker()
-    retriever = Retriever(bm25, faiss, encoder, doc_store, reranker=reranker)
+
+    from retrieval.query_expansion import QueryExpander
+    from retrieval.relevance_feedback import RelevanceFeedback
+    from retrieval.ranker import MultiFactorRanker
+
+    retriever = Retriever(
+        lexical_index=bm25,
+        vector_index=faiss,
+        encoder=encoder,
+        doc_store=doc_store,
+        cleaner=None,
+        reranker=reranker,
+        expander=QueryExpander(),
+        feedback=RelevanceFeedback(),
+        ranker=MultiFactorRanker(),
+    )
 
     indexer = Indexer()
     indexer.lexical_index = bm25
@@ -157,10 +172,12 @@ def startup_event():
         from rag.pipeline import RAGPipeline
 
         llm_client = FallbackLLMClient([
-            GeminiLLMClient(),
             OpenRouterLLMClient(),
+            GeminiLLMClient(),
         ])
-        rag_pipeline = RAGPipeline(retriever=retriever, llm_client=llm_client)
+        
+        rag_pipeline = RAGPipeline(retriever=retriever, llm_client=llm_client, doc_store=doc_store)
+        
         if llm_client.is_available:
             print(f"OK: RAG Pipeline configurado ({llm_client.model_name})")
         else:
@@ -679,6 +696,10 @@ def _build_expansion_retriever() -> Optional[Retriever]:
 
         if not (lex_ok and vec_ok):
             logger.info("Expansion indices not found yet — will be created on first expand.")
+            return None
+
+        if exp_doc_store.count == 0:
+            logger.info("Expansion doc_store is empty — skipping expansion retriever.")
             return None
 
         return Retriever(exp_bm25, exp_faiss, exp_encoder, exp_doc_store)

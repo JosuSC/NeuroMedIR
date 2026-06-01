@@ -420,9 +420,6 @@ class Retriever:
         for r in enriched:
             r["latency_ms"] = round(t_total * 1000, 1)
 
-        return enriched
-
-        # Log latency per stage
         logger.info(
             f"Retrieval completed in {t_total*1000:.1f}ms — "
             f"Stage 1 (Recall): {t_stage1*1000:.1f}ms ["
@@ -433,6 +430,8 @@ class Retriever:
             f"fusion: {t_fusion*1000:.1f}ms] "
             f"Stage 2 (Re-rank): {t_rerank*1000:.1f}ms → {len(ranked)} results"
         )
+
+        return enriched
 
         
 

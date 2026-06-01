@@ -65,9 +65,10 @@ class RAGPipeline:
     Retrieval-Augmented Generation pipeline for medical queries.
     """
 
-    def __init__(self, retriever: Retriever, llm_client: BaseLLMClient):
+    def __init__(self, retriever: Retriever, llm_client: BaseLLMClient, doc_store=None):
         self._retriever = retriever
         self._llm = llm_client
+        self._doc_store = doc_store  # Para recuperar contenido completo de documentos
 
     @property
     def is_available(self) -> bool:
@@ -116,11 +117,20 @@ class RAGPipeline:
         while heap and remaining > 0:
             neg_score, orig_idx, src = heapq.heappop(heap)
             title = src.get("title", "Sin título")
-            snippet = src.get("snippet", "")
             url = src.get("url", "")
             source_num = orig_idx + 1
 
-            entry = f"[Fuente {source_num}] Título: {title}\nContenido: {snippet}\nURL: {url}\n"
+            # Intentar contenido completo desde el doc_store
+            content = ""
+            doc_id = src.get("doc_id")
+            if self._doc_store and doc_id is not None:
+                content = self._doc_store.get_text(doc_id)
+
+            # Fallback al snippet si no hay doc_store o el doc no se encontró
+            if not content:
+                content = src.get("snippet", "")
+
+            entry = f"[Fuente {source_num}] Título: {title}\nContenido: {content}\nURL: {url}\n"
             entry_len = len(entry)
 
             if entry_len <= remaining:
@@ -283,6 +293,20 @@ class RAGPipeline:
         ]
         if not filtered:
             filtered = results
+
+        # Filtrar docs con muy poco contenido real (videos sin transcripción,
+        # páginas índice, etc.) que hacen match léxico por título pero no
+        # aportan información sustancial al LLM.
+        if self._doc_store:
+            substantial = []
+            for r in filtered:
+                doc_id = r.get("doc_id")
+                content = self._doc_store.get_text(doc_id) if doc_id is not None else ""
+                if len(content) >= rag_settings.RAG_MIN_DOC_CONTENT_CHARS:
+                    substantial.append(r)
+            # Solo aplicar el filtro si quedan suficientes docs
+            if len(substantial) >= 2:
+                filtered = substantial
 
         # STAGE 2: CONSTRUCT PROMPT
         lang = lang if lang in {"es", "en"} else self._detect_language(query)

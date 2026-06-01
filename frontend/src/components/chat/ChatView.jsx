@@ -194,14 +194,7 @@ export const ChatView = () => {
 
         {isLoading && (
           <div className="flex flex-col gap-3 w-full max-w-4xl animate-fade-in">
-            <div className="glass-card px-4 py-2 shadow-sm flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
-                {t('searchingWeb')}
-              </span>
-              <div className="w-32 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div className="h-full w-2/3 bg-gradient-to-r from-neurol-500 to-medical-500 animate-shimmer bg-[length:200%_100%]"></div>
-              </div>
-            </div>
+            
 
             <div className="flex gap-4 w-full max-w-4xl">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-neurol-500 to-neurol-700 flex items-center justify-center shrink-0 animate-pulse-soft shadow-lg shadow-neurol-500/20">
