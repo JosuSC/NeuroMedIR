@@ -33,3 +33,15 @@ EMBEDDING_BATCH_SIZE = 32
 HNSW_M = 32
 HNSW_EF_CONSTRUCTION = 120
 HNSW_EF_SEARCH = 64
+
+
+# SerpApi (búsqueda web real para expansión dinámica)
+SERPAPI_API_KEY_ENV = "SERPAPI_API_KEY"
+# Fuentes confiables a las que se restringe la búsqueda web
+EXPANSION_TRUSTED_SITES = [
+    "msdmanuals.com",
+    "medlineplus.gov",
+    "mayoclinic.org",
+    "who.int",
+    "cdc.gov",
+]

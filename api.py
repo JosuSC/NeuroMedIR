@@ -173,8 +173,8 @@ def startup_event():
         from rag.pipeline import RAGPipeline
 
         llm_client = FallbackLLMClient([
-            GeminiLLMClient(),
             OpenRouterLLMClient(),
+            GeminiLLMClient(),
             
         ])
         
