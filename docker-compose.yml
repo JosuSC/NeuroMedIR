@@ -1,0 +1,35 @@
+# =============================================================================
+# docker-compose.yml — NeuroMedIR
+#
+# Uso:
+#   1. Copia .env.example a .env y rellena tus API keys.
+#   2. docker compose up --build
+#   3. Abre http://localhost:8000 en tu navegador.
+#
+# Las API keys se inyectan en runtime desde .env (NUNCA van en la imagen).
+# El volumen 'neuromedir-indices' persiste los índices entre reinicios para
+# no reconstruirlos cada vez.
+# =============================================================================
+services:
+  neuromedir:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: neuromedir:latest
+    container_name: neuromedir
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # Persistir índices construidos (corpus principal)
+      - neuromedir-indices:/app/indices
+      # Persistir índices y datos de expansión web
+      - neuromedir-expansion-idx:/app/indices_expansion
+      - neuromedir-expansion-data:/app/data/expansion
+    restart: unless-stopped
+
+volumes:
+  neuromedir-indices:
+  neuromedir-expansion-idx:
+  neuromedir-expansion-data:

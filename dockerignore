@@ -1,0 +1,48 @@
+# =============================================================================
+# .dockerignore - que NO copiar a la imagen Docker
+# =============================================================================
+
+# Entorno virtual local
+.venv/
+venv/
+
+# Secretos - NUNCA en la imagen (se inyectan en runtime via env_file)
+.env
+
+# Frontend: node_modules y dist se manejan en la etapa de build
+frontend/node_modules/
+frontend/dist/
+node_modules/
+
+# Caches de Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Carpeta basura con .pyc duplicados
+crawler y scraper/
+
+# Scripts de depuracion y desarrollo (no necesarios en runtime)
+debug_*.py
+fix_gui.py
+run_app.py
+main.py
+uvicorn_log.txt
+vite_log.txt
+
+# Git
+.git/
+.gitignore
+
+# Editores / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Handoffs y notas
+HANDOFF_*.md
+agent.md
+skill.md
