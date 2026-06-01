@@ -72,7 +72,7 @@ expansion_retriever: Optional[Retriever] = None  # Índices de expansión web (s
 # Configuración de expansión web automática
 # ---------------------------------------------------------------------------
 MIN_RESULTS_FOR_ANSWER = 2          # bajar a 2 (pediste que basta con 1-2 docs)
-WEB_EXPANSION_SCORE_THRESHOLD = 0.5  # umbral sobre logit del cross-encoder
+WEB_EXPANSION_SCORE_THRESHOLD = 1  # umbral sobre logit del cross-encoder
 WEB_EXPANSION_TARGET_DOCS = 2
 
 
@@ -173,8 +173,9 @@ def startup_event():
         from rag.pipeline import RAGPipeline
 
         llm_client = FallbackLLMClient([
-            OpenRouterLLMClient(),
             GeminiLLMClient(),
+            OpenRouterLLMClient(),
+            
         ])
         
         rag_pipeline = RAGPipeline(retriever=retriever, llm_client=llm_client, doc_store=doc_store)
@@ -635,13 +636,15 @@ def feedback_endpoint(req: FeedbackRequest):
 # ---------------------------------------------------------------------------
 
 def _should_expand(results: list) -> bool:
-    """Insuficiente si: no hay resultados, hay muy pocos, o el mejor es débil."""
+    """
+    Insuficiente si no hay suficientes documentos REALMENTE relevantes.
+    Cuenta cuántos superan el piso de relevancia del cross-encoder, en vez
+    de mirar solo el primero (que puede ser un falso positivo léxico).
+    """
     if not results:
         return True
-    if len(results) < MIN_RESULTS_FOR_ANSWER:
-        return True
-    top_score = results[0].get("score", 0.0)
-    return top_score < WEB_EXPANSION_SCORE_THRESHOLD
+    strong = [r for r in results if r.get("score", 0.0) >= WEB_EXPANSION_SCORE_THRESHOLD]
+    return len(strong) < MIN_RESULTS_FOR_ANSWER
 
 
 def _build_bibliography(retrieval_results: list) -> list:

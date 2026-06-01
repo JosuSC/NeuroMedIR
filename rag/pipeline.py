@@ -114,6 +114,11 @@ class RAGPipeline:
         included: List[Dict] = []
         remaining = max_chars
 
+        # doc_stores activos (corpus principal + expansión). IDs no colisionan.
+        stores = getattr(self, "_active_doc_stores", None) or (
+            [self._doc_store] if self._doc_store else []
+        )
+
         while heap and remaining > 0:
             neg_score, orig_idx, src = heapq.heappop(heap)
             title = src.get("title", "Sin título")
@@ -121,21 +126,17 @@ class RAGPipeline:
             source_num = orig_idx + 1
 
             # Buscar contenido completo en todos los doc_stores activos
-        # (corpus principal + expansión). Los doc_ids no colisionan.
-        content = ""
-        doc_id = src.get("doc_id")
-        stores = getattr(self, "_active_doc_stores", None) or (
-            [self._doc_store] if self._doc_store else []
-        )
-        if doc_id is not None:
-            for store in stores:
-                content = store.get_text(doc_id)
-                if content:
-                    break
+            content = ""
+            doc_id = src.get("doc_id")
+            if doc_id is not None:
+                for store in stores:
+                    content = store.get_text(doc_id)
+                    if content:
+                        break
 
-        # Fallback al snippet si no se encontró en ningún store
-        if not content:
-            content = src.get("snippet", "")
+            # Fallback al snippet si no se encontró en ningún store
+            if not content:
+                content = src.get("snippet", "")
 
             entry = f"[Fuente {source_num}] Título: {title}\nContenido: {content}\nURL: {url}\n"
             entry_len = len(entry)
@@ -312,12 +313,18 @@ class RAGPipeline:
                 t_start,
             )
 
-        filtered = [
+        # Filtrar docs irrelevantes: el cross-encoder asigna logits altos solo
+        # a docs realmente pertinentes. Pasar basura al LLM lo induce a alucinar.
+        relevant = [
             r for r in results
-            if r.get("score", 0) >= rag_settings.RAG_MIN_SCORE_THRESHOLD
+            if r.get("score", 0) >= rag_settings.RAG_RELEVANCE_FLOOR
         ]
-        if not filtered:
-            filtered = results
+        if not relevant:
+            # Ningún doc supera el piso → no hay material para responder con
+            # fundamento. Devolver mensaje honesto en vez de dejar alucinar.
+            return self._no_grounding_response(t_start, results)
+
+        filtered = relevant
 
         # Filtrar docs con muy poco contenido real (videos sin transcripción,
         # páginas índice, etc.) que hacen match léxico por título pero no
@@ -428,6 +435,26 @@ class RAGPipeline:
             )
 
         return answer
+
+
+    def _no_grounding_response(self, t_start: float, results: List[Dict]) -> Dict:
+        """
+        Respuesta cuando ningún documento supera el piso de relevancia.
+        No se deja generar al LLM para evitar alucinaciones sin fundamento.
+        """
+        msg = (
+            "No encontré información suficientemente relevante en mis fuentes "
+            "para responder con fundamento a tu consulta. Te recomiendo "
+            "reformular la pregunta o consultar a un profesional de la salud."
+        )
+        return {
+            "answer": msg,
+            "sources": [],
+            "confidence": 0.0,
+            "latency_ms": round((time.perf_counter() - t_start) * 1000, 1),
+            "model": self._llm.model_name if self._llm else "none",
+            "retrieval_count": len(results),
+        }
 
     def _error_response(self, message: str, t_start: float) -> Dict:
         return {

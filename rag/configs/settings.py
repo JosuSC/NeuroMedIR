@@ -51,6 +51,9 @@ RAG_MAX_CONTEXT_TOKENS = 8192   # Max tokens for context (input documents).
                                 # ~5 full medical docs comfortably.
 RAG_CHARS_PER_TOKEN = 4         # Heuristic: avg 4 chars per token for English/Spanish
 
+RAG_RELEVANCE_FLOOR = 1.0   # piso de score (logit cross-encoder) para que un
+                            # doc entre al contexto del LLM. Evita alucinación
+                            # alimentando solo documentos pertinentes.
 # ---------------------------------------------------------------------------
 # Retrieval Parameters (RAG-specific, override retrieval defaults)
 # ---------------------------------------------------------------------------
