@@ -4,7 +4,7 @@ api.py — FastAPI endpoints para el sistema NeuroMedIR.
 Endpoints:
     GET  /api/health              — Health check del backend
     POST /api/chat                — Endpoint conversacional unificado
-    POST /api/chat/submit_form   — Envío de formulario de síntomas
+    
     POST /api/query              — Retrieval híbrido directo (legacy)
     POST /api/rag_query          — Pipeline RAG directo (legacy)
 
