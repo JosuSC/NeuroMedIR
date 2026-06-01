@@ -71,8 +71,9 @@ expansion_retriever: Optional[Retriever] = None  # Índices de expansión web (s
 # ---------------------------------------------------------------------------
 # Configuración de expansión web automática
 # ---------------------------------------------------------------------------
-MIN_RESULTS_FOR_ANSWER = 3
-WEB_EXPANSION_TARGET_DOCS = 5
+MIN_RESULTS_FOR_ANSWER = 2          # bajar a 2 (pediste que basta con 1-2 docs)
+WEB_EXPANSION_SCORE_THRESHOLD = 0.5  # umbral sobre logit del cross-encoder
+WEB_EXPANSION_TARGET_DOCS = 2
 
 
 # ---------------------------------------------------------------------------
@@ -420,79 +421,74 @@ def _handle_non_medical_llm(message: str, lang_code: str) -> dict:
 
 
 def _handle_question(message: str, lang_code: str) -> dict:
-    """Maneja preguntas generales: RAG → respuesta experta + bibliografía."""
+    """
+    Maneja preguntas: revisa corpus principal + expansión, expande web si es
+    insuficiente, y genera respuesta RAG con la información combinada.
+    """
     t_start = time.time()
     used_web_search = False
 
-    try:
-        initial_results = retriever.retrieve(message, top_k=5, preferred_lang=lang_code)
-        # Complementar con resultados de expansión si existen
+    # 1) Recuperar de AMBOS índices (principal + expansión)
+    def _retrieve_combined(top_k_each=5):
+        primary = []
+        expansion = []
+        try:
+            primary = retriever.retrieve(message, top_k=top_k_each, preferred_lang=lang_code)
+        except Exception as e:
+            logger.error(f"Retrieval principal falló: {e}")
         if expansion_retriever is not None:
             try:
-                exp_results = expansion_retriever.retrieve(message, top_k=3, preferred_lang=lang_code)
-                initial_results = initial_results + exp_results
-            except Exception:
-                pass
-    except Exception as e:
-        logger.error(f"Retrieval inicial falló: {e}")
-        initial_results = []
+                expansion = expansion_retriever.retrieve(message, top_k=top_k_each, preferred_lang=lang_code)
+            except Exception as e:
+                logger.error(f"Retrieval expansión falló: {e}")
+        return primary, expansion
 
-    if _should_expand(initial_results):
+    primary_results, expansion_results = _retrieve_combined()
+    combined = _merge_retrieval_results(primary_results, expansion_results, top_k=5)
+
+    # 2) ¿Es insuficiente? → lanzar expansión web
+    if _should_expand(combined):
         used_web_search = _try_expand_corpus(message)
+        # Tras expandir, re-revisar (el expansion_retriever ya fue reconstruido)
+        if used_web_search:
+            primary_results, expansion_results = _retrieve_combined()
+            combined = _merge_retrieval_results(primary_results, expansion_results, top_k=5)
 
-    # Intentar RAG (genera respuesta natural con LLM)
+    # 3) Generar respuesta con RAG usando los resultados combinados
     answer_text = None
     sources = []
     confidence = 0.0
 
-    if rag_pipeline is not None and rag_pipeline.is_available:
+    if rag_pipeline is not None and rag_pipeline.is_available and combined:
+        # Lista de doc_stores donde el pipeline buscará el contenido
+        stores = [doc_store]
+        if expansion_retriever is not None:
+            stores.append(expansion_retriever._doc_store)
         try:
-            rag_result = rag_pipeline.query(message, top_k=5, lang=lang_code)
+            rag_result = rag_pipeline.query(
+                message,
+                top_k=5,
+                lang=lang_code,
+                prefetched_results=combined,
+                doc_stores=stores,
+            )
             answer_text = rag_result.get("answer")
             sources = rag_result.get("sources", [])
             confidence = rag_result.get("confidence", 0.0)
         except Exception as e:
-            logger.error(f"RAG falló para pregunta: {e}")
+            logger.error(f"RAG falló: {e}")
 
-    # Si la respuesta indica insuficiencia, intentar expansión web
-    if answer_text and _answer_indicates_insufficient(answer_text):
-        if not used_web_search:
-            used_web_search = _try_expand_corpus(message)
-        if used_web_search and rag_pipeline is not None and rag_pipeline.is_available:
-            try:
-                rag_result = rag_pipeline.query(message, top_k=5, lang=lang_code)
-                answer_text = rag_result.get("answer")
-                sources = rag_result.get("sources", [])
-                sources = _filter_by_language(sources, lang_code)
-                confidence = rag_result.get("confidence", 0.0)
-            except Exception as e:
-                logger.error(f"RAG falló tras expansión web: {e}")
-
-    # Si hay baja confianza, intentar expansión web
-    if answer_text and confidence < 0.15 and not used_web_search:
-        used_web_search = _try_expand_corpus(message)
-        if used_web_search and rag_pipeline is not None and rag_pipeline.is_available:
-            try:
-                rag_result = rag_pipeline.query(message, top_k=5, lang=lang_code)
-                answer_text = rag_result.get("answer")
-                sources = rag_result.get("sources", [])
-                confidence = rag_result.get("confidence", 0.0)
-            except Exception as e:
-                logger.error(f"RAG falló tras expansión web por baja confianza: {e}")
-
-    # Si RAG no está disponible o falló, usar retrieval directo
+    # 4) Fallback: si RAG no disponible o falló, usar retrieval directo
     if answer_text is None:
-        results = retriever.retrieve(message, top_k=5, preferred_lang=lang_code)
-        sources = results
-        answer_text = _build_answer_from_results(results, lang_code)
+        sources = combined
+        answer_text = _build_answer_from_results(combined, lang_code)
 
-    # Construir bibliografía
+    # 5) Bibliografía + disclaimer
     bibliography = _build_bibliography(sources) if sources else []
-
     disclaimer = chat_settings.DISCLAIMER_ES if lang_code == "es" else chat_settings.DISCLAIMER_EN
 
     latency_ms = round((time.time() - t_start) * 1000, 1)
-    logger.info(f"Pregunta respondida en {latency_ms}ms (RAG={'sí' if rag_pipeline else 'no'})")
+    logger.info(f"Pregunta respondida en {latency_ms}ms (web_search={used_web_search})")
 
     return {
         "type": "question",
@@ -639,13 +635,13 @@ def feedback_endpoint(req: FeedbackRequest):
 # ---------------------------------------------------------------------------
 
 def _should_expand(results: list) -> bool:
-    """Retorna True si la base local es insuficiente para responder."""
-    if results is None:
+    """Insuficiente si: no hay resultados, hay muy pocos, o el mejor es débil."""
+    if not results:
         return True
     if len(results) < MIN_RESULTS_FOR_ANSWER:
         return True
-    top_score = results[0].get("score", 0.0) if results else 0.0
-    return top_score < 0.15
+    top_score = results[0].get("score", 0.0)
+    return top_score < WEB_EXPANSION_SCORE_THRESHOLD
 
 
 def _build_bibliography(retrieval_results: list) -> list:
@@ -666,6 +662,39 @@ def _build_bibliography(retrieval_results: list) -> list:
             "snippet": (result.get("snippet", ""))[:150] + "...",
         })
     return bibliography
+
+
+def _merge_retrieval_results(primary: list, expansion: list, top_k: int = 5) -> list:
+    """
+    Fusiona resultados del corpus principal y de expansión.
+    Deduplica por doc_id (no colisionan tras el offset de ids) y ordena
+    por score descendente. Devuelve los top_k.
+    """
+    merged = {}
+    for r in (primary or []) + (expansion or []):
+        doc_id = r.get("doc_id")
+        if doc_id is None:
+            continue
+        # Conservar el de mayor score si aparece duplicado
+        if doc_id not in merged or r.get("score", 0) > merged[doc_id].get("score", 0):
+            merged[doc_id] = r
+    ordered = sorted(merged.values(), key=lambda x: x.get("score", 0), reverse=True)
+    return ordered[:top_k]
+
+
+def _next_expansion_doc_id() -> int:
+    """
+    Calcula el id inicial para nuevos docs de expansión:
+    después del mayor id entre corpus principal y expansión.
+    """
+    max_corpus = max(doc_store._store.keys()) if doc_store and doc_store._store else 0
+    max_exp = 0
+    if expansion_retriever is not None:
+        exp_store = expansion_retriever._doc_store
+        if exp_store and exp_store._store:
+            max_exp = max(exp_store._store.keys())
+    return max(max_corpus, max_exp) + 1
+
 
 def _build_expansion_retriever() -> Optional[Retriever]:
     """
@@ -718,7 +747,12 @@ def _try_expand_corpus(query: str) -> bool:
     """
     global expansion_retriever
 
-    new_docs = expand_corpus_from_query(query, max_new_docs=WEB_EXPANSION_TARGET_DOCS)
+    start_id = _next_expansion_doc_id()
+    new_docs = expand_corpus_from_query(
+        query,
+        max_new_docs=WEB_EXPANSION_TARGET_DOCS,
+        start_doc_id=start_id,
+    )
     if not new_docs:
         return False
 

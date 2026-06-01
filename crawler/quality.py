@@ -47,10 +47,18 @@ class CorpusQualityGate:
 
     La uso para evitar basura repetida o demasiado corta dentro del corpus.
     """
+    def __init__(self, min_content_chars: int = 600, relaxed: bool = False):
+        """Configura el umbral mínimo de longitud del contenido.
 
-    def __init__(self, min_content_chars: int = 600):
-        """Configura el umbral mínimo de longitud del contenido."""
+        Args:
+            relaxed: Si es True (modo expansión web), se omiten los filtros
+                heurísticos de portada/navegación/boilerplate que suelen
+                rechazar artículos válidos provenientes de páginas de
+                resultados de búsqueda. Se conservan los filtros esenciales:
+                campos obligatorios, idioma, longitud mínima y deduplicación.
+        """
         self.min_content_chars = min_content_chars
+        self.relaxed = relaxed
         self._seen_urls = set()
         self._seen_fingerprints = set()
 
@@ -198,18 +206,21 @@ class CorpusQualityGate:
 
         if len(doc["content"]) < self.min_content_chars:
             return ValidationResult(False, "content_too_short")
-        
-        if self._contains_boilerplate(doc["content"]):
-            return ValidationResult(False, "boilerplate_content")
 
-        if self._looks_like_navigation_page(doc["content"]):
-            return ValidationResult(False, "navigation_page")
+        # En modo relajado (expansión web) se omiten los filtros heurísticos
+        # que tienden a rechazar artículos válidos por falsos positivos.
+        if not self.relaxed:
+            if self._contains_boilerplate(doc["content"]):
+                return ValidationResult(False, "boilerplate_content")
 
-        if self._is_portal_or_landing_page(doc["content"]):
-            return ValidationResult(False, "portal_or_landing_page")
+            if self._looks_like_navigation_page(doc["content"]):
+                return ValidationResult(False, "navigation_page")
 
-        if self._has_excessive_repetition(doc["content"]):
-            return ValidationResult(False, "excessive_repetition")
+            if self._is_portal_or_landing_page(doc["content"]):
+                return ValidationResult(False, "portal_or_landing_page")
+
+            if self._has_excessive_repetition(doc["content"]):
+                return ValidationResult(False, "excessive_repetition")
 
         normalized_url = doc["url"].strip().lower()
         if normalized_url in self._seen_urls:

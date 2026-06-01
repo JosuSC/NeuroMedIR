@@ -120,15 +120,22 @@ class RAGPipeline:
             url = src.get("url", "")
             source_num = orig_idx + 1
 
-            # Intentar contenido completo desde el doc_store
-            content = ""
-            doc_id = src.get("doc_id")
-            if self._doc_store and doc_id is not None:
-                content = self._doc_store.get_text(doc_id)
+            # Buscar contenido completo en todos los doc_stores activos
+        # (corpus principal + expansión). Los doc_ids no colisionan.
+        content = ""
+        doc_id = src.get("doc_id")
+        stores = getattr(self, "_active_doc_stores", None) or (
+            [self._doc_store] if self._doc_store else []
+        )
+        if doc_id is not None:
+            for store in stores:
+                content = store.get_text(doc_id)
+                if content:
+                    break
 
-            # Fallback al snippet si no hay doc_store o el doc no se encontró
-            if not content:
-                content = src.get("snippet", "")
+        # Fallback al snippet si no se encontró en ningún store
+        if not content:
+            content = src.get("snippet", "")
 
             entry = f"[Fuente {source_num}] Título: {title}\nContenido: {content}\nURL: {url}\n"
             entry_len = len(entry)
@@ -266,20 +273,38 @@ class RAGPipeline:
         query: str,
         top_k: Optional[int] = None,
         lang: Optional[str] = None,
+        prefetched_results: Optional[List[Dict]] = None,
+        doc_stores: Optional[List] = None,
     ) -> Dict:
-        """Full RAG pipeline: retrieve → construct → generate → parse."""
+        """Full RAG pipeline: retrieve → construct → generate → parse.
+
+        Args:
+            prefetched_results: Si se provee, salta el retrieve interno y usa
+                estos resultados ya enriquecidos (ej. fusión corpus+expansión).
+            doc_stores: Lista de DocumentStores donde buscar contenido por
+                doc_id (ej. [principal, expansión]). Si es None usa el propio.
+        """
         t_start = time.perf_counter()
         top_k = top_k or rag_settings.RAG_TOP_K
 
-        # STAGE 1: RETRIEVE
-        try:
-            results = self._retriever.retrieve(query, top_k=top_k)
-        except Exception as e:
-            logger.error(f"RAG retrieval failed: {e}")
-            return self._error_response(
-                "Error al recuperar documentos. Intente nuevamente.",
-                t_start,
-            )
+        # Permitir múltiples doc_stores para resolver contenido de docs
+        # provenientes de distintos índices (corpus principal + expansión).
+        self._active_doc_stores = doc_stores if doc_stores else (
+            [self._doc_store] if self._doc_store else []
+        )
+
+        # STAGE 1: RETRIEVE (o usar resultados pre-recuperados)
+        if prefetched_results is not None:
+            results = prefetched_results
+        else:
+            try:
+                results = self._retriever.retrieve(query, top_k=top_k)
+            except Exception as e:
+                logger.error(f"RAG retrieval failed: {e}")
+                return self._error_response(
+                    "Error al recuperar documentos. Intente nuevamente.",
+                    t_start,
+                )
 
         if not results:
             return self._error_response(

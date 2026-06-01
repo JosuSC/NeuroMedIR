@@ -28,6 +28,7 @@ class CrawlConfig:
     language_targets: Dict[str, int] = field(default_factory=lambda: {"es": 2500})
     output_dir: Path = Path("data") / "corpus_v2"
     save_raw_html: bool = False
+    relaxed_quality: bool = False  # True en modo expansión: gate menos estricto
 
 
 DEFAULT_DOMAINS: List[DomainConfig] = [

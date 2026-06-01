@@ -103,7 +103,10 @@ class CorpusCrawler:
         # el suyo con la factory.
         self._shared_scraper = scraper
         self.storage = CorpusStorage(config.output_dir)
-        self.quality = CorpusQualityGate(config.min_content_chars)
+        self.quality = CorpusQualityGate(
+            config.min_content_chars,
+            relaxed=config.relaxed_quality,
+        )
 
         self.max_workers = max_workers or min(len(self.domains), 16)
 
