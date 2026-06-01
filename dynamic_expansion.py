@@ -190,7 +190,7 @@ def expand_corpus_from_query(query: str, max_new_docs: int = 5) -> List[Dict]:
     # Sin límites de idioma para no rechazar documentos válidos en expansión
     config.language_targets = {"es": max_new_docs, "en": max(1, max_new_docs - 2)}
     # Directorio separado para no mezclar con el corpus base durante la expansión
-    config.output_dir = idx_settings.EXPANSION_DATA_DIR
+    config.output_dir = idx_settings.EXPANSION_DATA_DIR.parent  # data/expansion/
 
     try:
         # IMPORTANTE: skip_existing=True evita cargar todo el corpus en memoria
