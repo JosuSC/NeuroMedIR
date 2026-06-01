@@ -2,79 +2,47 @@
     {
         "query_id": "q01",
         "query": "síntomas de diabetes tipo 2",
-        "relevant": [
-            792,
-            797,
-            791
-        ]
+        "relevant": []
     },
     {
         "query_id": "q02",
         "query": "tratamiento para la hipertensión arterial",
-        "relevant": [
-            1202,
-            1232,
-            145,
-            2175
-        ]
+        "relevant": []
     },
     {
         "query_id": "q03",
         "query": "cómo prevenir un infarto al corazón",
-        "relevant": [
-            1200,
-            142
-        ]
+        "relevant": []
     },
     {
         "query_id": "q04",
         "query": "causas del asma en niños",
-        "relevant": [
-            422,
-            967,
-            1427,
-            125,
-            773,
-            148
-        ]
+        "relevant": []
     },
     {
         "query_id": "q05",
         "query": "diferencia entre artritis y artrosis",
-        "relevant": [
-            1318
-        ]
+        "relevant": []
     },
     {
         "query_id": "q06",
         "query": "medicamentos para la depresión mayor",
-        "relevant": [
-            2274,
-            953
-        ]
+        "relevant": []
     },
     {
         "query_id": "q07",
         "query": "síntomas del infarto cerebral o ictus",
-        "relevant": [
-            1567,
-            2488
-        ]
+        "relevant": []
     },
     {
         "query_id": "q08",
         "query": "vacunas recomendadas para adultos mayores",
-        "relevant": [
-            2099
-        ]
+        "relevant": []
     },
     {
         "query_id": "q09",
         "query": "qué es la enfermedad de Parkinson y cómo se trata",
-        "relevant": [
-            999,
-            2491
-        ]
+        "relevant": []
     },
     {
         "query_id": "q10",
@@ -84,19 +52,12 @@
     {
         "query_id": "q11",
         "query": "causas y tratamiento de la migraña crónica",
-        "relevant": [
-            2483,
-            412,
-            1437
-        ]
+        "relevant": []
     },
     {
         "query_id": "q12",
         "query": "cómo se diagnostica la osteoporosis",
-        "relevant": [
-            821,
-            123
-        ]
+        "relevant": []
     },
     {
         "query_id": "q13",
@@ -106,41 +67,27 @@
     {
         "query_id": "q14",
         "query": "síntomas y causas del hipotiroidismo",
-        "relevant": [
-            1027,
-            1039
-        ]
+        "relevant": []
     },
     {
         "query_id": "q15",
         "query": "tratamiento de la ansiedad sin medicamentos",
-        "relevant": [
-            2304,
-            1222
-        ]
+        "relevant": []
     },
     {
         "query_id": "q16",
         "query": "cómo controlar el colesterol alto con alimentación",
-        "relevant": [
-            1192,
-            158,
-            155
-        ]
+        "relevant": []
     },
     {
         "query_id": "q17",
         "query": "signos de alerta del cáncer de colon",
-        "relevant": [
-            806
-        ]
+        "relevant": []
     },
     {
         "query_id": "q18",
         "query": "diferencia entre gripe y resfriado común",
-        "relevant": [
-            2089
-        ]
+        "relevant": []
     },
     {
         "query_id": "q19",
@@ -150,8 +97,6 @@
     {
         "query_id": "q20",
         "query": "síntomas de apendicitis en adultos",
-        "relevant": [
-            1459
-        ]
+        "relevant": []
     }
 ]
