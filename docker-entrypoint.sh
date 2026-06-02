@@ -2,19 +2,21 @@
 # =============================================================================
 # docker-entrypoint.sh — Arranque del contenedor NeuroMedIR
 #
-# 1. Si los índices no existen, los construye desde el corpus crudo
-#    (cumple el requisito: "la carga del sistema debe indexar el corpus
-#     inicial como un paso requerido").
+# 1. Si la carpeta de índices está vacía, construye los índices desde el corpus
+#    inicial (cumple el requisito: "la carga del sistema debe indexar su corpus
+#    inicial como un paso requerido").
 # 2. Arranca el servidor FastAPI en el puerto 8000.
 # =============================================================================
 set -e
 
-INDEX_FILE="/app/indices/bm25_lexical.pkl"
+INDEX_DIR="/app/indices"
 
-if [ ! -f "$INDEX_FILE" ]; then
+# Comprobar si la carpeta de índices está vacía (robusto frente al nombre exacto
+# de los archivos que genere run_indexing.py).
+if [ -z "$(ls -A "$INDEX_DIR" 2>/dev/null)" ]; then
     echo "============================================================"
     echo " Índices no encontrados. Construyendo desde el corpus..."
-    echo " (Este es un paso único; puede tardar varios minutos.)"
+    echo " (Paso único; puede tardar varios minutos.)"
     echo "============================================================"
     python run_indexing.py
     echo " Indexación completada."
