@@ -47,6 +47,7 @@ Design principles (from agent.md):
 
 import time
 import logging
+import numpy as np
 from typing import List, Dict, Optional
 
 from indexing.preprocess.text_cleaner import TextCleaner
@@ -468,7 +469,13 @@ class Retriever:
         Re-executes retrieval after applying Rocchio relevance feedback.
 
         Adjusts the query vector in embedding space based on user-marked
-        results (relevant / irrelevant) and re-runs the full pipeline.
+        results (relevant / irrelevant) and re-runs the retrieval pipeline.
+
+        NOTE: The cross-encoder (Stage 2) is intentionally skipped here.
+        The CE uses the original text query and would assign identical scores
+        to the same (query, doc) pairs regardless of the Rocchio adjustment,
+        negating the effect entirely. Rocchio operates in vector space; the
+        CE operates in text space — they are incompatible in the same chain.
 
         Args:
             query:        Original user query string.
@@ -476,14 +483,73 @@ class Retriever:
             top_k:        Number of results to return.
 
         Returns:
-            Re-ranked enriched result list.
+            Re-ranked enriched result list driven by the Rocchio-adjusted vector.
         """
-        return self._feedback.apply(
-            query=query,
-            feedback_map=feedback_map,
-            retriever=self,
-            top_k=top_k,
+        top_k = top_k or ret_settings.FINAL_TOP_K
+
+        # Rocchio parameters (α=1.0, β=0.75, γ=0.25)
+        alpha, beta, gamma = 1.0, 0.75, 0.25
+
+        # ── 1. Encode original query ─────────────────────────────────────────
+        processed = self.preprocess_query(query)
+        q_vec = self.generate_embedding(processed["semantic_text"])  # (dim,)
+
+        # ── 2. Encode feedback document texts ────────────────────────────────
+        rel_vecs: list = []
+        irrel_vecs: list = []
+
+        for doc_id, relevant in feedback_map.items():
+            doc = self._doc_store.get(int(doc_id))
+            if not doc:
+                logger.warning(f"Feedback: doc_id={doc_id} not found in store.")
+                continue
+            text = (doc.get("content") or doc.get("title") or "")[:512]
+            if not text.strip():
+                continue
+            vec = self.generate_embedding(text)
+            (rel_vecs if relevant else irrel_vecs).append(vec)
+
+        # ── 3. Rocchio adjustment ─────────────────────────────────────────────
+        q_rocchio = alpha * q_vec
+
+        if rel_vecs:
+            q_rocchio = q_rocchio + beta * np.mean(rel_vecs, axis=0)
+            logger.info(f"Rocchio: added {len(rel_vecs)} relevant vectors (β={beta})")
+
+        if irrel_vecs:
+            q_rocchio = q_rocchio - gamma * np.mean(irrel_vecs, axis=0)
+            logger.info(f"Rocchio: subtracted {len(irrel_vecs)} irrelevant vectors (γ={gamma})")
+
+        # L2-normalize (FAISS expects unit vectors for cosine via inner product)
+        norm = np.linalg.norm(q_rocchio)
+        if norm > 1e-10:
+            q_rocchio = q_rocchio / norm
+
+        # ── 4. Hybrid retrieval with Rocchio vector ───────────────────────────
+        # BM25 uses the original tokens (text-based, unaffected by Rocchio)
+        # FAISS uses the Rocchio-adjusted vector → this is where the magic is
+        lexical_results = self.search_bm25(
+            processed["lexical_tokens"],
+            top_k=ret_settings.LEXICAL_TOP_K,
         )
+        semantic_results = self.search_faiss(
+            q_rocchio,
+            top_k=ret_settings.SEMANTIC_TOP_K,
+        )
+
+        fused = self.fuse_results(lexical_results, semantic_results)
+        ranked = self.rank_results(fused, top_k=top_k)
+
+        # ── 5. Enrich + multi-factor rank (CE intentionally skipped) ─────────
+        enriched = self._enrich_results(ranked)
+        enriched = self._ranker.rerank(enriched)
+
+        logger.info(
+            f"retrieve_with_feedback: Rocchio applied "
+            f"({len(rel_vecs)} rel, {len(irrel_vecs)} irrel). "
+            f"CE skipped. Returning {len(enriched)} results."
+        )
+        return enriched
 
     # -----------------------------------------------------------------------
     # Private Helpers
